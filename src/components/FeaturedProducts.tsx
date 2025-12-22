@@ -65,7 +65,7 @@ export default function FeaturedProducts() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
           <div className="text-center mb-6 sm:mb-8 lg:mb-12">
             <h2 className="text-xs lg:text-3xl xl:text-4xl font-serif text-brand-light-gray">
-              Senin Yaşayan Efsanen
+              ALTINDA USTALIK, TASARIMDA KARAKTER
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
@@ -96,7 +96,7 @@ export default function FeaturedProducts() {
           className="text-center mb-6 sm:mb-8 lg:mb-12"
         >
           <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-serif text-brand-light-gray mb-2">
-            Senin Yaşayan Efsanen
+            ALTINDA USTALIK, TASARIMDA KARAKTER
           </h2>
           <motion.div
             initial={{ width: 0 }}

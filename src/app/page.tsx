@@ -11,32 +11,32 @@ export default function Home() {
     {
       icon: Award,
       title: 'Kalite Garantisi',
-      description: 'Her ürün en kaliteli malzemelerle üretilir',
+      description: 'Tüm ürünlerimiz, yüksek saflıkta altın ve titizlikle seçilmiş malzemeler kullanılarak üretilmiştir.',
     },
     {
       icon: Shield,
       title: 'Güvenilir Hizmet',
-      description: 'Yıllardır güvenle hizmet veriyoruz',
+      description: 'Uzun yıllara dayanan tecrübemizle, güvenilir ve şeffaf hizmet anlayışı sunuyoruz.',
     },
     {
       icon: Clock,
       title: 'Uzman Ekip',
-      description: 'Deneyimli ustalar ile çalışıyoruz',
+      description: 'Alanında uzman ustalarımızla, her detayda kusursuz işçilik sağlıyoruz.',
     },
     {
       icon: Gem,
       title: 'Özel Tasarım',
-      description: 'Size özel tasarım imkanı',
+      description: 'Hayalinizdeki tasarımları, size özel ölçü ve detaylarla uzman ekibimiz ve tasarım atölyemiz sayesinde gerçeğe dönüştürüyoruz.',
     },
     {
       icon: Calculator,
       title: 'Şeffaf Fiyatlandırma',
-      description: 'Güncel altın fiyatları ile hesaplama',
+      description: 'Güncel altın fiyatlarına esas alınarak, net ve şeffaf fiyatlandırma yapılır.',
     },
     {
       icon: Package,
       title: 'El İşçiliği',
-      description: 'Tüm ürünler özenle hazırlanır',
+      description: 'Tüm ürünlerimiz, geleneksel el işçiliği ve modern tekniklerin birleşimiyle özenle hazırlanır.',
     },
   ];
 

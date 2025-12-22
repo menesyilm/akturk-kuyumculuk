@@ -83,45 +83,113 @@ export default function NedenAkturkKuyumculuk() {
             className="w-20 sm:w-24 lg:w-32 h-0.5 sm:h-1 bg-brand-gold mx-auto mb-3 sm:mb-4 lg:mb-6"
           ></motion.div>
           <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-brand-medium-gray max-w-3xl mx-auto px-4">
-            Güven, kalite ve mükemmelliğin buluştuğu noktada, sizin için en iyisini sunuyoruz
+            Güven, ustalık ve zarafetin buluştuğu noktada; size özel, zamana değer katan tasarımlar sunuyoruz.
           </p>
         </motion.div>
 
-        {/* Özel Deneyim */}
-        <motion.section
-          initial={{ opacity: 0, x: -50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          className="mb-10 sm:mb-12 lg:mb-20"
-        >
-          <div className="bg-brand-dark-gray  p-4 sm:p-6 lg:p-8 xl:p-12 border border-brand-medium-gray shadow-xl">
-            <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
-              <Heart className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
-              <h2 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-serif text-brand-light-gray">
-                Size Özel Alışveriş Deneyimi
-              </h2>
-            </div>
-            <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base xl:text-lg leading-relaxed mb-3 sm:mb-4 lg:mb-6">
-              Trabzon mağazamızda, misafirlerimize alışveriş deneyimlerini unutulmaz kılacak özel bir hizmet sunuyoruz. 
-              Randevulu olarak davet ettiğimiz misafirlerimiz, güne yöresel lezzetlerle dolu zengin bir kahvaltıyla başlıyor. 
-              Ardından, sadece onlara özel bir anı bırakabilmeleri adına, kendi ürünlerine kişiselleştirme fırsatı tanıyoruz.
-            </p>
-            <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base xl:text-lg leading-relaxed">
-              Deneyimli ustalarımız eşliğinde, misafirlerimiz kendi ürünlerinin üretim sürecine bizzat tanıklık ediyor. 
-              Uzman ekibimiz, alınan ölçüler doğrultusunda ürünü misafire özel olarak hazırlıyor. Ölçülendirme tamamlandıktan 
-              sonra, misafirlerimize ürünü denetme ve ölçü onayı fırsatı sunuluyor. Onay alındıktan sonra, atölyemizde üretim 
-              süreci titizlikle tamamlanıyor.
-            </p>
-            <div className="mt-4 sm:mt-6 lg:mt-8 p-3 sm:p-4 lg:p-6 bg-brand-gold  sm: border-l-2 sm:border-l-4 border-light-gray">
-              <p className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">
-                Misafirlerimiz, kendi el emeğiyle dokunuş kattıkları Yaşayan Efsane&apos;lerine kavuşuyor.
-              </p>
-            </div>
-          </div>
-        </motion.section>
+        {/* Ana Değerler Grid - 2x2 */}
+        <section className="mb-10 sm:mb-12 lg:mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+            {/* Kaliteyi Standart Değil, İlke Kabul Ediyoruz */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "100px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
+                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
+                  <Heart className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
+                    Kaliteyi Standart Değil, İlke Kabul Ediyoruz
+                  </h2>
+                </div>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
+                  Aktürk Kuyumculuk&apos;ta her ürün, yüksek saflıkta altın kullanılarak; kalite, dayanıklılık ve estetik kriterleri esas alınarak üretilir.
+                  Tüm tasarımlarımız, yalnızca bugünün değil; yıllar sonra da değerini koruyacak şekilde planlanır.
+                </p>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
+                  Üretim sürecimizin her aşaması, titiz kontrol ve uzman işçilik anlayışıyla yürütülür.
+                </p>
+              </div>
+            </motion.div>
 
-        {/* Ürün Kimliği */}
+            {/* Ustalıkla Şekillenen Tasarımlar */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
+                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
+                  <Gem className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
+                    Ustalıkla Şekillenen Tasarımlar
+                  </h2>
+                </div>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
+                  Deneyimli ustalarımız, geleneksel kuyumculuk bilgisini modern tasarım anlayışıyla birleştirerek;
+                  her detayında zarafet ve denge barındıran özel parçalar üretir.
+                </p>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
+                  Ortaya çıkan her ürün; ölçü, form ve konfor açısından yüksek hassasiyetle hazırlanır ve kusursuz işçilikle tamamlanır.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Şeffaf ve Güvenilir Fiyatlandırma */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "100px" }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
+                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
+                  <Calculator className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
+                    Şeffaf ve Güvenilir Fiyatlandırma
+                  </h2>
+                </div>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
+                  Aktürk Kuyumculuk&apos;ta fiyatlandırma, güncel altın değerleri esas alınarak net ve anlaşılır şekilde yapılır.
+                  Ürün bedelleri; altın gramajı, işçilik ve tasarım detayları doğrultusunda şeffaf biçimde belirlenir.
+                </p>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
+                  Sürpriz maliyetlere veya belirsiz fiyatlandırmaya yer verilmez.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Kişiye Özel Değer Anlayışı */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, margin: "100px" }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
+                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
+                  <Award className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
+                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
+                    Kişiye Özel Değer Anlayışı
+                  </h2>
+                </div>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
+                  Her tasarım, sahibinin tarzını ve beklentisini yansıtacak şekilde ele alınır.
+                  Aktürk Kuyumculuk&apos;ta amaç; yalnızca bir takı sunmak değil, kişisel değeri olan kalıcı bir parça üretmektir.
+                </p>
+                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
+                  Bu anlayışla hazırlanan ürünler, nesiller boyu aktarılabilecek anlamlı birer değere dönüşür.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Ürün Kimliği - Geçici olarak yorum satırında */}
+        {/* 
         <motion.section
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -179,6 +247,7 @@ export default function NedenAkturkKuyumculuk() {
             </div>
           </div>
         </motion.section>
+        */}
 
         {/* Ayrıcalıklar Grid */}
         <section className="mb-10 sm:mb-12 lg:mb-20">
@@ -207,9 +276,9 @@ export default function NedenAkturkKuyumculuk() {
                 Ayar Garantisi
               </h3>
               <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Özenle ürettiğimiz tüm ürünlerde, ham madde olarak kullandığımız altını bütün üretim aşamalarında 
-                laboratuvarda analize tabi tutarak ayar garantili üretim yapmaktayız. Ürün kimliği numaranızla 
-                analiz sonuçlarını görebilirsiniz.
+                Tüm ürünlerimiz, yüksek saflıkta altın kullanılarak üretilir ve üretim süreci boyunca kalite kontrollerden geçirilir.
+                Altın ayarı, laboratuvar analizleriyle doğrulanır ve ürünlerimiz ayar garantisi kapsamında sunulur.
+                Her parça, kalite standartlarımıza uygunluğu onaylandıktan sonra teslim edilir.
               </p>
             </motion.div>
 
@@ -228,8 +297,8 @@ export default function NedenAkturkKuyumculuk() {
                 Ömür Boyu Ücretsiz Bakım
               </h3>
               <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Kullanıcı hatalarından oluşabilen ürün deformasyonlarında dahi ücretsiz bakım ve onarım imkanları 
-                sunuyoruz. Kilit problemi, form bozulması gibi problemlerde ücretsiz bakım ve onarım sağlamaktayız.
+                Kullanıma bağlı olarak oluşabilecek küçük deformasyonlar ve ayar bozulmaları için ömür boyu ücretsiz bakım hizmeti sunuyoruz.
+                Bakım ve onarım işlemleri, ürünün estetik ve yapısal bütünlüğü korunarak uzman ustalarımız tarafından gerçekleştirilir.
               </p>
             </motion.div>
 
@@ -248,8 +317,8 @@ export default function NedenAkturkKuyumculuk() {
                 Sürdürülebilir Kalite
               </h3>
               <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Yıllardır tecrübeli, seçkin ustalarımız tarafından üretilen ürünlerimiz kalite kursuna tabii tutulmuştur. 
-                Ustalarımız kalite kontrol eğitimlerine tabi tutularak çalışmaktadırlar.
+                Üretim anlayışımız; deneyim, disiplin ve süreklilik üzerine kuruludur.
+                Seçkin ustalarımız tarafından üretilen tüm ürünler, uzun ömürlü kullanım ve kalıcı değer hedefiyle kalite standartlarına uygun şekilde hazırlanır.
               </p>
             </motion.div>
 
@@ -268,8 +337,8 @@ export default function NedenAkturkKuyumculuk() {
                 İleri Teknoloji Üretim
               </h3>
               <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Üretim aşamasında kullandığımız ileri teknoloji buluşlar sayesinde piyasa standartlarının en hafif 
-                ve en kaliteli ürünlerini üretiyoruz. Kalitemizi standart bir hale getirdik.
+                Üretim süreçlerimizde, hassas ölçüm ve modern üretim tekniklerinden faydalanılır.
+                Bu sayede estetik, konfor ve dayanıklılık açısından üst düzey ürünler ortaya çıkarılır; kalite standartlarımız her aşamada korunur.
               </p>
             </motion.div>
 
@@ -288,8 +357,8 @@ export default function NedenAkturkKuyumculuk() {
                 Kişiye Özel Üretim
               </h3>
               <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Müşterilerimizin isteklerine göre özel tasarım ve üretim hizmeti sunuyoruz. Hayalinizdeki mücevheri 
-                birlikte tasarlayıp, size özel üretiyoruz.
+                Müşteri beklentilerine göre şekillenen tasarımlar, ölçü ve detay hassasiyetiyle kişiye özel olarak üretilir.
+                Her parça, sahibinin tarzını ve kullanım alışkanlıklarını yansıtacak şekilde özenle hazırlanır.
               </p>
             </motion.div>
 
@@ -308,8 +377,8 @@ export default function NedenAkturkKuyumculuk() {
                 Uzman Kadro
               </h3>
               <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Alanında uzman, deneyimli ustalarımız ve danışmanlarımızla size en iyi hizmeti sunmak için çalışıyoruz. 
-                Her aşamada profesyonel destek sağlamaktayız.
+                Alanında deneyimli ustalarımız ve danışmanlarımız, sürecin her aşamasında profesyonel destek sağlar.
+                Tasarımdan üretime, kontrolden teslimata kadar tüm adımlar uzman kadromuz tarafından titizlikle yönetilir.
               </p>
             </motion.div>
           </div>

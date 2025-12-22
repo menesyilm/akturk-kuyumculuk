@@ -9,37 +9,37 @@ export default function Uretim() {
     {
       icon: Flame,
       title: 'Eritme Aşaması',
-      description: 'Üretimde kullandığımız altın tellerin üretimine, has altın ve alloy karışımıyla 1064-1150 derecede eritme ocaklarında başlanır. Karışım eritilerek altında istenilen ayara dönüşüm sağlanır. Eritilen altının, 8mm kalınlığındaki kalıpta çubuk dökümü gerçekleştirilir.',
+      description: 'Üretimde kullanılan altın, saflık ve kalite standartlarına uygun alaşım oranlarıyla hazırlanır. Altın, 1064–1150°C aralığında özel eritme ocaklarında kontrollü şekilde eritilir. Bu aşamada homojen yapı elde edilmesi sağlanır ve altın, üretime hazır hale getirilir.',
       temp: '1064-1150°C',
     },
     {
       icon: Cog,
       title: 'Silindir Makinesi',
-      description: 'Elde edilen altın çubuk silindir makinesindeki silindirlerin arasından defalarca geçirilerek, ürünlerin tellerini oluşturacak incelikte olması sağlanır. Silindir makinesi ile 8 mm kalınlıktaki altın çubuğun 1.2 milimetreye kadar inceltilmesi sağlanır.',
+      description: 'Elde edilen altın çubuklar, silindir makinelerinde kademeli olarak inceltilir. Bu işlem sayesinde altın, ürün tasarımına uygun ölçü ve kalınlığa getirilir. Silindirleme süreci, metalin dayanıklılığını ve form bütünlüğünü koruyacak şekilde gerçekleştirilir.',
       detail: '8mm → 1.2mm',
     },
     {
       icon: Flame,
       title: 'Tav Fırını',
-      description: 'Ürününüzün telini oluşturacak 1.2mm inceliğe ulaşmış altın teli tav fırını içerisinde 700 derece sıcaklıkta yumuşadıktan sonra daha da incelip tel görüntüsüne kavuşması için haddeli tel makinesindeki işleme geçilir.',
+      description: 'İnceltme sonrası altın, 700°C sıcaklıkta tav fırınında kontrollü olarak yumuşatılır. Bu işlem, metalin esnekliğini artırarak sonraki aşamalarda form verme işlemlerinin kusursuz şekilde yapılmasını sağlar.',
       temp: '700°C',
     },
     {
       icon: Cog,
       title: 'Haddeli Tel Makinesi',
-      description: '1.2 mm kalınlıktaki altın tel haddeler arasında su ile sıyrıla sıyrıla 31 micron (saç telinin 7 katı) inceliğine ulaşarak ürünlerimizin tellerine dönüşür.',
+      description: 'Yumuşatılan altın teller, haddeli tel makinelerinde mikron hassasiyetinde inceltilir. 1,2 mm kalınlığındaki altın tel, yaklaşık 31 mikron seviyesine kadar düşürülerek ürün formuna uygun hale getirilir. Bu aşama, ürünün estetik ve dayanıklılık dengesini belirleyen kritik süreçlerden biridir.',
       detail: '1.2mm → 31 micron',
     },
     {
       icon: TestTube,
       title: 'Laboratuvar Analizi',
-      description: 'Birçok aşamadan geçerek 31 micron inceliğine ulaşan altın tel, Kuyumcular Odası Ayar Evi ve laboratuvarlarda teste tabii tutularak, altın ayarı laboratuvar sonuçlarıyla onaylatılır.',
-      detail: 'Sertifikalı Ayar',
+      description: 'Üretim süreci tamamlanan altın teller ve ürünler, yetkili laboratuvarlarda analiz edilir. Altın ayarı, saflık oranı ve teknik değerler test edilerek sertifikalandırılır. Laboratuvar sonuçları, ürün kimliği ve seri numarasıyla sistemimize kaydedilir.',
+      detail: 'Sertifikalı Ayar Kontrolü',
     },
     {
       icon: Hammer,
       title: 'Usta İşçiliği',
-      description: 'Siparişin ağırlığına göre gramlara ayrılan teller, firmamızda çalışan ve sosyal haklara sahip usta zanaatkârlarımıza verilir. Tecrübeli ustalarımız, her ürünü titizlikle işler ve mükemmelliğe ulaştırır.',
+      description: 'Tüm teknik aşamaların ardından ürünler, deneyimli ustalarımızın el işçiliğiyle son haline getirilir. Her parça; form, simetri, estetik ve konfor açısından titizlikle kontrol edilir. Bu aşamada ürün, Aktürk Kuyumculuk kalite standartlarına uygun hale getirilir.',
       detail: 'El İşçiliği',
     },
   ];
@@ -48,17 +48,17 @@ export default function Uretim() {
     {
       icon: Hammer,
       title: 'Tokmak ve Form Verme',
-      description: 'Profesyonel ellerimize teslim edilen ürünlerdeki tellerin üst üste gelen noktaları tespit edilir. Ürün, oval şimşir tokmakla tokmaklanarak tellerin yerine oturtulması sağlanır.',
+      description: 'Ürün üzerindeki tel birleşim noktaları ve detaylar, ustalarımız tarafından hassas şekilde şekillendirilir. Tokmaklama işlemi, ürünün dengeli ve sağlam bir form kazanmasını sağlar.',
     },
     {
       icon: Cog,
-      title: 'Pressleme',
-      description: 'Ürün, press makinesinde kontrollü bir şekilde belli aralıklarla presslenerek tellerin yerine tamamen oturtulması sağlanır. Buradaki amaç ürünün tokmak aşamasında yerine oturmayan tellerinin tamamen yerine oturmasını sağlamaktır.',
+      title: 'Presleme',
+      description: 'Ürün, pres makinelerinde kontrollü basınç altında şekillendirilir. Bu işlem, tel ve yüzeylerin tam uyum sağlaması ve ürün bütünlüğünün artırılması amacıyla uygulanır.',
     },
     {
       icon: Sparkles,
       title: 'Renklendirme',
-      description: 'Kalite kontrolleri de sağlandıktan sonra ürün hor ateşle ısıtılarak renklendirme aşaması tamamlanır. Ürünler son teknoloji döküm işlemiyle hazırlanır ve laboratuvarda analize tabi tutulur.',
+      description: 'Tüm kalite kontrolleri tamamlandıktan sonra ürün, son teknoloji işlemlerle renklendirilir. Renklendirme sonrası ürün tekrar laboratuvar analizine tabi tutulur ve son kontroller gerçekleştirilir.',
     },
   ];
 
@@ -74,7 +74,7 @@ export default function Uretim() {
           className="text-center pb-8 sm:pb-12 lg:pb-16"
         >
           <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-serif text-brand-light-gray mb-2 sm:mb-3 lg:mb-4">
-            Üretim Aşaması
+            Üretim Süreci
           </h1>
           <motion.div
             initial={{ width: 0 }}
@@ -84,7 +84,7 @@ export default function Uretim() {
             className="w-20 sm:w-24 lg:w-32 h-0.5 sm:h-1 bg-brand-gold mx-auto mb-3 sm:mb-4 lg:mb-6"
           ></motion.div>
           <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-brand-medium-gray max-w-3xl mx-auto px-4">
-            Her bir ürünümüz, ustalık ve teknolojinin mükemmel uyumuyla hayat buluyor
+            Ham maddeden son ürüne kadar her adım, kontrollü ve izlenebilir bir sistemle yönetilir.
           </p>
         </motion.div>
 
@@ -186,7 +186,7 @@ export default function Uretim() {
               Atölye Aşaması
             </h2>
             <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base xl:text-lg text-center mb-6 sm:mb-8 lg:mb-12 max-w-3xl mx-auto px-4">
-              Tokmak - Form Verme - Pressleme - Renklendirme
+              Tokmak – Form Verme – Presleme – Renklendirme
             </p>
             
             <div className="grid md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-6 sm:mb-8 lg:mb-12">
@@ -220,14 +220,22 @@ export default function Uretim() {
                 Son Aşama ve Kalite Kontrolü
               </h3>
               <p className="text-brand-medium-gray leading-relaxed mb-2 sm:mb-3 lg:mb-4 text-xs sm:text-sm lg:text-base">
-                Atölyedeki üretim aşamasında kullanılan kilitler ve tasarım parçaları, son teknoloji döküm işlemiyle üretilir. 
-                Sonrasında, ürünler laboratuvarda analize tabi tutulur ve olumlu sonuç alındığı takdirde, üretim tamamlanır 
-                ve yaklaşık 3 gün içinde ürün hazır hale getirilir.
+                Üretimin son aşamasında kullanılan tüm kilit parçalar ve tasarım detayları yeniden kontrol edilir. 
+                Laboratuvar analizlerinden olumlu sonuç alınmasının ardından ürün, üretim onayını alır ve ortalama 3 iş günü içinde teslimata hazır hale getirilir.
               </p>
-              <p className="text-brand-medium-gray leading-relaxed text-xs sm:text-sm lg:text-base">
-                Bu süreçte, ürünün ustasının kim olduğu, hangi personel tarafından üretildiği ve analiz raporları ürün kimliği 
-                ve seri numaralarına kaydedilir. Müşterilerimiz, bu numaralar sayesinde ürünlerin kim tarafından üretildiğini 
-                ve analiz raporlarını internet sitemizden kontrol edebilirler.
+              <p className="text-brand-medium-gray leading-relaxed mb-2 sm:mb-3 text-xs sm:text-sm lg:text-base">
+                Bu süreçte;
+              </p>
+              <ul className="text-brand-medium-gray leading-relaxed mb-2 sm:mb-3 space-y-1 text-xs sm:text-sm lg:text-base">
+                <li>• Ürünün hangi usta tarafından üretildiği,</li>
+                <li>• Hangi aşamalardan geçtiği ve</li>
+                <li>• Analiz raporları</li>
+              </ul>
+              <p className="text-brand-medium-gray leading-relaxed mb-2 sm:mb-3 text-xs sm:text-sm lg:text-base">
+                ürün kimliği ve seri numarasıyla sistemimize kayıt altına alınır.
+              </p>
+              <p className="text-brand-gold leading-relaxed text-xs sm:text-sm lg:text-base font-semibold">
+                Müşterilerimiz, bu bilgiler üzerinden ürünlerinin üretim ve analiz detaylarını şeffaf şekilde inceleyebilir.
               </p>
             </div>
           </div>
@@ -286,23 +294,23 @@ export default function Uretim() {
                 </h3>
               </div>
               <p className="text-brand-medium-gray leading-relaxed mb-2 sm:mb-3 lg:mb-4 text-xs sm:text-sm lg:text-base">
-                Aktürk Kuyumculuk olarak her aşamada kaliteyi garanti ediyoruz:
+                Aktürk Kuyumculuk olarak üretimin her aşamasında kaliteyi garanti altına alıyoruz.
               </p>
               <ul className="space-y-2 sm:space-y-3 text-brand-medium-gray">
                 <li className="flex items-start text-xs sm:text-sm lg:text-base">
-                  <span className="text-brand-gold mr-2 font-bold">✓</span>
+                  <span className="text-brand-gold mr-2 font-bold">✔</span>
                   Sertifikalı laboratuvar analizleri
                 </li>
                 <li className="flex items-start text-xs sm:text-sm lg:text-base">
-                  <span className="text-brand-gold mr-2 font-bold">✓</span>
+                  <span className="text-brand-gold mr-2 font-bold">✔</span>
                   Ayar garantisi ve belgelendirme
                 </li>
                 <li className="flex items-start text-xs sm:text-sm lg:text-base">
-                  <span className="text-brand-gold mr-2 font-bold">✓</span>
+                  <span className="text-brand-gold mr-2 font-bold">✔</span>
                   Uzman usta kadrosu ile üretim
                 </li>
                 <li className="flex items-start text-xs sm:text-sm lg:text-base">
-                  <span className="text-brand-gold mr-2 font-bold">✓</span>
+                  <span className="text-brand-gold mr-2 font-bold">✔</span>
                   Ömür boyu bakım ve onarım desteği
                 </li>
               </ul>
