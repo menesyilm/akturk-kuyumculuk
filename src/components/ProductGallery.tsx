@@ -23,6 +23,18 @@ const CATEGORY_COLLECTIONS = [
 export default function ProductGallery({ className }: { className?: string }) {
   const [items, setItems] = useState<Product[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(4);
+
+  useEffect(() => {
+    const update = () => {
+      if (window.innerWidth < 640) setVisibleCount(2);
+      else if (window.innerWidth < 1024) setVisibleCount(3);
+      else setVisibleCount(4);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -70,7 +82,7 @@ export default function ProductGallery({ className }: { className?: string }) {
         <div className="h-full overflow-hidden">
           <div
             className="flex h-full gallery-scroll-right"
-            style={{ width: `${loop.length * 25}%` }}
+            style={{ width: `${loop.length * (100 / visibleCount)}%` }}
           >
             {loop.map((p, i) => (
               <Link
@@ -83,8 +95,8 @@ export default function ProductGallery({ className }: { className?: string }) {
                   src={p.image}
                   alt={p.name}
                   fill
-                  sizes="25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                sizes={`${Math.round(100 / visibleCount)}vw`}
+                  className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
               </Link>

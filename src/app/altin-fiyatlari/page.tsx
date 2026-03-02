@@ -331,10 +331,11 @@ export default function AltinFiyatlari() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "100px" }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-6 bg-brand-gold/10 border border-brand-gold/30 p-4 rounded"
+          className="mt-6 bg-brand-gold/30 border border-brand-gold p-4 rounded"
         >
-          <p className="text-xs text-brand-medium-gray leading-relaxed">
-            <span className="font-semibold text-brand-gold">Not:</span> Bu sayfadaki fiyatlar anlık piyasa verilerine dayanmaktadır. 
+          <p className="text-xs text-white leading-relaxed">
+            <span className="font-semibold text-brand-gold">Not:
+              </span> Bu sayfadaki fiyatlar anlık piyasa verilerine dayanmaktadır. 
             Gerçek alış-satış fiyatları için mağazamızı ziyaret edebilir veya bizimle iletişime geçebilirsiniz.
           </p>
         </motion.div>

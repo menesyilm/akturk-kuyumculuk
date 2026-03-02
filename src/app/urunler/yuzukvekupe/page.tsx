@@ -65,14 +65,14 @@ export default function YuzukveKupePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-brand-black flex items-center justify-center">
+      <div className="min-h-[calc(125vh-5rem)] sm:min-h-[calc(125vh-6rem)] lg:min-h-[calc(125vh-7.5rem)] bg-brand-black flex items-center justify-center">
         <div className="text-brand-gold text-base sm:text-lg lg:text-xl">Yükleniyor...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-brand-black">
+    <div className="min-h-[calc(125vh-5rem)] sm:min-h-[calc(125vh-6rem)] lg:min-h-[calc(125vh-7.5rem)] bg-brand-black">
       <div className="container mx-auto px-3 sm:px-4 lg:px-8 pt-8 pt-12 lg:pt-30 pb-8 sm:pb-12 lg:pb-16">
         <motion.h1
           initial={{ opacity: 0, y: -30 }}
