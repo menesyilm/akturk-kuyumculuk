@@ -1,6 +1,6 @@
 "use client";
 
-import { Award, Shield, Clock, Gem, Calculator, Package, Heart, Users, X } from 'lucide-react';
+import { Award, Clock, Gem, Calculator, Package, Heart, Users, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { useState, useRef } from 'react';
