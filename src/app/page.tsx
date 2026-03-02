@@ -40,9 +40,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-black">
+    <div className="flex flex-col bg-brand-black h-[calc(100vh-5rem)] sm:h-[calc(100vh-6rem)] lg:h-[calc(100vh-7.5rem)] overflow-hidden">
       {/* Ürün Galerisi */}
-      <ProductGallery />
+      <ProductGallery className="flex-1 min-h-0" />
 
       {/* Özellikler */}
       <motion.div
@@ -50,7 +50,7 @@ export default function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.05, margin: "100px" }}
         transition={{ duration: 0.6 }}
-        className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-14 py-4 sm:py-8 lg:py-14"
+        className="max-w-8xl mx-auto px-4 sm:px-8 lg:px-14 py-3 sm:py-4 lg:py-5"
       >
         <div className="grid grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6 lg:gap-4 xl:gap-6">
           {features.map((feature) => (
