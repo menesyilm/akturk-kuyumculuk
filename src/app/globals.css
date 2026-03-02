@@ -229,3 +229,13 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ProductGallery – sonsuz sağa kayan animasyonlar */
+@keyframes gallery-scroll-right {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.gallery-scroll-right {
+  animation: gallery-scroll-right 70s linear infinite;
+}

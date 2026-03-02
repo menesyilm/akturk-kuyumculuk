@@ -1,23 +1,23 @@
 import { NextResponse } from 'next/server';
 
 interface NosyApiItem {
-  code: string;
-  ShortName: string;
-  FullName: string;
-  buying: number;
-  selling: number;
-  latest: number;
+  currencyCode: string;
+  baseCurrencyCode: string;
+  targetCurrencyCode: string;
+  description: string;
+  buy: number;
+  sell: number;
   changeRate: number;
-  dayMin: number | null;
-  dayMax: number | null;
-  lastupdate: string;
+  dayHigh: number | null;
+  dayLow: number | null;
+  prevClose: number;
 }
 
 interface NosyApiResponse {
   status: string;
   data: NosyApiItem[];
   creditUsed?: number;
-  creditLeft?: number;
+  rowCount?: number;
 }
 
 interface CurrencyData {
@@ -50,11 +50,10 @@ export async function GET() {
 
     // Fetch exchange rates from NosyAPI
     const response = await fetch(
-      'https://www.nosyapi.com/apiv2/service/economy/currency/exchange-rate',
+      `https://www.nosyapi.com/apiv2/service/economy/live-exchange-rates?apiKey=${apiKey}`,
       {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         cache: 'no-store',
@@ -94,51 +93,39 @@ export async function GET() {
     // API'den gelen verileri map et
     data.data.forEach((item) => {
       const currency: CurrencyData = {
-        buying: item.buying,
-        selling: item.selling,
+        buying: item.buy,
+        selling: item.sell,
         change: item.changeRate,
       };
 
-      switch (item.code) {
-        case 'USD':
+      switch (item.currencyCode) {
+        case 'USDTRY':
           result.dolar = currency;
           break;
-        case 'EUR':
+        case 'EURTRY':
           result.euro = currency;
           break;
-        case 'gram-altin':
+        case 'gramaltin':
           result.gramAltin = currency;
           break;
-        case 'GBP':
+        case 'GBPTRY':
           result.ingilizSterlini = currency;
           break;
-        case 'ons':
+        case 'EURUSD':
+          result.euroDolar = currency;
+          break;
+        case 'onstry':
           result.onsAltin = currency;
           break;
-        case 'gumus':
+        case 'GUMUSTRY':
           result.gumus = currency;
+          break;
+        case 'ALTINGUMUS':
+          result.altinGumus = currency;
           break;
       }
     });
 
-    // Euro Dolar hesaplaması (EUR/USD)
-    if (result.euro.buying > 0 && result.dolar.buying > 0) {
-      result.euroDolar = {
-        buying: result.euro.buying / result.dolar.buying,
-        selling: result.euro.selling / result.dolar.selling,
-        change: result.euro.change - result.dolar.change,
-      };
-    }
-
-    // Altın/Gümüş oranı
-    if (result.gramAltin.buying > 0 && result.gumus.buying > 0) {
-      result.altinGumus = {
-        buying: result.gramAltin.buying / result.gumus.buying,
-        selling: result.gramAltin.selling / result.gumus.selling,
-        change: 0, // Oran için değişim hesaplaması yapılabilir
-      };
-    }
-    
     return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching gold prices:', error);

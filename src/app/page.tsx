@@ -2,8 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import FeaturedProducts from '@/components/FeaturedProducts';
-import HeroSlider from '@/components/HeroSlider';
+import ProductGallery from '@/components/ProductGallery';
 import { Award, Shield, Clock, Gem, Calculator, Package } from 'lucide-react';
 
 export default function Home() {
@@ -41,9 +40,9 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-dark-gray">
-      {/* Hero Slider */}
-      <HeroSlider />
+    <div className="min-h-screen bg-brand-black">
+      {/* Ürün Galerisi */}
+      <ProductGallery />
 
       {/* Özellikler */}
       <motion.div
@@ -70,7 +69,6 @@ export default function Home() {
           ))}
         </div>
       </motion.div>
-      <FeaturedProducts />
     </div>
   );
 }

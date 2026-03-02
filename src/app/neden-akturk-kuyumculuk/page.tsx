@@ -9,7 +9,8 @@ export default function NedenAkturkKuyumculuk() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [isPaused, setIsPaused] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const isDraggingRef = useRef(false);
+  const hasMoved = useRef(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -30,7 +31,7 @@ export default function NedenAkturkKuyumculuk() {
   const infiniteImages = Array(10).fill(galleryImages).flat();
 
   const handleImageClick = (image: string) => {
-    if (!isDragging) {
+    if (!hasMoved.current) {
       setSelectedImage(image);
       setLightboxOpen(true);
     }
@@ -39,15 +40,17 @@ export default function NedenAkturkKuyumculuk() {
   // Mouse/Touch drag handlers
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     setIsPaused(true);
-    setIsDragging(true);
+    isDraggingRef.current = true;
+    hasMoved.current = false;
     const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
     setStartX(pageX - (scrollContainerRef.current?.offsetLeft || 0));
     setScrollLeft(scrollContainerRef.current?.scrollLeft || 0);
   };
 
   const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
     e.preventDefault();
+    hasMoved.current = true;
     const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
     const x = pageX - (scrollContainerRef.current?.offsetLeft || 0);
     const walk = (x - startX) * 2;
@@ -58,7 +61,7 @@ export default function NedenAkturkKuyumculuk() {
 
   const handleDragEnd = () => {
     setIsPaused(false);
-    setTimeout(() => setIsDragging(false), 100);
+    setTimeout(() => { isDraggingRef.current = false; }, 100);
   };
 
   return (
@@ -416,7 +419,8 @@ export default function NedenAkturkKuyumculuk() {
               <div
                 className="flex gap-3 sm:gap-4 lg:gap-6"
                 style={{
-                  animation: isPaused ? 'none' : 'scroll-left 40s linear infinite',
+                  animation: 'scroll-left 40s linear infinite',
+                  animationPlayState: isPaused ? 'paused' : 'running',
                   width: 'fit-content',
                 }}
               >
@@ -427,7 +431,6 @@ export default function NedenAkturkKuyumculuk() {
                     style={{
                       width: 'clamp(200px, 25vw, 350px)',
                       height: 'clamp(150px, 18.75vw, 262px)',
-                      pointerEvents: isDragging ? 'none' : 'auto',
                     }}
                     onClick={() => handleImageClick(image)}
                   >
