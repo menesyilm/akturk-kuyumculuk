@@ -305,10 +305,10 @@ export default function AltinFiyatlari() {
                       <div className="font-semibold text-brand-light-gray text-sm sm:text-base">ALTIN GÜMÜŞ</div>
                     </div>
                     <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      {formatPrice(goldData.altinGumus.buying)}
+                      ₺{formatPrice(goldData.altinGumus.buying)}
                     </div>
                     <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      {formatPrice(goldData.altinGumus.selling)}
+                      ₺{formatPrice(goldData.altinGumus.selling)}
                     </div>
                     <div className="flex items-center justify-center">
                       <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
