@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAnalytics, Analytics } from 'firebase/analytics';
+import type { Analytics } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
@@ -19,8 +19,20 @@ const auth = getAuth(app);
 
 let analytics: Analytics | null = null;
 
-if (typeof window !== 'undefined') {
-  analytics = getAnalytics(app);
+export async function initAnalytics(): Promise<Analytics | null> {
+  if (analytics) return analytics;
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const { isSupported, getAnalytics } = await import('firebase/analytics');
+    const supported = await isSupported();
+    if (!supported) return null;
+
+    analytics = getAnalytics(app);
+    return analytics;
+  } catch {
+    return null;
+  }
 }
 
-export { app, analytics, db, auth };
+export { app, db, auth };

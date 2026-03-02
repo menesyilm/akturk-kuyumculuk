@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { analytics } from '@/lib/firebase';
+import { initAnalytics } from '@/lib/firebase';
 
 export default function FirebaseProvider({
   children,
@@ -10,9 +10,7 @@ export default function FirebaseProvider({
 }) {
   useEffect(() => {
     // Analytics'i initialize et (sadece client-side)
-    if (analytics) {
-      console.log('Firebase Analytics initialized');
-    }
+    void initAnalytics();
   }, []);
 
   return <>{children}</>;
