@@ -40,7 +40,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="flex flex-col bg-brand-black h-[calc(100vh-5rem)] sm:h-[calc(100vh-6rem)] lg:h-[calc(100vh-7.5rem)] overflow-hidden">
+    <div className="flex flex-col bg-brand-black h-[calc(125vh-5rem)] sm:h-[calc(125vh-6rem)] lg:h-[calc(125vh-7.5rem)] overflow-hidden">
       {/* Ürün Galerisi */}
       <ProductGallery className="flex-1 min-h-0" />
 
