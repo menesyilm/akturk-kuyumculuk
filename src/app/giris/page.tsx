@@ -63,9 +63,9 @@ export default function LoginPage() {
   // Auth kontrolü yapılırken loading göster
   if (checkingAuth) {
     return (
-      <div className="min-h-screen bg-brand-dark-gray flex items-center justify-center px-3 sm:px-4">
+      <div className="fixed inset-0 bg-brand-dark-gray flex items-center justify-center px-3 sm:px-4">
         <div className="text-center">
-          <div className="whileInView-spin rounded-full h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 border-b-4 border-brand-gold mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 border-b-4 border-brand-gold mx-auto"></div>
           <p className="mt-3 sm:mt-4 text-brand-medium-gray font-medium text-sm sm:text-base">Kontrol ediliyor...</p>
         </div>
       </div>
@@ -73,17 +73,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-dark-gray flex items-center justify-center px-3 sm:px-4 lg:px-6">
+    <div className="fixed inset-0 bg-brand-dark-gray flex items-center justify-center overflow-y-auto px-3 sm:px-4 lg:px-6">
       <div className="max-w-md w-full">
         {/* Logo/Başlık */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">
           <div className="inline-block">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-brand-light-gray mb-2 sm:mb-3 tracking-wide">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-brand-gold mb-2 sm:mb-3 tracking-wide">
               Aktürk Kuyumculuk
             </h1>
-            <div className="h-0.5 sm:h-1 bg-brand-light-gray rounded-full"></div>
+            <div className="h-0.5 sm:h-1 bg-brand-gold rounded-full"></div>
           </div>
-          <p className="text-brand-light-gray mt-3 sm:mt-4 lg:mt-5 text-base sm:text-lg lg:text-xl font-medium">Admin Paneli</p>
+          <p className="text-brand-gold mt-3 sm:mt-4 lg:mt-5 text-base sm:text-lg lg:text-xl font-medium">Admin Paneli</p>
         </div>
 
         {/* Login Form */}
@@ -148,7 +148,7 @@ export default function LoginPage() {
               {loading ? (
                 <span className="flex items-center justify-center">
                   <svg
-                    className="whileInView-spin -ml-1 mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6 text-white"
+                    className="animate-spin -ml-1 mr-2 sm:mr-3 h-5 w-5 sm:h-6 sm:w-6 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -191,7 +191,7 @@ export default function LoginPage() {
 
         {/* Bilgilendirme */}
         <div className="mt-6 sm:mt-8 text-center">
-          <p className="text-xs sm:text-sm text-brand-light-gray bg-brand-black py-2.5 sm:py-3 px-3 sm:px-4 rounded">
+          <p className="text-xs sm:text-sm text-white bg-brand-black py-2.5 sm:py-3 px-3 sm:px-4 rounded">
             Admin paneline erişim için yetkili hesap gereklidir
           </p>
         </div>

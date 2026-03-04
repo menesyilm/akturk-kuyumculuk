@@ -132,9 +132,9 @@ export default function AdminPage() {
 
   if (authLoading || !user || loading) {
     return (
-      <div className="min-h-screen bg-brand-dark-gray flex items-center justify-center px-3 sm:px-4">
+      <div className="fixed inset-0 bg-brand-dark-gray flex items-center justify-center px-3 sm:px-4">
         <div className="text-center">
-          <div className="whileInView-spin rounded-full h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 border-b-4 border-brand-gold mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 border-b-4 border-brand-gold mx-auto"></div>
           <p className="mt-3 sm:mt-4 text-brand-light-gray font-medium text-sm sm:text-base">Yükleniyor...</p>
         </div>
       </div>
@@ -147,8 +147,8 @@ export default function AdminPage() {
         {/* Başlık ve Butonlar */}
         <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-brand-light-gray">Admin Paneli</h1>
-            <p className="text-brand-medium-gray mt-1 sm:mt-2 text-xs sm:text-sm lg:text-base">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-brand-gold">Admin Paneli</h1>
+            <p className="text-white mt-1 sm:mt-2 text-xs sm:text-sm lg:text-base">
               Hoş geldiniz, {user.email}
             </p>
           </div>
@@ -169,7 +169,7 @@ export default function AdminPage() {
         </div>
 
         {/* İstatistik Kartları */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8">
           {/* Toplam Ürün */}
           <div className="bg-brand-black border-2 border-brand-gold p-3 sm:p-4 lg:p-5 shadow-xl">
             <div className="flex items-center justify-between">
@@ -200,20 +200,6 @@ export default function AdminPage() {
             </div>
           </div>
 
-          {/* Durum */}
-          <div className="bg-brand-black border-2 border-green-500 p-3 sm:p-4 lg:p-5 shadow-xl sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-brand-medium-gray text-xs sm:text-sm font-medium mb-1">Sistem Durumu</p>
-                <p className="text-lg sm:text-xl lg:text-2xl font-bold text-green-500">Aktif</p>
-              </div>
-              <div className="bg-green-500 bg-opacity-20 p-2 sm:p-2.5 lg:p-3">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Ürün Tablosu */}
@@ -299,7 +285,7 @@ export default function AdminPage() {
                             title="Sil"
                           >
                             {deletingId === product.id ? (
-                              <div className="whileInView-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-red-500"></div>
+                              <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-red-500"></div>
                             ) : (
                               <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                             )}
