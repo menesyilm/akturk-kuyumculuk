@@ -115,7 +115,7 @@ export default function SearchBox({
 
           {/* Arama Sonuçları Dropdown */}
           {searchQuery && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl max-h-96 overflow-y-auto z-50">
+            <div className="absolute top-full right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl max-h-[168px] sm:max-h-[288px] xl:max-h-[520px] overflow-y-auto z-50 w-64 sm:w-80 md:w-96">
               {searchResults.map((product) => (
                 <Link
                   key={`${product.category}-${product.id}`}
@@ -142,7 +142,7 @@ export default function SearchBox({
 
           {/* Sonuç Bulunamadı */}
           {searchQuery && searchResults.length === 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl p-4 z-50">
+            <div className="absolute top-full right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl p-4 z-50 w-64 sm:w-80 md:w-96">
               <p className="text-brand-medium-gray text-sm text-center">Ürün bulunamadı</p>
             </div>
           )}
