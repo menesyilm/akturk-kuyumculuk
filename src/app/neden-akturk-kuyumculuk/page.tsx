@@ -497,7 +497,7 @@ export default function NedenAkturkKuyumculuk() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 sm:p-6 lg:p-8"
+            className="fixed inset-0 z-50 bg-brand-black/40 flex items-center justify-center p-4 sm:p-6 lg:p-8"
             onClick={() => setLightboxOpen(false)}
           >
             <button
@@ -513,10 +513,9 @@ export default function NedenAkturkKuyumculuk() {
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ duration: 0.3 }}
               className="relative max-w-7xl w-full h-full flex items-center justify-center"
-              onClick={(e) => e.stopPropagation()}
             >
               <div className="relative w-full h-full max-h-[90vh] flex items-center justify-center">
-                <div className="relative inline-block ring-4 ring-brand-gold">
+                <div className="relative inline-block ring-4 ring-brand-gold" onClick={(e) => e.stopPropagation()}>
                   <Image
                     src={selectedImage}
                     alt="Galeri Büyük Görsel"
