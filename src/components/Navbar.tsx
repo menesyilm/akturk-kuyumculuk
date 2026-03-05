@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone } from 'lucide-react';
+
 import SearchBox from './SearchBox';
 
 export default function Navbar() {
@@ -31,17 +31,7 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Sağ - İletişim */}
-            <div className="flex items-center space-x-4 xl:text-lg lg:text-sm">
-              <a href="tel:05312831934" className="flex items-center space-x-2 text-brand-light-gray hover:text-brand-gold transition-colors">
-                <Phone className="w-4 h-4" />
-                <span>+90 531 283 19 34</span>
-              </a>
-              <a href="tel:04623321661" className="flex items-center space-x-2 text-brand-light-gray hover:text-brand-gold transition-colors">
-                <Phone className="w-4 h-4" />
-                <span>+90 462 332 16 61</span>
-              </a>
-            </div>
+
           </div>
         </div>
       </div>
