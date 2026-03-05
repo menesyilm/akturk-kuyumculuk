@@ -21,26 +21,7 @@ export default function Sidebar() {
     <>
       {/* Mobile Navbar - Sadece mobilde görünür */}
       <nav className="lg:hidden fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
-        {/* En Üst Bar - İletişim ve Linkler */}
-        <div className="bg-brand-black border-b border-brand-gold">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="flex items-center justify-center h-10">
-              {/* Ortalanmış linkler */}
-              <div className="flex items-center space-x-3 text-xs">
-                <Link href="/neden-akturk-kuyumculuk" className="text-brand-light-gray hover:text-brand-gold transition-colors whitespace-nowrap">
-                  Neden Aktürk Kuyumculuk?
-                </Link>
-                <Link href="/uretim" className="text-brand-light-gray hover:text-brand-gold transition-colors">
-                  Üretim
-                </Link>
-              </div>
-
-
-            </div>
-          </div>
-        </div>
-
-        {/* Orta Kısım - Logo ve Butonlar */}
+          {/* Orta Kısım - Logo ve Butonlar */}
         <div className="border-b border-brand-medium-gray">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="relative flex items-center justify-between h-16">
