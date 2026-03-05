@@ -17,25 +17,6 @@ export default function Navbar() {
 
   return (
     <nav className="hidden lg:block fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
-      {/* En Üst Bar - İletişim ve Linkler */}
-      <div className="bg-brand-black border-b border-brand-gold">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
-            {/* Sol - Linkler */}
-            <div className="flex items-center space-x-6 xl:text-lg lg:text-sm">
-              <Link href="/neden-akturk-kuyumculuk" className="text-brand-light-gray hover:text-brand-gold transition-colors">
-                Neden Akturk Kuyumculuk?
-              </Link>
-              <Link href="/uretim" className="text-brand-light-gray hover:text-brand-gold transition-colors">
-                Üretim
-              </Link>
-            </div>
-
-
-          </div>
-        </div>
-      </div>
-
       {/* Orta Kısım - Logo */}
       <div className="border-b border-brand-medium-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
