@@ -84,7 +84,7 @@ export default function SertifikaPage() {
   };
 
   return (
-    <div className="bg-brand-black pt-8 sm:pt-12 lg:pt-30 pb-8 sm:pb-12 lg:pb-16">
+    <div className="bg-brand-black pt-5 sm:pt-10 lg:pt-15 pb-8 sm:pb-12 lg:pb-16">
       <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Başlık */}
         <motion.div

@@ -234,6 +234,25 @@ html {
   display: none;
 }
 
+/* Brand scrollbar - Arama sonuçları için */
+.scrollbar-brand {
+  scrollbar-width: thin;
+  scrollbar-color: #AB8C4E #3E3E3E;
+}
+
+.scrollbar-brand::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-brand::-webkit-scrollbar-track {
+  background: #3E3E3E;
+}
+
+.scrollbar-brand::-webkit-scrollbar-thumb {
+  background-color: #AB8C4E;
+  border-radius: 3px;
+}
+
 /* ProductGallery – sonsuz sağa kayan animasyonlar */
 @keyframes gallery-scroll-right {
   0%   { transform: translateX(-50%); }

@@ -153,7 +153,7 @@ export default function SearchBox({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2 }}
-                    className="mt-2 bg-brand-black/90 border-2 border-brand-gold max-h-[400px] overflow-y-auto rounded-sm"
+                    className="mt-2 bg-brand-black/90 border-2 border-brand-gold max-h-[400px] overflow-y-auto rounded-sm scrollbar-brand"
                   >
                     {searchResults.length > 0 ? searchResults.map((product) => (
                       <Link
