@@ -24,54 +24,56 @@ export default function Sidebar() {
           {/* Orta Kısım - Logo ve Butonlar */}
         <div className="border-b border-brand-medium-gray">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="relative flex items-center justify-between h-16">
-              {/* Hamburger Menu Button (sol) */}
-              <div className="z-10">
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2 text-brand-gold hover:bg-brand-medium-gray/20  transition-colors"
-                  aria-label="Menu"
-                >
-                  {mobileMenuOpen ? (
-                    <X className="w-6 h-6" />
-                  ) : (
-                    <Menu className="w-6 h-6" />
-                  )}
-                </button>
+            <div className="flex items-center justify-between h-16">
+              {/* Logo (sol) */}
+              <Link href="/" className="flex items-center">
+                <div className="relative h-16 w-16">
+                  <Image
+                    src="/images/logo-no-background.png"
+                    alt="Aktürk Kuyumculuk"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </Link>
+
+              
+
+              {/* Caption - Sadece Tablet */}
+              <div className="hidden sm:flex flex-1 justify-center">
+                <div className="relative h-88 w-88">
+                  <Image
+                    src="/images/caption-2.png"
+                    alt="Caption"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
               </div>
 
-              {/* Logo (tam ortada - absolute positioning) */}
-              <div className="absolute left-1/2 -translate-x-1/2">
-                <Link href="/" className="flex items-center">
-                  <div className="relative h-16 w-16">
-                    <Image
-                      src="/images/logo-no-background.png"
-                      alt="Aktürk Kuyumculuk"
-                      fill
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
-                </Link>
-              </div>
-
-              {/* Arama (sağda) */}
-              <div className="flex justify-end items-center z-20">
-                <SearchBox 
-                  inputWidth="w-32 sm:w-50"
-                  iconSize="w-6 h-6"
-                  onResultClick={() => setMobileMenuOpen(false)}
-                />
-              </div>
+              {/* Hamburger Menu Button (sağ) */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
+                aria-label="Menu"
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Sidebar Menü - Soldan Açılır */}
+      {/* Sidebar Menü - Sağdan Açılır */}
       <div
-        className={`lg:hidden fixed inset-y-0 left-0 w-64 bg-brand-black border-r-2 border-brand-gold transform transition-transform duration-300 ease-in-out z-50 ${
-          mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        className={`lg:hidden fixed inset-y-0 right-0 w-full sm:w-80 bg-brand-black border-l-2 border-brand-gold transform transition-transform duration-300 ease-in-out z-50 ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
@@ -80,13 +82,19 @@ export default function Sidebar() {
             <h2 className="text-brand-gold font-bold text-md">Menü</h2>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2 text-brand-gold hover:bg-brand-medium-gray/20  transition-colors"
+              className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-
+          {/* Arama */}
+          <div className="px-4 py-3 border-b border-brand-medium-gray">
+            <SearchBox
+              alwaysOpen
+              onResultClick={() => setMobileMenuOpen(false)}
+            />
+          </div>
           {/* Menu Items */}
           <div className="flex-1 overflow-y-auto py-4">
             <div className="space-y-1 px-2">

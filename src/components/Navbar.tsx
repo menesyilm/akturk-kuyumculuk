@@ -19,7 +19,7 @@ export default function Navbar() {
     <nav className="hidden lg:block fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
       {/* Orta Kısım - Logo */}
       <div className="border-b border-brand-medium-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo (sol) */}
             <div className="flex-1 flex justify-start">
@@ -50,7 +50,7 @@ export default function Navbar() {
             </div>
 
             {/* Arama (sağda) */}
-            <div className="flex-1 flex justify-end items-center">
+            <div className="flex-1 flex justify-end items-center gap-3 xl:gap-4">
               <SearchBox 
                 inputWidth="xl:w-56 lg:w-40"
                 iconSize="xl:w-8 xl:h-8 lg:w-6 lg:h-6"
