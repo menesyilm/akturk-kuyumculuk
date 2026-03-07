@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Navbar - Sadece mobilde görünür */}
-      <nav className="lg:hidden fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
+      <nav className="lg:hidden fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50 overflow-hidden">
           {/* Orta Kısım - Logo ve Butonlar */}
         <div className="border-b border-brand-medium-gray">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -41,8 +41,8 @@ export default function Sidebar() {
               
 
               {/* Caption - Sadece Tablet */}
-              <div className="hidden sm:flex flex-1 justify-center">
-                <div className="relative h-88 w-88">
+              <div className="hidden sm:flex flex-1 justify-center overflow-hidden">
+                <div className="relative h-88 w-full max-w-88">
                   <Image
                     src="/images/caption-2.png"
                     alt="Caption"
@@ -53,18 +53,26 @@ export default function Sidebar() {
                 </div>
               </div>
 
-              {/* Hamburger Menu Button (sağ) */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
-                aria-label="Menu"
-              >
-                {mobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
+              {/* Bize Ulaşın + Hamburger Menu Button (sağ) */}
+              <div className="flex items-center gap-2">
+                <a
+                  href="/iletisim"
+                  className="text-xs block btn-primary text-brand-black px-1.5 py-1.5"
+                >
+                  Bize Ulaşın
+                </a>
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
+                  aria-label="Menu"
+                >
+                  {mobileMenuOpen ? (
+                    <X className="w-6 h-6" />
+                  ) : (
+                    <Menu className="w-6 h-6" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

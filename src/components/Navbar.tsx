@@ -49,12 +49,18 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Arama (sağda) */}
+            {/* Arama + Bize Ulaşın (sağda) */}
             <div className="flex-1 flex justify-end items-center gap-3 xl:gap-4">
               <SearchBox 
                 inputWidth="xl:w-56 lg:w-40"
                 iconSize="xl:w-8 xl:h-8 lg:w-6 lg:h-6"
               />
+              <a
+                href="/iletisim"
+                 className="text-xs block btn-primary text-brand-black px-1.5 py-1.5"
+              >
+                Bize Ulaşın
+              </a>
             </div>
           </div>
         </div>
