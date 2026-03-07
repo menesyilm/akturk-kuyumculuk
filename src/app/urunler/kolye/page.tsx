@@ -65,15 +65,15 @@ export default function Page() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(125vh-5rem)] sm:min-h-[calc(125vh-6rem)] lg:min-h-[calc(125vh-7.5rem)] bg-brand-black flex items-center justify-center">
+      <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black flex items-center justify-center">
         <div className="text-brand-gold text-base sm:text-lg lg:text-xl">Yükleniyor...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-[calc(125vh-5rem)] sm:min-h-[calc(125vh-6rem)] lg:min-h-[calc(125vh-7.5rem)] bg-brand-black">
-      <div className="container mx-auto px-3 sm:px-4 lg:px-8 pt-5 pt-10 lg:pt-15 pb-8 sm:pb-12 lg:pb-16">
+    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black">
+      <div className="container mx-auto px-3 sm:px-4 lg:px-8 pt-5 lg:pt-10 pb-5 lg:pb-10">
         <motion.h1
           initial={{ opacity: 0, y: -30 }}
           whileInView={{ opacity: 1, y: 0 }}

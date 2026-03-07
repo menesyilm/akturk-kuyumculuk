@@ -67,7 +67,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-brand-black flex items-center justify-center">
+      <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black flex items-center justify-center">
         <div className="text-brand-gold text-base sm:text-lg lg:text-xl xl:text-2xl">Yükleniyor...</div>
       </div>
     )

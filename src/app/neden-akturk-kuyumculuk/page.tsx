@@ -65,7 +65,7 @@ export default function NedenAkturkKuyumculuk() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-black pt-8 sm:pt-12 lg:pt-30 ">
+    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black pt-8 sm:pt-12 lg:pt-30">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Başlık */}
         <motion.div
