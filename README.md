@@ -20,39 +20,12 @@ Akturk Kuyumculuk is a modern jewelry web application. The project focuses on co
 - Firebase (Auth + Firestore)
 - Cloudinary
 
-### Installation
-
 #### Requirements
 - Node.js 18+
 - npm, yarn, pnpm, or bun
 - Firebase project credentials
 - Cloudinary credentials
 - Gold API key
-
-#### 1) Clone the Repository
-
-```bash
-git clone https://github.com/enssyilmz/akturk-kuyumculuk.git
-cd akturk-kuyumculuk
-```
-
-#### 2) Install Dependencies
-
-```bash
-npm install
-```
-
-#### 3) Configure Environment Variables
-
-Create a `.env.local` file and add the required credentials.
-
-#### 4) Run the Application
-
-```bash
-npm run dev
-```
-
-Open http://localhost:3000 in your browser.
 
 ## Türkçe
 
@@ -73,40 +46,6 @@ Aktürk Kuyumculuk, modern bir kuyumculuk web uygulamasıdır. Proje; ürün vit
 - Framer Motion
 - Firebase (Auth + Firestore)
 - Cloudinary
-
-### Kurulum
-
-#### Gereksinimler
-- Node.js 18+
-- npm, yarn, pnpm veya bun
-- Firebase proje bilgileri
-- Cloudinary bilgileri
-- Gold API anahtarı
-
-#### 1) Projeyi Klonlayın
-
-```bash
-git clone https://github.com/enssyilmz/akturk-kuyumculuk.git
-cd akturk-kuyumculuk
-```
-
-#### 2) Bağımlılıkları Yükleyin
-
-```bash
-npm install
-```
-
-#### 3) Ortam Değişkenlerini Ayarlayın
-
-`.env.local` dosyasını oluşturun ve gerekli anahtarları ekleyin.
-
-#### 4) Uygulamayı Başlatın
-
-```bash
-npm run dev
-```
-
-Tarayıcıda http://localhost:3000 adresini açın.
 
 ### Renk Paledi | Color Palette
 <img width="1918" height="518" alt="image" src="https://github.com/user-attachments/assets/119a93b3-1da7-49da-85b8-05e556666f68" />
