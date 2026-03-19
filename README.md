@@ -20,13 +20,6 @@ Akturk Kuyumculuk is a modern jewelry web application. The project focuses on co
 - Firebase (Auth + Firestore)
 - Cloudinary
 
-#### Requirements
-- Node.js 18+
-- npm, yarn, pnpm, or bun
-- Firebase project credentials
-- Cloudinary credentials
-- Gold API key
-
 ## Türkçe
 
 Aktürk Kuyumculuk, modern bir kuyumculuk web uygulamasıdır. Proje; ürün vitrini, kategori bazlı ürün listeleme, ürün detay sayfaları, admin paneli ve anlık altın fiyatı entegrasyonu gibi temel ihtiyaçlara odaklanır.
