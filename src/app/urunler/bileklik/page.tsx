@@ -46,7 +46,7 @@ export default function Page() {
 
   useEffect(() => {
     let sorted = [...products];
-    
+
     switch (sortBy) {
       case 'name-asc':
         sorted.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
@@ -59,7 +59,7 @@ export default function Page() {
         sorted = products;
         break;
     }
-    
+
     setSortedProducts(sorted);
   }, [sortBy, products]);
 
@@ -70,7 +70,7 @@ export default function Page() {
       </div>
     )
   }
-  
+
   return (
     <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black">
       <div className="container mx-auto px-3 sm:px-4 lg:px-8 pt-5 lg:pt-10 pb-5 lg:pb-10">
@@ -89,7 +89,7 @@ export default function Page() {
           viewport={{ once: false, margin: "100px" }}
           transition={{ delay: 0.2, duration: 0.5 }}
           className="flex items-center justify-end mb-4 sm:mb-6 lg:mb-8"
-        >          
+        >
           <div className="flex items-center gap-2">
             <label htmlFor="sort" className="text-brand-light-gray text-xs sm:text-sm lg:text-base">Sırala:</label>
             <select
@@ -119,46 +119,48 @@ export default function Page() {
                 viewport={{ once: false, margin: "100px" }}
                 transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
               >
-                <Link 
+                <Link
                   href={`/urunler/bileklik/${product.id}`}
                   className="block bg-brand-dark-gray overflow-hidden ring-1 ring-brand-gold cursor-pointer group transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-light-gray/50"
                 >
-                <div className="relative h-40 sm:h-60 lg:h-80 xl:h-100 overflow-hidden">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-opacity duration-300 group-hover:opacity-0"
-                  />
-                  {product.image2 && (
+                  <div className="relative h-40 sm:h-60 lg:h-80 xl:h-100 overflow-hidden">
                     <Image
-                      src={product.image2}
-                      alt={`${product.name} - 2`}
+                      src={product.image}
+                      alt={product.name}
                       fill
-                      className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      unoptimized
+                      className="object-cover transition-opacity duration-300 group-hover:opacity-0"
                     />
-                  )}
-                </div>
+                    {product.image2 && (
+                      <Image
+                        src={product.image2}
+                        alt={`${product.name} - 2`}
+                        fill
+                        unoptimized
+                        className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      />
+                    )}
+                  </div>
 
-              <div className="p-2 sm:p-3 lg:p-4 flex flex-col">
-                {/* Başlık - Sabit yükseklik */}
-                <div className="h-10 sm:h-11 lg:h-12 mb-1 sm:mb-2">
-                  <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-bold text-brand-gold text-center line-clamp-2">
-                    {product.name}
-                  </h3>
-                </div>
+                  <div className="p-2 sm:p-3 lg:p-4 flex flex-col">
+                    {/* Başlık - Sabit yükseklik */}
+                    <div className="h-10 sm:h-11 lg:h-12 mb-1 sm:mb-2">
+                      <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-bold text-brand-gold text-center line-clamp-2">
+                        {product.name}
+                      </h3>
+                    </div>
 
-                {/* Açıklama - Sabit yükseklik */}
-                <div className="h-8 sm:h-9 lg:h-10">
-                  {product.description && (
-                    <p className="text-[10px] sm:text-xs lg:text-sm text-brand-light-gray line-clamp-2">
-                      {product.description}
-                    </p>
-                  )}
-                </div>
-              </div>
+                    {/* Açıklama - Sabit yükseklik */}
+                    <div className="h-8 sm:h-9 lg:h-10">
+                      {product.description && (
+                        <p className="text-[10px] sm:text-xs lg:text-sm text-brand-light-gray line-clamp-2">
+                          {product.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-              </Link>
+                </Link>
               </motion.div>
             ))}
           </div>

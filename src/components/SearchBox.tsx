@@ -22,8 +22,8 @@ interface SearchBoxProps {
   alwaysOpen?: boolean;
 }
 
-export default function SearchBox({ 
-  inputWidth = "xl:w-56 lg:w-40 w-25", 
+export default function SearchBox({
+  inputWidth = "xl:w-56 lg:w-40 w-25",
   iconSize = "xl:w-8 xl:h-8 lg:w-6 lg:h-6",
   onResultClick,
   alwaysOpen = false,
@@ -163,7 +163,7 @@ export default function SearchBox({
                         className="flex items-center gap-4 p-4 hover:bg-brand-gold/10 border-b border-brand-medium-gray/30 last:border-b-0 transition-colors"
                       >
                         <div className="relative w-14 h-14 flex-shrink-0">
-                          <Image src={product.image} alt={product.name} fill className="object-cover rounded-sm" />
+                          <Image src={product.image} alt={product.name} fill unoptimized className="object-cover rounded-sm" />
                         </div>
                         <div>
                           <p className="text-white font-semibold text-base">{product.name}</p>
@@ -219,7 +219,7 @@ export default function SearchBox({
                   className="flex items-center gap-3 p-2.5 hover:bg-brand-gold/10 border-b border-brand-medium-gray/20 last:border-b-0 transition-colors"
                 >
                   <div className="relative w-10 h-10 flex-shrink-0">
-                    <Image src={product.image} alt={product.name} fill className="object-cover rounded-sm" />
+                    <Image src={product.image} alt={product.name} fill unoptimized className="object-cover rounded-sm" />
                   </div>
                   <div>
                     <p className="text-white font-semibold text-xs">{product.name}</p>
@@ -267,7 +267,7 @@ export default function SearchBox({
                       className="flex items-center gap-3 p-3 hover:bg-brand-light-gray/10 border-b border-brand-medium-gray last:border-b-0 transition-colors"
                     >
                       <div className="relative w-10 h-10 flex-shrink-0">
-                        <Image src={product.image} alt={product.name} fill className="object-cover" />
+                        <Image src={product.image} alt={product.name} fill unoptimized className="object-cover" />
                       </div>
                       <div>
                         <p className="text-brand-black font-semibold text-xs">{product.name}</p>

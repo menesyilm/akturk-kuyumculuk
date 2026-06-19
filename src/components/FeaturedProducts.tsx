@@ -114,18 +114,19 @@ export default function FeaturedProducts() {
               key={product.id}
               initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
               whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
-              viewport={{ once: false,  margin: "100px" }}
+              viewport={{ once: false, margin: "100px" }}
               transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
             >
               <Link
                 href={`/urunler/${product.collectionName}/${product.id}`}
                 className="block group bg-brand-dark-gray overflow-hidden ring-1 ring-brand-gold cursor-pointer transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-light-gray/50"
               >
-              {/* Ürün Görseli */}
+                {/* Ürün Görseli */}
                 <div className="relative h-40 sm:h-60 lg:h-80 xl:h-100 overflow-hidden">
                   <Image
                     src={product.image}
                     alt={product.name}
+                    unoptimized
                     fill
                     className="object-cover transition-opacity duration-300 group-hover:opacity-0"
                   />
@@ -133,30 +134,31 @@ export default function FeaturedProducts() {
                     <Image
                       src={product.image2}
                       alt={`${product.name} - 2`}
+                      unoptimized
                       fill
                       className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                   )}
                 </div>
 
-              {/* Ürün Bilgileri */}
-              <div className="p-2 sm:p-3 lg:p-4 flex flex-col">
-                {/* Başlık - Sabit yükseklik */}
-                <div className="h-10 sm:h-11 lg:h-12 mb-1 sm:mb-2">
-                  <h3 className="text-xs sm:text-sm lg:text-base font-semibold text-brand-light-gray line-clamp-2 group-hover:text-brand-gold transition-colors">
-                    {product.name}
-                  </h3>
-                </div>
+                {/* Ürün Bilgileri */}
+                <div className="p-2 sm:p-3 lg:p-4 flex flex-col">
+                  {/* Başlık - Sabit yükseklik */}
+                  <div className="h-10 sm:h-11 lg:h-12 mb-1 sm:mb-2">
+                    <h3 className="text-xs sm:text-sm lg:text-base font-semibold text-brand-light-gray line-clamp-2 group-hover:text-brand-gold transition-colors">
+                      {product.name}
+                    </h3>
+                  </div>
 
-                {/* Açıklama - Sabit yükseklik */}
-                <div className="h-8 sm:h-9 lg:h-10">
-                  {product.description && (
-                    <p className="text-[10px] sm:text-xs lg:text-sm text-brand-medium-gray line-clamp-2">
-                      {product.description}
-                    </p>
-                  )}
+                  {/* Açıklama - Sabit yükseklik */}
+                  <div className="h-8 sm:h-9 lg:h-10">
+                    {product.description && (
+                      <p className="text-[10px] sm:text-xs lg:text-sm text-brand-medium-gray line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
               </Link>
             </motion.div>
           ))}

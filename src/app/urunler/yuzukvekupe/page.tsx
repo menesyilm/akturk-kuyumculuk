@@ -45,8 +45,8 @@ export default function YuzukveKupePage() {
   }, [])
 
   useEffect(() => {
-  let sorted = [...products];
-    
+    let sorted = [...products];
+
     switch (sortBy) {
       case 'name-asc':
         sorted.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
@@ -88,7 +88,7 @@ export default function YuzukveKupePage() {
           viewport={{ once: false, margin: "100px" }}
           transition={{ delay: 0.2, duration: 0.5 }}
           className="flex items-center justify-end mb-4 sm:mb-6 lg:mb-8"
-        >          
+        >
           <div className="flex items-center gap-2">
             <label htmlFor="sort" className="text-brand-light-gray text-xs sm:text-sm lg:text-base">Sırala:</label>
             <select
@@ -118,45 +118,47 @@ export default function YuzukveKupePage() {
                 viewport={{ once: false, margin: "100px" }}
                 transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
               >
-              <Link 
-                key={product.id}
-                href={`/urunler/yuzukvekupe/${product.id}`}
-                className="block bg-brand-dark-gray overflow-hidden ring-1 ring-brand-gold cursor-pointer group transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-light-gray/50" 
-              >
-                <div className="relative h-40 sm:h-60 lg:h-80 xl:h-100 overflow-hidden">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-opacity duration-300 group-hover:opacity-0"
-                  />
-                  {product.image2 && (
+                <Link
+                  key={product.id}
+                  href={`/urunler/yuzukvekupe/${product.id}`}
+                  className="block bg-brand-dark-gray overflow-hidden ring-1 ring-brand-gold cursor-pointer group transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-light-gray/50"
+                >
+                  <div className="relative h-40 sm:h-60 lg:h-80 xl:h-100 overflow-hidden">
                     <Image
-                      src={product.image2}
-                      alt={`${product.name} - 2`}
+                      src={product.image}
+                      alt={product.name}
+                      unoptimized
                       fill
-                      className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      className="object-cover transition-opacity duration-300 group-hover:opacity-0"
                     />
-                  )}
-                </div>
-              <div className="p-2 sm:p-3 lg:p-4 flex flex-col">
-                {/* Başlık - Sabit yükseklik */}
-                <div className="h-10 sm:h-11 lg:h-12 mb-1 sm:mb-2">
-                  <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-bold text-brand-gold text-center line-clamp-2">
-                    {product.name}
-                  </h3>
-                </div>
+                    {product.image2 && (
+                      <Image
+                        src={product.image2}
+                        alt={`${product.name} - 2`}
+                        unoptimized
+                        fill
+                        className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                      />
+                    )}
+                  </div>
+                  <div className="p-2 sm:p-3 lg:p-4 flex flex-col">
+                    {/* Başlık - Sabit yükseklik */}
+                    <div className="h-10 sm:h-11 lg:h-12 mb-1 sm:mb-2">
+                      <h3 className="text-sm sm:text-base lg:text-lg xl:text-xl font-bold text-brand-gold text-center line-clamp-2">
+                        {product.name}
+                      </h3>
+                    </div>
 
-                {/* Açıklama - Sabit yükseklik */}
-                <div className="h-8 sm:h-9 lg:h-10">
-                  {product.description && (
-                    <p className="text-[10px] sm:text-xs lg:text-sm text-brand-light-gray line-clamp-2">
-                      {product.description}
-                    </p>
-                  )}
-                </div>
-              </div>
-              </Link>
+                    {/* Açıklama - Sabit yükseklik */}
+                    <div className="h-8 sm:h-9 lg:h-10">
+                      {product.description && (
+                        <p className="text-[10px] sm:text-xs lg:text-sm text-brand-light-gray line-clamp-2">
+                          {product.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Link>
               </motion.div>
             ))}
           </div>

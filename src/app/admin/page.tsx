@@ -248,6 +248,7 @@ export default function AdminPage() {
                             <Image
                               src={product.image}
                               alt={product.name}
+                              unoptimized
                               fill
                               className="object-cover"
                             />

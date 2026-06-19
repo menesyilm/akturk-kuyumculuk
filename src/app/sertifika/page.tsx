@@ -139,9 +139,9 @@ export default function SertifikaPage() {
                   </>
                 ) : (
                   <>
-                  <div className='flex items-center text-center justify-center gap-2'>
-                    <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Sorgula</span>
+                    <div className='flex items-center text-center justify-center gap-2'>
+                      <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+                      <span>Sorgula</span>
                     </div>
                   </>
                 )}
@@ -200,6 +200,7 @@ export default function SertifikaPage() {
                 <Image
                   src={product.image}
                   alt={product.name}
+                  unoptimized
                   fill
                   className="object-cover"
                 />

@@ -95,7 +95,8 @@ export default function ProductGallery({ className }: { className?: string }) {
                   src={p.image}
                   alt={p.name}
                   fill
-                sizes={`${Math.round(100 / visibleCount)}vw`}
+                  unoptimized
+                  sizes={`${Math.round(100 / visibleCount)}vw`}
                   className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
