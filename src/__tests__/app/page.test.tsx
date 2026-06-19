@@ -2,10 +2,8 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '@/app/page';
 
-// ProductGallery componenti oldukça büyük ve
-// kendi içerisinde başka bağımlılıklar içeriyor olabilir.
-// Bu testte ProductGallery'nin içeriğini değil,
-// Home sayfasının davranışını test etmek istediğimiz için mock'luyoruz.
+// ProductGallery componenti oldukça büyük ve kendi içerisinde başka bağımlılıklar içeriyor olabilir.
+// Bu testte ProductGallery'nin içeriğini değil, Home sayfasının davranışını test etmek istediğimiz için mock'luyoruz.
 jest.mock('@/components/ProductGallery', () => {
     return function MockProductGallery() {
         return <div data-testid="product-gallery">Product Gallery</div>;
