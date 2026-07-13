@@ -1,345 +1,215 @@
 "use client";
 
-import { useCallback, useEffect, useState } from 'react';
-import { TrendingUp, TrendingDown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useEffect, useMemo, useState } from "react";
+import { ArrowDown, ArrowUp, Radio } from "lucide-react";
+import { motion } from "framer-motion";
+import { io } from "socket.io-client";
 
-interface CurrencyData {
-  buying: number;
-  selling: number;
-  change: number;
+const HAREM_SOCKET_URL = "wss://hrmsocketonly.haremaltin.com:443";
+
+const MARKET_DEFINITIONS = [
+  { code: "ALTIN", name: "HAS ALTIN", decimals: 2 },
+  { code: "ONS", name: "ONS", decimals: 1 },
+  { code: "USDKG", name: "USD/KG", decimals: 0 },
+  { code: "EURKG", name: "EUR/KG", decimals: 0 },
+  { code: "AYAR22", name: "22 AYAR", decimals: 2 },
+  { code: "KULCEALTIN", name: "GRAM ALTIN", decimals: 2 },
+  { code: "XAUXAG", name: "ALTIN GÜMÜŞ", decimals: 2 },
+  { code: "CEYREK_YENI", name: "YENİ ÇEYREK", decimals: 0 },
+  { code: "CEYREK_ESKI", name: "ESKİ ÇEYREK", decimals: 0 },
+  { code: "YARIM_YENI", name: "YENİ YARIM", decimals: 0 },
+  { code: "YARIM_ESKI", name: "ESKİ YARIM", decimals: 0 },
+  { code: "TEK_YENI", name: "YENİ TAM", decimals: 0 },
+  { code: "TEK_ESKI", name: "ESKİ TAM", decimals: 0 },
+  { code: "ATA_YENI", name: "YENİ ATA", decimals: 0 },
+  { code: "ATA_ESKI", name: "ESKİ ATA", decimals: 0 },
+  { code: "ATA5_YENI", name: "YENİ ATA5", decimals: 0 },
+  { code: "ATA5_ESKI", name: "ESKİ ATA5", decimals: 0 },
+  { code: "GREMESE_YENI", name: "YENİ GREMSE", decimals: 0 },
+  { code: "GREMESE_ESKI", name: "ESKİ GREMSE", decimals: 0 },
+  { code: "AYAR14", name: "14 AYAR", decimals: 2 },
+  { code: "GUMUSTRY", name: "GÜMÜŞ TL", decimals: 3 },
+  { code: "XAGUSD", name: "GÜMÜŞ ONS", decimals: 2 },
+  { code: "GUMUSUSD", name: "GÜMÜŞ USD", decimals: 2 },
+  { code: "XPTUSD", name: "PLATİN ONS", decimals: 2 },
+  { code: "XPDUSD", name: "PALADYUM ONS", decimals: 2 },
+  { code: "PLATIN", name: "PLATİN/USD", decimals: 0 },
+  { code: "PALADYUM", name: "PALADYUM/USD", decimals: 0 },
+] as const;
+
+interface HaremPrice {
+  code: string;
+  alis: number | string;
+  satis: number | string;
+  kapanis: number | string;
+  tarih?: string;
+  dir?: { alis_dir?: "up" | "down"; satis_dir?: "up" | "down" };
 }
 
-interface GoldData {
-  dolar: CurrencyData;
-  euro: CurrencyData;
-  gramAltin: CurrencyData;
-  ingilizSterlini: CurrencyData;
-  euroDolar: CurrencyData;
-  onsAltin: CurrencyData;
-  gumus: CurrencyData;
-  altinGumus: CurrencyData;
+interface PriceChangedMessage {
+  data?: Record<string, HaremPrice>;
+  meta?: { time?: number };
 }
 
-// Cache yapılandırmasını bileşen dışında tanımlayarak
-// değişmeyen sabitleri dependency dizilerinden çıkarıyoruz
-const CACHE_KEY = 'gold_prices_cache';
-const CACHE_DURATION = 60 * 60 * 1000; // 1 saat (3.600.000 ms)
+type ConnectionState = "connecting" | "connected" | "disconnected" | "error";
+type PriceFlash = { direction: "up" | "down"; tick: number };
+
+function toNumber(value: number | string | undefined) {
+  if (typeof value === "number") return value;
+  if (!value) return 0;
+  const normalized = value.includes(",")
+    ? value.replace(/\./g, "").replace(",", ".")
+    : value;
+  return Number.parseFloat(normalized) || 0;
+}
+
+function formatPrice(value: number | string | undefined, decimals: number) {
+  return new Intl.NumberFormat("tr-TR", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(toNumber(value));
+}
+
+function getChange(price?: HaremPrice) {
+  if (!price) return 0;
+  const close = toNumber(price.kapanis);
+  return close > 0 ? ((toNumber(price.satis) - close) / close) * 100 : 0;
+}
 
 export default function AltinFiyatlari() {
-  const [goldData, setGoldData] = useState<GoldData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchGoldPrices = useCallback(async (forceRefresh = false) => {
-    try {
-      // Cache kontrolü - forceRefresh yoksa cache'i kontrol et
-      if (!forceRefresh) {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data, timestamp } = JSON.parse(cached);
-          const now = new Date().getTime();
-          
-          // Cache 1 saatten yeniyse, API'ye istek atmadan cache'i kullan
-          if (now - timestamp < CACHE_DURATION) {
-            console.log('Using cached gold data');
-            setGoldData(data);
-            setLoading(false);
-            return;
-          }
-        }
-      }
-
-      // Cache yoksa veya eski ise API'den çek
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetch('/api/gold-prices');
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || 'Fiyatlar yüklenemedi');
-      }
-      
-      const data = await response.json();
-      console.log('Fetched fresh gold data from API');
-      
-      // Veriyi state'e kaydet
-      setGoldData(data);
-      const now = new Date();
-      
-      // localStorage'a kaydet
-      localStorage.setItem(CACHE_KEY, JSON.stringify({
-        data,
-        timestamp: now.getTime()
-      }));
-    } catch (err) {
-      console.error('Fetch error:', err);
-      setError(err instanceof Error ? err.message : 'Bir hata oluştu');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [prices, setPrices] = useState<Record<string, HaremPrice>>({});
+  const [connectionState, setConnectionState] = useState<ConnectionState>("connecting");
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const [priceFlashes, setPriceFlashes] = useState<Record<string, PriceFlash>>({});
 
   useEffect(() => {
-    fetchGoldPrices();
-    const interval = setInterval(() => fetchGoldPrices(true), CACHE_DURATION);
-    return () => clearInterval(interval);
-  }, [fetchGoldPrices]);
+    const socket = io(HAREM_SOCKET_URL, {
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionDelay: 1_000,
+      reconnectionDelayMax: 10_000,
+    });
 
-  const formatPrice = (price: number) => {
-    if (!price || isNaN(price)) return '0.00';
-    return new Intl.NumberFormat('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(price);
-  };
+    socket.on("connect", () => setConnectionState("connected"));
+    socket.on("disconnect", () => setConnectionState("disconnected"));
+    socket.on("connect_error", () => setConnectionState("error"));
+    socket.on("price_changed", (message: PriceChangedMessage) => {
+      if (!message?.data) return;
+      setPrices((current) => ({ ...current, ...message.data }));
+      setPriceFlashes((current) => {
+        const next = { ...current };
+        const tick = Date.now();
 
-  const formatPercentage = (percent: number) => {
-    if (!percent || isNaN(percent)) return '%0.00';
-    return `%${percent > 0 ? '+' : ''}${percent.toFixed(2)}`;
-  };
+        Object.values(message.data ?? {}).forEach((price, index) => {
+          const direction = price.dir?.satis_dir;
+          if (direction === "up" || direction === "down") {
+            next[price.code] = { direction, tick: tick + index };
+          }
+        });
+
+        return next;
+      });
+      const sourceTime = message.meta?.time;
+      setUpdatedAt(sourceTime ? new Date(sourceTime < 10_000_000_000 ? sourceTime * 1000 : sourceTime) : new Date());
+    });
+
+    return () => {
+      socket.removeAllListeners();
+      socket.disconnect();
+    };
+  }, []);
+
+  const status = useMemo(() => {
+    if (connectionState === "connected") return { label: "Canlı", color: "text-emerald-400" };
+    if (connectionState === "connecting") return { label: "Bağlanıyor", color: "text-amber-400" };
+    return { label: "Bağlantı kesildi · yeniden deneniyor", color: "text-red-400" };
+  }, [connectionState]);
 
   return (
-    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black pt-5 pt-10 lg:pt-15 pb-8 sm:pb-12 lg:pb-16">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Başlık */}
-        <motion.h1
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          className="text-xl sm:text-xl lg:text-3xl xl:text-4xl font-bold text-brand-gold text-center mb-6 sm:mb-8"
+    <main className="min-h-screen bg-brand-black pb-12 pt-10 lg:pb-16 lg:pt-16">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="overflow-hidden border border-brand-medium-gray bg-brand-dark-gray shadow-2xl"
         >
-          ALTIN FİYATLARI
-        </motion.h1>
-
-        {/* Fiyat Tablosu - Boş */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-8 sm:mb-12"
-        >
-          <div className="bg-brand-dark-gray border border-brand-medium-gray overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-brand-gold/20 to-brand-gold/10 border-b border-brand-gold/30 p-4">
-              <div className="grid grid-cols-4 gap-4 text-xs sm:text-sm font-semibold text-brand-light-gray">
-                <div>PİYASA ÖZETİ</div>
-                <div className="text-center">ALIŞ</div>
-                <div className="text-center">SATIŞ</div>
-                <div className="text-center">DEĞIŞIM</div>
-              </div>
-            </div>
-
-            {/* İçerik */}
-            <div className="divide-y divide-brand-medium-gray/30">
-              {loading && !goldData ? (
-                <div className="p-8 text-center text-brand-medium-gray">
-                  <div className="w-8 h-8 border-4 border-brand-gold border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                  <p>Fiyatlar yükleniyor...</p>
-                </div>
-              ) : error ? (
-                <div className="p-8 text-center text-red-400">
-                  <p className="mb-2">{error}</p>
-                  <button
-                    onClick={() => fetchGoldPrices(true)}
-                    className="mt-4 px-4 py-2 bg-brand-gold text-brand-black rounded hover:bg-brand-gold/80 transition-colors"
-                  >
-                    Tekrar Dene
-                  </button>
-                </div>
-              ) : goldData ? (
-                <>
-                  {/* DOLAR */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">DOLAR</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.dolar.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.dolar.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.dolar.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.dolar.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.dolar.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* EURO */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">EURO</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.euro.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.euro.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.euro.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.euro.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.euro.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* GRAM ALTIN */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">GRAM ALTIN</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.gramAltin.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.gramAltin.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.gramAltin.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.gramAltin.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.gramAltin.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* İNGİLİZ STERLİNİ */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">İNGİLİZ STERLİNİ</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.ingilizSterlini.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.ingilizSterlini.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.ingilizSterlini.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.ingilizSterlini.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.ingilizSterlini.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* EURO DOLAR */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">EURO DOLAR</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ${formatPrice(goldData.euroDolar.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ${formatPrice(goldData.euroDolar.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.euroDolar.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.euroDolar.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.euroDolar.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* ONS ALTIN */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">ONS ALTIN</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.onsAltin.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.onsAltin.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.onsAltin.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.onsAltin.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.onsAltin.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* GÜMÜŞ */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">GÜMÜŞ</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.gumus.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.gumus.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.gumus.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.gumus.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.gumus.change)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* ALTIN GÜMÜŞ */}
-                  <div className="grid grid-cols-4 gap-4 p-4 hover:bg-brand-medium-gray/10 transition-colors">
-                    <div>
-                      <div className="font-semibold text-brand-light-gray text-sm sm:text-base">ALTIN GÜMÜŞ</div>
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.altinGumus.buying)}
-                    </div>
-                    <div className="text-center font-mono text-brand-light-gray text-sm sm:text-base">
-                      ₺{formatPrice(goldData.altinGumus.selling)}
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <span className={`flex items-center gap-1 text-sm sm:text-base font-semibold ${
-                        goldData.altinGumus.change >= 0 ? 'text-green-500' : 'text-red-500'
-                      }`}>
-                        {goldData.altinGumus.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                        {formatPercentage(goldData.altinGumus.change)}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              ) : null}
+          <div className="flex flex-col gap-2 border-b border-brand-gold/30 bg-brand-black/40 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+            <h1 className="text-lg font-bold text-brand-gold sm:text-xl lg:text-2xl">
+              ALTIN FİYATLARI
+            </h1>
+            <div className="flex items-center gap-3 text-xs sm:text-sm">
+              <span className={`flex items-center gap-1.5 font-semibold ${status.color}`}>
+                <Radio className={connectionState === "connected" ? "h-4 w-4 animate-pulse" : "h-4 w-4"} />
+                {status.label}
+              </span>
+              <span className="text-brand-medium-gray">
+                {updatedAt ? `Son güncelleme: ${updatedAt.toLocaleTimeString("tr-TR")}` : "Veri bekleniyor"}
+              </span>
             </div>
           </div>
-        </motion.div>
-        
-        {/* Bilgi Notu */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-6 bg-brand-gold/30 border border-brand-gold p-4 rounded"
-        >
-          <p className="text-xs text-white leading-relaxed">
-            <span className="font-semibold text-brand-gold">Not:
-              </span> Bu sayfadaki fiyatlar anlık piyasa verilerine dayanmaktadır. 
-            Gerçek alış-satış fiyatları için mağazamızı ziyaret edebilir veya bizimle iletişime geçebilirsiniz.
+
+          <div className="overflow-x-auto">
+            <div className="min-w-[620px]">
+              <div className="grid grid-cols-[1.4fr_1fr_1fr_0.8fr] gap-3 border-b border-brand-gold/30 bg-gradient-to-r from-brand-gold/20 to-brand-gold/5 px-4 py-3 text-xs font-semibold text-brand-light-gray sm:text-sm">
+                <div>PİYASA</div>
+                <div className="text-right">ALIŞ</div>
+                <div className="text-right">SATIŞ</div>
+                <div className="text-right">FARK</div>
+              </div>
+
+              <div className="divide-y divide-brand-medium-gray/30">
+                {MARKET_DEFINITIONS.map((definition) => {
+                  const price = prices[definition.code];
+                  const change = getChange(price);
+                  const isUp = change >= 0;
+                  const flash = priceFlashes[definition.code];
+
+                  return (
+                    <motion.div
+                      key={`${definition.code}-${flash?.tick ?? 0}`}
+                      initial={flash ? {
+                        backgroundColor: flash.direction === "up"
+                          ? "rgba(16, 185, 129, 0.42)"
+                          : "rgba(239, 68, 68, 0.42)",
+                      } : { backgroundColor: "rgba(0, 0, 0, 0)" }}
+                      animate={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className="grid grid-cols-[1.4fr_1fr_1fr_0.8fr] items-center gap-3 px-4 py-3 hover:bg-brand-gold/5 sm:py-4"
+                    >
+                      <div>
+                        <div className="text-sm font-bold text-brand-light-gray sm:text-base">{definition.name}</div>
+                        <div className="text-[10px] text-brand-medium-gray sm:text-xs">{definition.name}</div>
+                      </div>
+                      <div className="text-right font-mono text-sm text-brand-light-gray sm:text-base">
+                        {price ? formatPrice(price.alis, definition.decimals) : "—"}
+                      </div>
+                      <div className="text-right font-mono text-sm text-brand-light-gray sm:text-base">
+                        {price ? formatPrice(price.satis, definition.decimals) : "—"}
+                      </div>
+                      <div className={`flex items-center justify-end gap-1 text-sm font-semibold sm:text-base ${isUp ? "text-emerald-400" : "text-red-400"}`}>
+                        {price ? (
+                          <>
+                            {isUp ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                            %{change.toFixed(2)}
+                          </>
+                        ) : "—"}
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </motion.section>
+
+        <div className="mt-6 border border-brand-gold bg-brand-gold/20 p-4">
+          <p className="text-xs leading-relaxed text-white">
+            <span className="font-semibold text-brand-gold">Not: </span>
+            Fiyatlar Harem Altın canlı piyasa yayınından anlık olarak gösterilir ve bilgi amaçlıdır. Gerçek alış-satış fiyatları için mağazamızı ziyaret edebilir veya bizimle iletişime geçebilirsiniz.
           </p>
-        </motion.div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
