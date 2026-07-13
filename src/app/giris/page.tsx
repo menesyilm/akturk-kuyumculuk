@@ -42,7 +42,7 @@ export default function LoginPage() {
     } catch (err) {
       const error = err as { code?: string };
       console.error('Giriş hatası:', err);
-      
+
       // Türkçe hata mesajları
       if (error.code === 'auth/invalid-email') {
         setError('Geçersiz e-posta adresi');
@@ -113,7 +113,6 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-brand-light-gray focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold transition-all text-brand-black placeholder:text-brand-medium-gray bg-gray-50"
-                placeholder="galipsafa@admin.com"
                 required
                 disabled={loading}
               />
@@ -133,7 +132,6 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-brand-light-gray focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold transition-all text-brand-black placeholder:text-brand-medium-gray bg-gray-50"
-                placeholder="••••••••"
                 required
                 disabled={loading}
               />
