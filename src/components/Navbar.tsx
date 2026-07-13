@@ -29,6 +29,7 @@ export default function Navbar() {
                     src="/images/logo-no-background.png"
                     alt="Aktürk Kuyumculuk"
                     fill
+                    sizes="80px"
                     className="object-contain"
                     priority
                   />
@@ -43,6 +44,7 @@ export default function Navbar() {
                   src="/images/caption-2.png"
                   alt="Caption"
                   fill
+                  sizes="(min-width: 1280px) 500px, 400px"
                   className="object-contain"
                   priority
                 />

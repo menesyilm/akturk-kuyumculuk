@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import Link from 'next/link'
-import Image from 'next/image'
+import ImageWithLoader from '@/components/ImageWithLoader'
 
 type SortOption = 'recommended' | 'name-asc' | 'name-desc';
 
@@ -124,18 +124,21 @@ export default function Page() {
                   className="block bg-brand-dark-gray overflow-hidden ring-1 ring-brand-gold cursor-pointer group transition-shadow duration-300 hover:shadow-lg hover:shadow-brand-light-gray/50"
                 >
                   <div className="relative h-40 sm:h-60 lg:h-80 xl:h-100 overflow-hidden">
-                    <Image
+                    <ImageWithLoader
                       src={product.image}
                       alt={product.name}
                       fill
+                      sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
                       unoptimized
                       className="object-cover transition-opacity duration-300 group-hover:opacity-0"
                     />
                     {product.image2 && (
-                      <Image
+                      <ImageWithLoader
                         src={product.image2}
                         alt={`${product.name} - 2`}
                         fill
+                        sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
+                        loaderClassName="opacity-0 group-hover:opacity-100"
                         unoptimized
                         className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                       />

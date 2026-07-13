@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { doc, getDoc, Timestamp } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
-import Image from 'next/image'
+import ImageWithLoader from '@/components/ImageWithLoader'
 import { motion } from 'framer-motion'
 
 interface Product {
@@ -102,10 +102,11 @@ export default function ProductDetailPage() {
                     onClick={() => openLightbox(image)}
                     className="relative h-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] xl:h-[600px] bg-brand-dark-gray ring-1 ring-brand-gold overflow-hidden group cursor-zoom-in"
                   >
-                  <Image
+                  <ImageWithLoader
                     src={image}
                     alt={`${product.name} - ${index + 1}`}
                     fill
+                    sizes="(max-width: 767px) 100vw, 50vw"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </motion.button>
@@ -206,8 +207,8 @@ export default function ProductDetailPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <div className="ring-2 ring-brand-gold inline-block" onClick={(e) => e.stopPropagation()}>
-              <Image
+            <div className="relative ring-2 ring-brand-gold inline-block" onClick={(e) => e.stopPropagation()}>
+              <ImageWithLoader
                 src={lightboxImage}
                 alt={product.name}
                 width={0}

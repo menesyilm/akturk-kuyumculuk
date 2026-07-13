@@ -26,7 +26,7 @@ export default function Footer() {
             >
               <Link href="/">
                 <div className="relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20">
-                  <Image src="/images/logo-no-background.png" alt="Aktürk Kuyumculuk" fill className="object-contain" />
+                  <Image src="/images/logo-no-background.png" alt="Aktürk Kuyumculuk" fill sizes="96px" className="object-contain" />
                 </div>
               </Link>
 

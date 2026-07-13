@@ -32,6 +32,7 @@ export default function Sidebar() {
                     src="/images/logo-no-background.png"
                     alt="Aktürk Kuyumculuk"
                     fill
+                    sizes="64px"
                     className="object-contain"
                     priority
                   />
@@ -47,6 +48,7 @@ export default function Sidebar() {
                     src="/images/caption-2.png"
                     alt="Caption"
                     fill
+                    sizes="(min-width: 640px) 352px, 1px"
                     className="object-contain"
                     priority
                   />

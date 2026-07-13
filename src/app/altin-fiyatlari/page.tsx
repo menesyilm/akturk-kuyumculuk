@@ -134,7 +134,7 @@ export default function AltinFiyatlari() {
           transition={{ duration: 0.5 }}
           className="overflow-hidden border border-brand-medium-gray bg-brand-dark-gray shadow-2xl"
         >
-          <div className="flex flex-col gap-2 border-b border-brand-gold/30 bg-brand-black/40 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <div className="flex flex-col gap-2 bg-brand-black px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
             <h1 className="text-lg font-bold text-brand-gold sm:text-xl lg:text-2xl">
               ALTIN FİYATLARI
             </h1>
