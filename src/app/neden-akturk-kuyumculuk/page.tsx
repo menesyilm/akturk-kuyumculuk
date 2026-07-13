@@ -65,7 +65,7 @@ export default function NedenAkturkKuyumculuk() {
   };
 
   return (
-    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black pt-8 sm:pt-12 lg:pt-30">
+    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black pt-8 pb-8 sm:pt-12 lg:pt-30">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Başlık */}
         <motion.div
@@ -470,7 +470,7 @@ export default function NedenAkturkKuyumculuk() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, margin: "100px" }}
           transition={{ duration: 0.6 }}
-          className="text-center bg-brand-dark-gray p-6 sm:p-8 lg:p-12 mb-8 border border-brand-gold"
+          className="text-center bg-brand-dark-gray p-6 sm:p-8 lg:p-12 border border-brand-gold"
         >
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-brand-light-gray mb-3 sm:mb-4 lg:mb-6">
             Yaşayan Efsanenizi Bizimle Yaratın

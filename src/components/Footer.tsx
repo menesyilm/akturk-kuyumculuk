@@ -11,8 +11,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-brand-dark-gray">
-      <div className="max-w-8xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10 border-t-2 border-brand-gold">
+    <footer className="border-t-2 border-brand-gold bg-brand-dark-gray">
+      <div className="max-w-8xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10">
 
         {/* Ana Layout: Sol sütun + Sağ sütun */}
         <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 md:items-stretch">
