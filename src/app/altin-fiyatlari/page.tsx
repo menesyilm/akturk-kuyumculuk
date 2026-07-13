@@ -206,7 +206,7 @@ export default function AltinFiyatlari() {
         <div className="mt-6 border border-brand-gold bg-brand-gold/20 p-4">
           <p className="text-xs leading-relaxed text-white">
             <span className="font-semibold text-brand-gold">Not: </span>
-            Fiyatlar Harem Altın canlı piyasa yayınından anlık olarak gösterilir ve bilgi amaçlıdır. Gerçek alış-satış fiyatları için mağazamızı ziyaret edebilir veya bizimle iletişime geçebilirsiniz.
+            Fiyatlar canlı piyasa yayınından anlık olarak gösterilir ve bilgi amaçlıdır. Gerçek alış-satış fiyatları için mağazamızı ziyaret edebilir veya bizimle iletişime geçebilirsiniz.
           </p>
         </div>
       </div>
