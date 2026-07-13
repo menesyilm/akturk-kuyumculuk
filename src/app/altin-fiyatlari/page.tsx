@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import { ArrowDown, ArrowUp, Radio } from "lucide-react";
 import { motion } from "framer-motion";
 import { io } from "socket.io-client";
@@ -81,6 +81,27 @@ export default function AltinFiyatlari() {
   const [connectionState, setConnectionState] = useState<ConnectionState>("connecting");
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [priceFlashes, setPriceFlashes] = useState<Record<string, PriceFlash>>({});
+  const tableScrollRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef({ active: false, startX: 0, scrollLeft: 0 });
+
+  const startTableDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== "mouse" || !tableScrollRef.current) return;
+    dragState.current = {
+      active: true,
+      startX: event.clientX,
+      scrollLeft: tableScrollRef.current.scrollLeft,
+    };
+    tableScrollRef.current.setPointerCapture(event.pointerId);
+  };
+
+  const moveTableDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (!dragState.current.active || !tableScrollRef.current) return;
+    tableScrollRef.current.scrollLeft = dragState.current.scrollLeft - (event.clientX - dragState.current.startX);
+  };
+
+  const stopTableDrag = () => {
+    dragState.current.active = false;
+  };
 
   useEffect(() => {
     const socket = io(HAREM_SOCKET_URL, {
@@ -135,10 +156,10 @@ export default function AltinFiyatlari() {
           className="overflow-hidden border border-brand-medium-gray bg-brand-dark-gray shadow-2xl"
         >
           <div className="flex flex-col gap-2 bg-brand-black px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-            <h1 className="text-lg font-bold text-brand-gold sm:text-xl lg:text-2xl">
+            <h1 className="text-base font-bold text-brand-gold sm:text-xl lg:text-2xl">
               ALTIN FİYATLARI
             </h1>
-            <div className="flex items-center gap-3 text-xs sm:text-sm">
+            <div className="flex items-center gap-2 text-[10px] sm:gap-3 sm:text-xs lg:text-sm">
               <span className={`flex items-center gap-1.5 font-semibold ${status.color}`}>
                 <Radio className={connectionState === "connected" ? "h-4 w-4 animate-pulse" : "h-4 w-4"} />
                 {status.label}
@@ -149,10 +170,17 @@ export default function AltinFiyatlari() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <div className="min-w-[620px]">
-              <div className="grid grid-cols-[1.4fr_1fr_1fr_0.8fr] gap-3 border-b border-brand-gold/30 bg-gradient-to-r from-brand-gold/20 to-brand-gold/5 px-4 py-3 text-xs font-semibold text-brand-light-gray sm:text-sm">
-                <div>PİYASA</div>
+          <div
+            ref={tableScrollRef}
+            onPointerDown={startTableDrag}
+            onPointerMove={moveTableDrag}
+            onPointerUp={stopTableDrag}
+            onPointerCancel={stopTableDrag}
+            className="cursor-grab select-none overflow-x-auto overscroll-x-contain active:cursor-grabbing"
+          >
+            <div className="min-w-[700px] sm:min-w-[760px]">
+              <div className="grid grid-cols-[150px_1fr_1fr_0.8fr] gap-3 border-b border-brand-gold/30 bg-[#4b4842] px-3 py-3 text-[10px] font-semibold text-brand-light-gray sm:grid-cols-[190px_1fr_1fr_0.8fr] sm:px-4 sm:text-xs lg:grid-cols-[1.4fr_1fr_1fr_0.8fr] lg:text-sm">
+                <div className="sticky left-0 z-40 -my-3 -ml-3 flex items-center border-r-2 border-brand-gold bg-[#4b4842] pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-ml-4 sm:pl-4">PİYASA</div>
                 <div className="text-right">ALIŞ</div>
                 <div className="text-right">SATIŞ</div>
                 <div className="text-right">FARK</div>
@@ -164,30 +192,36 @@ export default function AltinFiyatlari() {
                   const change = getChange(price);
                   const isUp = change >= 0;
                   const flash = priceFlashes[definition.code];
+                  const rowStartColor = flash
+                    ? flash.direction === "up"
+                      ? "rgba(16, 185, 129, 0.42)"
+                      : "rgba(239, 68, 68, 0.42)"
+                    : "rgba(62, 62, 62, 1)";
 
                   return (
                     <motion.div
                       key={`${definition.code}-${flash?.tick ?? 0}`}
-                      initial={flash ? {
-                        backgroundColor: flash.direction === "up"
-                          ? "rgba(16, 185, 129, 0.42)"
-                          : "rgba(239, 68, 68, 0.42)",
-                      } : { backgroundColor: "rgba(0, 0, 0, 0)" }}
-                      animate={{ backgroundColor: "rgba(0, 0, 0, 0)" }}
+                      initial={{ backgroundColor: rowStartColor }}
+                      animate={{ backgroundColor: "rgba(62, 62, 62, 1)" }}
                       transition={{ duration: 1, ease: "easeOut" }}
-                      className="grid grid-cols-[1.4fr_1fr_1fr_0.8fr] items-center gap-3 px-4 py-3 hover:bg-brand-gold/5 sm:py-4"
+                      className="isolate grid grid-cols-[150px_1fr_1fr_0.8fr] items-center gap-3 px-3 py-3 hover:bg-brand-gold/5 sm:grid-cols-[190px_1fr_1fr_0.8fr] sm:px-4 sm:py-4 lg:grid-cols-[1.4fr_1fr_1fr_0.8fr]"
                     >
-                      <div>
-                        <div className="text-sm font-bold text-brand-light-gray sm:text-base">{definition.name}</div>
-                        <div className="text-[10px] text-brand-medium-gray sm:text-xs">{definition.name}</div>
-                      </div>
-                      <div className="text-right font-mono text-sm text-brand-light-gray sm:text-base">
+                      <motion.div
+                        initial={{ backgroundColor: rowStartColor }}
+                        animate={{ backgroundColor: "rgba(62, 62, 62, 1)" }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="sticky left-0 z-40 -my-3 -ml-3 flex h-[calc(100%+1.5rem)] flex-col justify-center border-r-2 border-brand-gold pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-my-4 sm:-ml-4 sm:h-[calc(100%+2rem)] sm:pl-4"
+                      >
+                        <div className="text-xs font-bold text-brand-light-gray sm:text-sm lg:text-base">{definition.name}</div>
+                        <div className="text-[9px] text-brand-medium-gray sm:text-[10px] lg:text-xs">{definition.name}</div>
+                      </motion.div>
+                      <div className="text-right font-mono text-xs text-brand-light-gray sm:text-sm lg:text-base">
                         {price ? formatPrice(price.alis, definition.decimals) : "—"}
                       </div>
-                      <div className="text-right font-mono text-sm text-brand-light-gray sm:text-base">
+                      <div className="text-right font-mono text-xs text-brand-light-gray sm:text-sm lg:text-base">
                         {price ? formatPrice(price.satis, definition.decimals) : "—"}
                       </div>
-                      <div className={`flex items-center justify-end gap-1 text-sm font-semibold sm:text-base ${isUp ? "text-emerald-400" : "text-red-400"}`}>
+                      <div className={`flex items-center justify-end gap-1 text-xs font-semibold sm:text-sm lg:text-base ${isUp ? "text-emerald-400" : "text-red-400"}`}>
                         {price ? (
                           <>
                             {isUp ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
