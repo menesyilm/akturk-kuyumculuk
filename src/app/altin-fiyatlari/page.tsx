@@ -180,7 +180,7 @@ export default function AltinFiyatlari() {
           >
             <div className="min-w-[700px] sm:min-w-[760px]">
               <div className="grid grid-cols-[150px_1fr_1fr_0.8fr] gap-3 border-b border-brand-gold/30 bg-[#4b4842] px-3 py-3 text-[10px] font-semibold text-brand-light-gray sm:grid-cols-[190px_1fr_1fr_0.8fr] sm:px-4 sm:text-xs lg:grid-cols-[1.4fr_1fr_1fr_0.8fr] lg:text-sm">
-                <div className="sticky left-0 z-40 -my-3 -ml-3 flex items-center border-r-2 border-brand-gold bg-[#4b4842] pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-ml-4 sm:pl-4">PİYASA</div>
+                <div className="sticky left-0 z-40 -my-3 -ml-3 flex items-center border-r-2 border-brand-dark-gray bg-[#4b4842] pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-ml-4 sm:pl-4">PİYASA</div>
                 <div className="text-right">ALIŞ</div>
                 <div className="text-right">SATIŞ</div>
                 <div className="text-right">FARK</div>
@@ -202,15 +202,27 @@ export default function AltinFiyatlari() {
                     <motion.div
                       key={`${definition.code}-${flash?.tick ?? 0}`}
                       initial={{ backgroundColor: rowStartColor }}
-                      animate={{ backgroundColor: "rgba(62, 62, 62, 1)" }}
-                      transition={{ duration: 1, ease: "easeOut" }}
+                      animate={{
+                        backgroundColor: flash
+                          ? [rowStartColor, "rgba(62, 62, 62, 1)", rowStartColor]
+                          : "rgba(62, 62, 62, 1)",
+                      }}
+                      transition={flash
+                        ? { duration: 2, ease: "easeInOut", repeat: Infinity }
+                        : { duration: 0 }}
                       className="isolate grid grid-cols-[150px_1fr_1fr_0.8fr] items-center gap-3 px-3 py-3 hover:bg-brand-gold/5 sm:grid-cols-[190px_1fr_1fr_0.8fr] sm:px-4 sm:py-4 lg:grid-cols-[1.4fr_1fr_1fr_0.8fr]"
                     >
                       <motion.div
                         initial={{ backgroundColor: rowStartColor }}
-                        animate={{ backgroundColor: "rgba(62, 62, 62, 1)" }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className="sticky left-0 z-40 -my-3 -ml-3 flex h-[calc(100%+1.5rem)] flex-col justify-center border-r-2 border-brand-gold pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-my-4 sm:-ml-4 sm:h-[calc(100%+2rem)] sm:pl-4"
+                        animate={{
+                          backgroundColor: flash
+                            ? [rowStartColor, "rgba(62, 62, 62, 1)", rowStartColor]
+                            : "rgba(62, 62, 62, 1)",
+                        }}
+                        transition={flash
+                          ? { duration: 2, ease: "easeInOut", repeat: Infinity }
+                          : { duration: 0 }}
+                        className="sticky left-0 z-40 -my-3 -ml-3 flex h-[calc(100%+1.5rem)] flex-col justify-center border-r-2 border-brand-dark-gray pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-my-4 sm:-ml-4 sm:h-[calc(100%+2rem)] sm:pl-4"
                       >
                         <div className="text-xs font-bold text-brand-light-gray sm:text-sm lg:text-base">{definition.name}</div>
                         <div className="text-[9px] text-brand-medium-gray sm:text-[10px] lg:text-xs">{definition.name}</div>
