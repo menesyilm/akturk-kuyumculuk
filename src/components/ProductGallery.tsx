@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Image from 'next/image';
+import cloudinaryImageLoader from '@/lib/cloudinaryImageLoader';
 import Link from 'next/link';
 
 interface Product {
@@ -110,7 +111,7 @@ export default function ProductGallery({ className }: { className?: string }) {
                   src={p.image}
                   alt={p.name}
                   fill
-                  unoptimized
+                  loader={cloudinaryImageLoader}
                   sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw"
                   onLoad={() => setLoadedImages((current) => ({ ...current, [imageKey]: true }))}
                   className={`object-cover object-top transition-all duration-500 group-hover:scale-110 ${loadedImages[imageKey] ? "opacity-100" : "opacity-0"}`}

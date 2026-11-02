@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import cloudinaryImageLoader from '@/lib/cloudinaryImageLoader';
 import { Search, X } from 'lucide-react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -153,6 +154,7 @@ export default function SearchBox({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2 }}
+                    data-lenis-prevent
                     className="mt-2 bg-brand-black/90 border-2 border-brand-gold max-h-[400px] overflow-y-auto rounded-sm scrollbar-brand"
                   >
                     {searchResults.length > 0 ? searchResults.map((product) => (
@@ -163,7 +165,7 @@ export default function SearchBox({
                         className="flex items-center gap-4 p-4 hover:bg-brand-gold/10 border-b border-brand-medium-gray/30 last:border-b-0 transition-colors"
                       >
                         <div className="relative w-14 h-14 flex-shrink-0">
-                          <Image src={product.image} alt={product.name} fill unoptimized className="object-cover rounded-sm" />
+                          <Image src={product.image} alt={product.name} fill loader={cloudinaryImageLoader} sizes="56px" className="object-cover rounded-sm" />
                         </div>
                         <div>
                           <p className="text-white font-semibold text-base">{product.name}</p>
@@ -209,6 +211,7 @@ export default function SearchBox({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
+              data-lenis-prevent
               className="absolute top-full left-0 right-0 mt-1 bg-brand-black border border-brand-gold/60 max-h-[280px] overflow-y-auto z-50 rounded-sm"
             >
               {searchResults.length > 0 ? searchResults.map((product) => (
@@ -219,7 +222,7 @@ export default function SearchBox({
                   className="flex items-center gap-3 p-2.5 hover:bg-brand-gold/10 border-b border-brand-medium-gray/20 last:border-b-0 transition-colors"
                 >
                   <div className="relative w-10 h-10 flex-shrink-0">
-                    <Image src={product.image} alt={product.name} fill unoptimized className="object-cover rounded-sm" />
+                    <Image src={product.image} alt={product.name} fill loader={cloudinaryImageLoader} sizes="40px" className="object-cover rounded-sm" />
                   </div>
                   <div>
                     <p className="text-white font-semibold text-xs">{product.name}</p>
@@ -258,7 +261,7 @@ export default function SearchBox({
                 autoFocus
               />
               {searchQuery && searchResults.length > 0 && (
-                <div className="absolute top-full right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl max-h-[288px] overflow-y-auto z-50 w-64 sm:w-80">
+                <div data-lenis-prevent className="absolute top-full right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl max-h-[288px] overflow-y-auto z-50 w-64 sm:w-80">
                   {searchResults.map((product) => (
                     <Link
                       key={`${product.category}-${product.id}`}
@@ -267,7 +270,7 @@ export default function SearchBox({
                       className="flex items-center gap-3 p-3 hover:bg-brand-light-gray/10 border-b border-brand-medium-gray last:border-b-0 transition-colors"
                     >
                       <div className="relative w-10 h-10 flex-shrink-0">
-                        <Image src={product.image} alt={product.name} fill unoptimized className="object-cover" />
+                        <Image src={product.image} alt={product.name} fill loader={cloudinaryImageLoader} sizes="40px" className="object-cover" />
                       </div>
                       <div>
                         <p className="text-brand-black font-semibold text-xs">{product.name}</p>

@@ -73,7 +73,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="fixed inset-0 bg-brand-dark-gray flex items-center justify-center overflow-y-auto px-3 sm:px-4 lg:px-6">
+    <div data-lenis-prevent className="fixed inset-0 bg-brand-dark-gray flex items-center justify-center overflow-y-auto px-3 sm:px-4 lg:px-6">
       <div className="max-w-md w-full">
         {/* Logo/Başlık */}
         <div className="text-center mb-8 sm:mb-10 lg:mb-12">

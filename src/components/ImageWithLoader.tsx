@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image, { type ImageProps } from 'next/image';
+import cloudinaryImageLoader from '@/lib/cloudinaryImageLoader';
 
 interface ImageWithLoaderProps extends ImageProps {
   loaderClassName?: string;
@@ -28,6 +29,8 @@ export default function ImageWithLoader({
       )}
       <Image
         {...props}
+        unoptimized={false}
+        loader={cloudinaryImageLoader}
         src={src}
         className={className}
         style={{ ...style, opacity: loaded ? style?.opacity : 0 }}

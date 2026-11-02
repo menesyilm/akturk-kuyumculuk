@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Image from 'next/image';
+import cloudinaryImageLoader from '@/lib/cloudinaryImageLoader';
 import Link from 'next/link';
 
 interface Product {
@@ -126,16 +127,18 @@ export default function FeaturedProducts() {
                   <Image
                     src={product.image}
                     alt={product.name}
-                    unoptimized
+                    loader={cloudinaryImageLoader}
                     fill
+                    sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
                     className="object-cover transition-opacity duration-300 group-hover:opacity-0"
                   />
                   {product.image2 && (
                     <Image
                       src={product.image2}
                       alt={`${product.name} - 2`}
-                      unoptimized
+                      loader={cloudinaryImageLoader}
                       fill
+                      sizes="(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 25vw"
                       className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     />
                   )}

@@ -105,7 +105,7 @@ export default function Sidebar() {
             />
           </div>
           {/* Menu Items */}
-          <div className="flex-1 overflow-y-auto py-4">
+          <div data-lenis-prevent className="flex-1 overflow-y-auto py-4">
             <div className="space-y-1 px-2">
               {menuItems.map((item) => (
                 <Link
