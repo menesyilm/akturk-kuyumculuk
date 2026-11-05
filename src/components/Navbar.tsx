@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { BadgeCheck } from 'lucide-react';
 import SearchBox from './SearchBox';
 
 export default function Navbar() {
@@ -12,10 +13,11 @@ export default function Navbar() {
     { name: 'YÜZÜK VE KÜPE', href: '/urunler/yuzukvekupe' },
     { name: 'SET', href: '/urunler/set' },
     { name: 'ALTIN FİYATLARI', href: '/altin-fiyatlari' },
+    { name: 'SERTİFİKA DOĞRULA', href: '/sertifika', featured: true },
   ];
 
   return (
-    <nav className="hidden lg:block fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
+    <nav aria-label="Ana menü" className="hidden lg:block fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
       {/* Orta Kısım - Logo */}
       <div className="border-b border-brand-medium-gray">
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,12 +58,12 @@ export default function Navbar() {
                 inputWidth="xl:w-56 lg:w-40"
                 iconSize="xl:w-8 xl:h-8 lg:w-6 lg:h-6"
               />
-              <a
+              <Link
                 href="/iletisim"
                  className="text-xs block btn-primary text-brand-black px-1.5 py-1.5"
               >
                 Bize Ulaşın
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -76,8 +78,13 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="xl:text-lg lg:text-sm font-bold text-black hover:text-brand-gold transition-colors whitespace-nowrap border-b-2 border-transparent hover:border-brand-gold py-1"
+                  className={`xl:text-lg lg:text-sm font-bold transition-colors whitespace-nowrap border-b-2 py-1 ${
+                    item.featured
+                      ? 'text-brand-gold border-brand-gold flex items-center gap-1.5'
+                      : 'text-black border-transparent hover:text-brand-gold hover:border-brand-gold'
+                  }`}
                 >
+                  {item.featured && <BadgeCheck aria-hidden="true" className="h-4 w-4" />}
                   {item.name}
                 </Link>
               ))}

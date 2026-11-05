@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Clock, Instagram } from 'lucide-react';
+import { BadgeCheck, Clock, Instagram } from 'lucide-react';
 
 export default function Footer() {
   const panelVariants = {
@@ -77,6 +77,9 @@ export default function Footer() {
               </Link>
               <Link href="/uretim" className="text-brand-gold hover:opacity-75 transition-opacity text-xs sm:text-sm lg:text-base xl:text-lg font-bold">
                 Üretim
+              </Link>
+              <Link href="/sertifika" className="inline-flex items-center gap-1.5 text-brand-gold hover:opacity-75 transition-opacity text-xs sm:text-sm lg:text-base xl:text-lg font-bold">
+                <BadgeCheck aria-hidden="true" className="h-4 w-4" /> Sertifika Doğrula
               </Link>
             </motion.div>
 

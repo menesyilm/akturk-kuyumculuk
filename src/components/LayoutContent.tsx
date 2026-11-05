@@ -18,6 +18,11 @@ export default function LayoutContent({
   return (
     <>
       {!hideNavigation && (
+        <a href="#ana-icerik" className="skip-link">
+          Ana içeriğe geç
+        </a>
+      )}
+      {!hideNavigation && (
         <>
           {/* Desktop: Navbar */}
           <Navbar />
@@ -25,7 +30,7 @@ export default function LayoutContent({
           <Sidebar />
         </>
       )}
-      <main className={hideNavigation ? "" : "pt-16 lg:pt-30"}>
+      <main id="ana-icerik" tabIndex={-1} className={hideNavigation ? "" : "pt-16 lg:pt-30"}>
         {children}
       </main>
       {!hideNavigation && <Footer />}

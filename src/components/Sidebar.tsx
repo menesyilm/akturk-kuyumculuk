@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X } from 'lucide-react';
+import { BadgeCheck, Menu, X } from 'lucide-react';
 import SearchBox from './SearchBox';
 
 export default function Sidebar() {
@@ -14,12 +14,13 @@ export default function Sidebar() {
     { name: 'YÜZÜK VE KÜPE', href: '/urunler/yuzukvekupe' },
     { name: 'SET', href: '/urunler/set' },
     { name: 'ALTIN FİYATLARI', href: '/altin-fiyatlari' },
+    { name: 'SERTİFİKA DOĞRULA', href: '/sertifika', featured: true },
   ];
 
   return (
     <>
       {/* Mobile Navbar - Sadece mobilde görünür */}
-      <nav className="lg:hidden fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50 overflow-hidden">
+      <nav aria-label="Mobil menü" className="lg:hidden fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50 overflow-hidden">
           {/* Orta Kısım - Logo ve Butonlar */}
         <div className="border-b border-brand-medium-gray">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -56,16 +57,18 @@ export default function Sidebar() {
 
               {/* Bize Ulaşın + Hamburger Menu Button (sağ) */}
               <div className="flex items-center gap-2">
-                <a
+                <Link
                   href="/iletisim"
                   className="text-xs block btn-primary text-brand-black px-1.5 py-1.5"
                 >
                   Bize Ulaşın
-                </a>
+                </Link>
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
-                  aria-label="Menu"
+                  aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+                  aria-expanded={mobileMenuOpen}
+                  aria-controls="mobil-yan-menu"
                 >
                   {mobileMenuOpen ? (
                     <X className="w-6 h-6" />
@@ -81,6 +84,8 @@ export default function Sidebar() {
 
       {/* Sidebar Menü - Sağdan Açılır */}
       <div
+        id="mobil-yan-menu"
+        aria-hidden={!mobileMenuOpen}
         className={`lg:hidden fixed inset-y-0 right-0 w-full sm:w-80 bg-brand-black border-l-2 border-brand-gold transform transition-transform duration-300 ease-in-out z-50 ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
@@ -92,6 +97,7 @@ export default function Sidebar() {
             <button
               onClick={() => setMobileMenuOpen(false)}
               className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
+              aria-label="Menüyü kapat"
             >
               <X className="w-5 h-5" />
             </button>
@@ -112,8 +118,13 @@ export default function Sidebar() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block px-4 py-3 text-brand-light-gray hover:text-brand-gold hover:bg-brand-dark-gray  transition-colors font-semibold text-xs"
+                  className={`px-4 py-3 hover:bg-brand-dark-gray transition-colors font-semibold text-sm ${
+                    item.featured
+                      ? 'flex items-center gap-2 text-brand-gold border border-brand-gold/60'
+                      : 'block text-brand-light-gray hover:text-brand-gold'
+                  }`}
                 >
+                  {item.featured && <BadgeCheck aria-hidden="true" className="h-5 w-5" />}
                   {item.name}
                 </Link>
               ))}
