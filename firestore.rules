@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /yuzukvekupe/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /bileklik/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /kolye/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /set/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Public certificate verification exposes technical data only.
+    // Certificate writes remain restricted to authenticated staff.
+    match /sertifikalar/{certificateId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Legacy collection kept for backward compatibility.
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}

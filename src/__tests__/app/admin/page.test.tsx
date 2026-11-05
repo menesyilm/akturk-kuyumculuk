@@ -1,12 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import type { ImgHTMLAttributes } from 'react';
+
+/* eslint-disable @next/next/no-img-element */
 
 // Firebase Firestore mock
 const mockGetDocs = jest.fn();
 
 jest.mock('firebase/firestore', () => ({
     collection: jest.fn(),
-    getDocs: (...args: any[]) => mockGetDocs(...args),
+    getDocs: (...args: unknown[]) => mockGetDocs(...args),
     deleteDoc: jest.fn(),
     doc: jest.fn(),
 }));
@@ -43,7 +46,7 @@ jest.mock('next/navigation', () => ({
 // next/image mock
 jest.mock('next/image', () => ({
     __esModule: true,
-    default: (props: any) => <img {...props} />,
+    default: (props: ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt ?? ''} />,
 }));
 
 // ConfirmPopup mock

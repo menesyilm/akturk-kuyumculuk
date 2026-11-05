@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
 import Link from 'next/link'
@@ -20,7 +20,6 @@ interface Product {
 
 export default function Page() {
   const [products, setProducts] = useState<Product[]>([])
-  const [sortedProducts, setSortedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState<SortOption>('recommended')
 
@@ -33,7 +32,6 @@ export default function Page() {
           ...doc.data()
         })) as Product[]
         setProducts(productsData)
-        setSortedProducts(productsData)
       } catch (error) {
         console.error('Ürünler yüklenirken hata:', error)
       } finally {
@@ -44,23 +42,18 @@ export default function Page() {
     fetchProducts()
   }, [])
 
-  useEffect(() => {
-    let sorted = [...products];
+  const sortedProducts = useMemo(() => {
+    const sorted = [...products];
 
     switch (sortBy) {
       case 'name-asc':
-        sorted.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
-        break;
+        return sorted.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
       case 'name-desc':
-        sorted.sort((a, b) => b.name.localeCompare(a.name, 'tr'));
-        break;
+        return sorted.sort((a, b) => b.name.localeCompare(a.name, 'tr'));
       case 'recommended':
       default:
-        sorted = products;
-        break;
+        return sorted;
     }
-
-    setSortedProducts(sorted);
   }, [sortBy, products]);
 
   if (loading) {

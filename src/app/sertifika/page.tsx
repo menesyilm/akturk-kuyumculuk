@@ -1,300 +1,346 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, CheckCircle, XCircle, QrCode, ShieldCheck } from 'lucide-react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { CheckCircle, QrCode, Search, ShieldCheck, XCircle } from 'lucide-react';
+import { collection, getDocs, limit, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Image from 'next/image';
 import Link from 'next/link';
 
-interface Product {
-  id: string;
-  name: string;
-  image: string;
-  category: string;
-  collectionName: string;
-  productCode?: string;
+interface CertificatePart {
+  type?: string;
+  code?: string;
+  markCode?: string;
+  sira?: string;
   gram?: string;
   ayar?: string;
-  certificateUrl?: string;
+  color?: string;
+  stone?: string;
+  batchNumber?: string;
+}
+
+interface CertificateRecord {
+  id: string;
+  source: 'certificate' | 'catalog';
+  collectionName?: string;
+  name?: string;
+  productName?: string;
+  image?: string;
+  category?: string;
+  productType?: string;
+  productCode?: string;
+  certificateNumber?: string;
   certificateDate?: string;
+  certificateStatus?: string;
+  physicalCount?: number;
+  gram?: string;
+  ayar?: string;
+  goldColor?: string;
+  stoneType?: string;
+  batchNumber?: string;
+  sira?: string;
+  warrantyInfo?: string;
+  careInstructions?: string;
+  warrantyPolicyVersion?: number;
+  certificatePartsJson?: string;
+  parts?: CertificatePart[];
+}
+
+function parseParts(value?: string): CertificatePart[] {
+  if (!value) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) ? (parsed as CertificatePart[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function displayValue(value?: string | number) {
+  return value === undefined || value === null || value === '' ? '—' : String(value);
 }
 
 export default function SertifikaPage() {
   const [productCode, setProductCode] = useState('');
-  const [product, setProduct] = useState<Product | null>(null);
+  const [record, setRecord] = useState<CertificateRecord | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchPerformed, setSearchPerformed] = useState(false);
 
-  const searchProduct = async () => {
-    if (!productCode.trim()) {
-      setError('Lütfen bir ürün kodu giriniz');
+  const performSearch = useCallback(async (rawCode: string) => {
+    const normalizedCode = rawCode.trim().toUpperCase();
+    if (!normalizedCode) {
+      setError('Lütfen ürün, sertifika, takip veya kazıma kodunu giriniz.');
       return;
     }
 
     setLoading(true);
     setError('');
-    setProduct(null);
+    setRecord(null);
     setSearchPerformed(false);
 
     try {
+      const certificateQuery = query(
+        collection(db, 'sertifikalar'),
+        where('lookupCodes', 'array-contains', normalizedCode),
+        limit(1)
+      );
+      const certificateSnapshot = await getDocs(certificateQuery);
+
+      if (!certificateSnapshot.empty) {
+        const certificateDocument = certificateSnapshot.docs[0];
+        const data = certificateDocument.data();
+        setRecord({
+          id: certificateDocument.id,
+          source: 'certificate',
+          ...data,
+          parts: parseParts(data.certificatePartsJson as string | undefined),
+        } as CertificateRecord);
+        setSearchPerformed(true);
+        return;
+      }
+
       const categories = ['bileklik', 'kolye', 'yuzukvekupe', 'set'];
-      let foundProduct: Product | null = null;
-
       for (const category of categories) {
-        const q = query(
+        const catalogQuery = query(
           collection(db, category),
-          where('productCode', '==', productCode.trim().toUpperCase())
+          where('productCode', '==', normalizedCode),
+          limit(1)
         );
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          const doc = querySnapshot.docs[0];
-          foundProduct = {
-            id: doc.id,
+        const catalogSnapshot = await getDocs(catalogQuery);
+        if (!catalogSnapshot.empty) {
+          const catalogDocument = catalogSnapshot.docs[0];
+          setRecord({
+            id: catalogDocument.id,
+            source: 'catalog',
             collectionName: category,
-            category: category,
-            ...doc.data(),
-          } as Product;
-          break;
+            category,
+            certificateStatus: 'active',
+            ...catalogDocument.data(),
+          } as CertificateRecord);
+          setSearchPerformed(true);
+          return;
         }
       }
 
       setSearchPerformed(true);
-
-      if (foundProduct) {
-        setProduct(foundProduct);
-      } else {
-        setError('Bu ürün kodu ile kayıtlı bir ürün bulunamadı');
-      }
-    } catch (err) {
-      console.error('Arama hatası:', err);
-      setError('Bir hata oluştu. Lütfen tekrar deneyiniz.');
+      setError('Bu kodla eşleşen aktif bir ürün veya sertifika kaydı bulunamadı.');
+    } catch (searchError) {
+      console.error('Sertifika arama hatası:', searchError);
+      setSearchPerformed(true);
+      setError('Doğrulama sistemine şu anda ulaşılamıyor. Lütfen daha sonra tekrar deneyiniz.');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      searchProduct();
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const urlCode = params.get('code') || params.get('kod');
+    if (urlCode) {
+      const normalizedCode = urlCode.trim().toUpperCase();
+      const timer = window.setTimeout(() => {
+        setProductCode(normalizedCode);
+        void performSearch(normalizedCode);
+      }, 0);
+      return () => window.clearTimeout(timer);
     }
-  };
+  }, [performSearch]);
+
+  const isActive = record?.certificateStatus !== 'cancelled';
+  const parts = record?.parts || [];
+  const title = record?.productName || record?.name || record?.productType || 'Sertifikalı Ürün';
 
   return (
-    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black pt-5 sm:pt-10 lg:pt-15 pb-8 sm:pb-12 lg:pb-16">
-      <div className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Başlık */}
+    <div className="min-h-screen bg-brand-black pt-6 sm:pt-10 pb-12 sm:pb-16">
+      <div className="max-w-5xl mx-auto px-3 sm:px-5 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-6 sm:mb-8 lg:mb-12"
+          transition={{ duration: 0.5 }}
+          className="text-center mb-7 sm:mb-10"
         >
-          <div className="flex justify-center mb-3 sm:mb-4">
-            <ShieldCheck className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-brand-gold" />
+          <div className="flex justify-center mb-3">
+            <ShieldCheck className="w-14 h-14 sm:w-16 sm:h-16 text-brand-gold" />
           </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl mb-2 sm:mb-3 lg:mb-4 font-serif text-brand-gold">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-brand-gold mb-3">
             Sertifika Doğrulama
           </h1>
-          <p className="text-brand-light-gray text-xs sm:text-sm lg:text-base xl:text-lg">
-            Ürün kodunuzu girerek sertifika bilgilerini görüntüleyebilirsiniz
+          <p className="text-brand-light-gray text-sm sm:text-base">
+            Ürün, sertifika, takip veya ürün üzerindeki kazıma koduyla sorgulama yapabilirsiniz.
           </p>
         </motion.div>
 
-        {/* Arama Kutusu */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-brand-dark-gray ring-2 ring-brand-gold p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8"
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-brand-dark-gray ring-2 ring-brand-gold p-4 sm:p-6 lg:p-8 mb-7"
         >
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
-              <label htmlFor="productCode" className="block text-brand-light-gray text-xs sm:text-sm lg:text-base mb-2">
-                Ürün Kodu
-              </label>
+              <label htmlFor="productCode" className="block text-brand-light-gray text-sm mb-2">Doğrulama Kodu</label>
               <input
                 id="productCode"
                 type="text"
-                placeholder="Örn: AK-12345"
+                autoComplete="off"
+                placeholder="Örn: BLK-261104-001 veya kazıma kodu"
                 value={productCode}
-                onChange={(e) => setProductCode(e.target.value.toUpperCase())}
-                onKeyPress={handleKeyPress}
-                className="w-full px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm lg:text-base bg-brand-black text-brand-light-gray border-2 border-brand-medium-gray focus:border-brand-gold focus:outline-none transition-colors"
+                onChange={(event) => setProductCode(event.target.value.toUpperCase())}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') void performSearch(productCode);
+                }}
+                className="w-full px-4 py-3 bg-brand-black text-brand-light-gray border-2 border-brand-medium-gray focus:border-brand-gold focus:outline-none text-sm sm:text-base"
               />
             </div>
             <div className="flex items-end">
               <button
-                onClick={searchProduct}
+                type="button"
+                onClick={() => void performSearch(productCode)}
                 disabled={loading}
-                className="w-full sm:w-auto btn-primary text-brand-black px-4 sm:px-6 lg:px-8 py-2 sm:py-3 text-xs sm:text-sm lg:text-base flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto btn-primary text-brand-black px-7 py-3 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-brand-black"></div>
-                    <span>Aranıyor...</span>
-                  </>
+                  <><span className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand-black" /> Aranıyor...</>
                 ) : (
-                  <>
-                    <div className='flex items-center text-center justify-center gap-2'>
-                      <Search className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Sorgula</span>
-                    </div>
-                  </>
+                  <><Search className="w-5 h-5" /> Sorgula</>
                 )}
               </button>
             </div>
           </div>
-
-          {/* QR Kod Bilgisi */}
-          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-brand-gold/30">
-            <div className="flex items-center gap-2 text-brand-light-gray text-xs sm:text-sm">
-              <QrCode className="w-4 h-4 sm:w-5 sm:h-5 text-brand-gold" />
-              <span>QR kod okutma özelliği yakında eklenecektir</span>
-            </div>
+          <div className="mt-4 pt-4 border-t border-brand-gold/30 flex items-start gap-2 text-brand-light-gray text-xs sm:text-sm">
+            <QrCode className="w-5 h-5 text-brand-gold flex-shrink-0" />
+            <span>Sertifika üzerindeki QR kod okutulduğunda doğrulama kodu otomatik sorgulanır.</span>
           </div>
         </motion.div>
 
-        {/* Hata Mesajı */}
         {error && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-red-900/20 ring-2 ring-red-500 p-4 sm:p-6 mb-6 sm:mb-8"
-          >
-            <div className="flex items-center gap-2 sm:gap-3">
-              <XCircle className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 flex-shrink-0" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-950/40 ring-2 ring-red-500 p-5 mb-7">
+            <div className="flex items-start gap-3">
+              <XCircle className="w-7 h-7 text-red-500 flex-shrink-0" />
               <div>
-                <h3 className="text-red-500 font-semibold text-sm sm:text-base lg:text-lg mb-1">Ürün Bulunamadı</h3>
-                <p className="text-red-400 text-xs sm:text-sm">{error}</p>
+                <h2 className="text-red-400 font-semibold text-lg">Kayıt Doğrulanamadı</h2>
+                <p className="text-red-300 text-sm mt-1">{error}</p>
               </div>
             </div>
           </motion.div>
         )}
 
-        {/* Ürün Bulundu */}
-        {product && searchPerformed && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-brand-dark-gray ring-2 ring-brand-gold overflow-hidden"
-          >
-            {/* Başarı Banner */}
-            <div className="bg-green-900/20 border-b-2 border-green-500 p-3 sm:p-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-500" />
+        {record && searchPerformed && (
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="bg-brand-dark-gray ring-2 ring-brand-gold overflow-hidden">
+            <div className={`${isActive ? 'bg-green-950/50 border-green-500' : 'bg-red-950/50 border-red-500'} border-b-2 p-4 sm:p-5`}>
+              <div className="flex items-start gap-3">
+                {isActive ? <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0" /> : <XCircle className="w-8 h-8 text-red-500 flex-shrink-0" />}
                 <div>
-                  <h3 className="text-green-500 font-semibold text-sm sm:text-base lg:text-lg">Sertifika Doğrulandı</h3>
-                  <p className="text-green-400 text-xs sm:text-sm">Bu ürün kayıtlı ve sertifikalıdır</p>
+                  <h2 className={`${isActive ? 'text-green-400' : 'text-red-400'} font-semibold text-lg sm:text-xl`}>
+                    {isActive ? 'Sertifika Doğrulandı' : 'Sertifika Geçersiz / İptal Edilmiş'}
+                  </h2>
+                  <p className={`${isActive ? 'text-green-300' : 'text-red-300'} text-sm mt-1`}>
+                    {isActive ? 'Kod, Aktürk Kuyumculuk kayıt sistemiyle eşleşmektedir.' : 'Bu belge güncel sistemde aktif değildir. Mağaza ile iletişime geçiniz.'}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4 sm:gap-6 p-4 sm:p-6 lg:p-8">
-              {/* Ürün Görseli */}
-              <div className="relative h-48 sm:h-64 md:h-80 bg-brand-black ring-1 ring-brand-gold overflow-hidden">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  unoptimized
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              {/* Ürün Bilgileri */}
-              <div className="space-y-3 sm:space-y-4">
-                <div>
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-semibold text-brand-gold mb-1 sm:mb-2">{product.name}</h2>
-                  <p className="text-brand-light-gray uppercase text-xs sm:text-sm">{product.category}</p>
-                </div>
-
-                <div className="border-t border-brand-gold/30 pt-3 sm:pt-4 space-y-2 sm:space-y-3">
-                  <div className="flex justify-between text-xs sm:text-sm lg:text-base">
-                    <span className="text-brand-light-gray">Ürün Kodu:</span>
-                    <span className="text-brand-gold font-semibold">{product.productCode}</span>
-                  </div>
-
-                  {product.gram && (
-                    <div className="flex justify-between text-xs sm:text-sm lg:text-base">
-                      <span className="text-brand-light-gray">Gram:</span>
-                      <span className="text-brand-gold">{product.gram}GR</span>
-                    </div>
-                  )}
-
-                  {product.ayar && (
-                    <div className="flex justify-between text-xs sm:text-sm lg:text-base">
-                      <span className="text-brand-light-gray">Ayar:</span>
-                      <span className="text-brand-gold">{product.ayar}</span>
-                    </div>
-                  )}
-
-                  {product.certificateDate && (
-                    <div className="flex justify-between text-xs sm:text-sm lg:text-base">
-                      <span className="text-brand-light-gray">Sertifika Tarihi:</span>
-                      <span className="text-brand-gold">{product.certificateDate}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Sertifika Belgesi Linki */}
-                {product.certificateUrl && (
-                  <div className="pt-3 sm:pt-4">
-                    <a
-                      href={product.certificateUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full btn-primary text-brand-black py-2 sm:py-3 text-center text-xs sm:text-sm lg:text-base"
-                    >
-                      Sertifika Belgesini Görüntüle
-                    </a>
+            <div className="p-4 sm:p-6 lg:p-8">
+              <div className={`grid ${record.image ? 'md:grid-cols-[280px_1fr]' : ''} gap-6`}>
+                {record.image && (
+                  <div className="relative h-64 bg-brand-black ring-1 ring-brand-gold overflow-hidden">
+                    <Image src={record.image} alt={title} unoptimized fill className="object-cover" />
                   </div>
                 )}
 
-                {/* Ürün Detayına Git */}
-                <Link
-                  href={`/urunler/${product.collectionName}/${product.id}`}
-                  className="block w-full bg-brand-black text-brand-gold ring-2 ring-brand-gold hover:bg-brand-gold hover:text-brand-black transition-all py-2 sm:py-3 text-center font-semibold text-xs sm:text-sm lg:text-base"
-                >
+                <div>
+                  <div className="mb-5">
+                    <p className="text-brand-light-gray text-xs uppercase tracking-[0.2em] mb-2">Aktürk Kuyumculuk Ürün Kimliği</p>
+                    <h2 className="text-2xl sm:text-3xl text-brand-gold font-serif">{title}</h2>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-px bg-brand-gold/30 ring-1 ring-brand-gold/30">
+                    {[
+                      ['Ana Ürün Kodu', record.productCode],
+                      ['Sertifika No', record.certificateNumber],
+                      ['Sertifika Tarihi', record.certificateDate],
+                      ['Ürün / Kategori', record.productType || record.category],
+                      ['Fiziksel Ürün Sayısı', record.physicalCount || (parts.length || 1)],
+                      ['Toplam Net Gram', record.gram ? `${record.gram} gr` : undefined],
+                      ['Ayar', record.ayar],
+                      ['Altın Rengi', record.goldColor],
+                      ['Taş Durumu', record.stoneType],
+                      ['Sıra', record.sira],
+                      ['Üretim Parti No', record.batchNumber],
+                      ['Garanti Politikası', record.warrantyPolicyVersion ? `Sürüm ${record.warrantyPolicyVersion}` : undefined],
+                    ].map(([label, value]) => (
+                      <div key={String(label)} className="bg-brand-black p-3 sm:p-4">
+                        <p className="text-brand-light-gray text-xs mb-1">{label}</p>
+                        <p className="text-brand-gold text-sm sm:text-base font-semibold break-words">{displayValue(value)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {parts.length > 0 && (
+                <div className="mt-7">
+                  <h3 className="text-brand-gold text-xl font-semibold mb-4">Ürün ve Kod Dökümü</h3>
+                  <div className="overflow-x-auto ring-1 ring-brand-gold/40">
+                    <table className="w-full min-w-[780px] text-sm">
+                      <thead className="bg-brand-gold text-brand-black">
+                        <tr>
+                          <th className="text-left p-3">No</th><th className="text-left p-3">Ürün</th><th className="text-left p-3">Takip Kodu</th><th className="text-left p-3">Kazıma</th><th className="text-left p-3">Gram / Ayar</th><th className="text-left p-3">Renk / Taş</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {parts.map((part, index) => (
+                          <tr key={`${part.code || 'part'}-${index}`} className="border-b border-brand-gold/20 last:border-0">
+                            <td className="p-3 text-brand-light-gray">{index + 1}</td>
+                            <td className="p-3 text-brand-light-gray">{displayValue(part.type)}{part.sira ? ` • Sıra ${part.sira}` : ''}</td>
+                            <td className="p-3 text-brand-gold font-semibold">{displayValue(part.code)}</td>
+                            <td className="p-3 text-brand-gold font-semibold">{displayValue(part.markCode)}</td>
+                            <td className="p-3 text-brand-light-gray">{displayValue(part.gram)} gr / {displayValue(part.ayar)}</td>
+                            <td className="p-3 text-brand-light-gray">{displayValue(part.color)} / {displayValue(part.stone)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {(record.warrantyInfo || record.careInstructions) && (
+                <div className="grid lg:grid-cols-2 gap-5 mt-7">
+                  {record.warrantyInfo && (
+                    <section className="bg-brand-black ring-1 ring-brand-gold/40 p-5">
+                      <h3 className="text-brand-gold text-lg font-semibold mb-3">Garanti ve Hizmet Kapsamı</h3>
+                      <p className="text-brand-light-gray text-sm leading-6 whitespace-pre-line">{record.warrantyInfo}</p>
+                    </section>
+                  )}
+                  {record.careInstructions && (
+                    <section className="bg-brand-black ring-1 ring-brand-gold/40 p-5">
+                      <h3 className="text-brand-gold text-lg font-semibold mb-3">Bakım ve Kullanım</h3>
+                      <p className="text-brand-light-gray text-sm leading-6 whitespace-pre-line">{record.careInstructions}</p>
+                    </section>
+                  )}
+                </div>
+              )}
+
+              {record.source === 'catalog' && record.collectionName && (
+                <Link href={`/urunler/${record.collectionName}/${record.id}`} className="block mt-6 w-full bg-brand-black text-brand-gold ring-2 ring-brand-gold hover:bg-brand-gold hover:text-brand-black transition-all py-3 text-center font-semibold">
                   Ürün Detayına Git
                 </Link>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
 
-        {/* Bilgilendirme */}
         {!searchPerformed && !loading && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="bg-brand-dark-gray ring-1 ring-brand-gold/50 p-4 sm:p-6 lg:p-8 mt-6 sm:mt-8"
-          >
-            <h3 className="text-brand-gold font-semibold text-base sm:text-lg lg:text-xl mb-3 sm:mb-4">Sertifika Sistemi Hakkında</h3>
-            <ul className="space-y-2 text-brand-light-gray text-xs sm:text-sm lg:text-base">
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold mt-1">•</span>
-                <span>Her ürünümüzün benzersiz bir ürün kodu bulunmaktadır</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold mt-1">•</span>
-                <span>Ürün kodunu kullanarak sertifika doğrulaması yapabilirsiniz</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold mt-1">•</span>
-                <span>Tüm ürünlerimiz kalite garantisi altındadır</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-brand-gold mt-1">•</span>
-                <span>Sertifika belgelerinizi dijital olarak görüntüleyebilirsiniz</span>
-              </li>
-            </ul>
-          </motion.div>
+          <div className="bg-brand-dark-gray ring-1 ring-brand-gold/50 p-5 sm:p-7 mt-7">
+            <h3 className="text-brand-gold font-semibold text-lg mb-3">Güvenli Doğrulama</h3>
+            <p className="text-brand-light-gray text-sm leading-6">
+              Bu sayfada yalnızca ürüne ve sertifikaya ait teknik bilgiler gösterilir. Müşteri adı, iletişim, ödeme ve satış tutarı bilgileri internete aktarılmaz.
+            </p>
+          </div>
         )}
       </div>
     </div>

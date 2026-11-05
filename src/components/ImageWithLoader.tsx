@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image, { type ImageProps } from 'next/image';
 import cloudinaryImageLoader from '@/lib/cloudinaryImageLoader';
 
@@ -9,6 +9,32 @@ interface ImageWithLoaderProps extends ImageProps {
 }
 
 export default function ImageWithLoader({
+  alt,
+  className = '',
+  loaderClassName = '',
+  onLoad,
+  src,
+  style,
+  ...props
+}: ImageWithLoaderProps) {
+  const imageKey = typeof src === 'string' ? src : JSON.stringify(src);
+
+  return (
+    <ImageWithLoaderContent
+      key={imageKey}
+      {...props}
+      alt={alt}
+      className={className}
+      loaderClassName={loaderClassName}
+      onLoad={onLoad}
+      src={src}
+      style={style}
+    />
+  );
+}
+
+function ImageWithLoaderContent({
+  alt,
   className = '',
   loaderClassName = '',
   onLoad,
@@ -17,8 +43,6 @@ export default function ImageWithLoader({
   ...props
 }: ImageWithLoaderProps) {
   const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => setLoaded(false), [src]);
 
   return (
     <>
@@ -29,6 +53,7 @@ export default function ImageWithLoader({
       )}
       <Image
         {...props}
+        alt={alt}
         unoptimized={false}
         loader={cloudinaryImageLoader}
         src={src}

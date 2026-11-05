@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import cloudinaryImageLoader from '@/lib/cloudinaryImageLoader';
@@ -23,6 +23,18 @@ interface SearchBoxProps {
   alwaysOpen?: boolean;
 }
 
+const subscribeToClient = () => () => undefined;
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
+function subscribeToViewport(callback: () => void) {
+  window.addEventListener('resize', callback);
+  return () => window.removeEventListener('resize', callback);
+}
+
+const getMobileSnapshot = () => window.innerWidth < 1024;
+const getServerMobileSnapshot = () => false;
+
 export default function SearchBox({
   inputWidth = "xl:w-56 lg:w-40 w-25",
   iconSize = "xl:w-8 xl:h-8 lg:w-6 lg:h-6",
@@ -31,19 +43,23 @@ export default function SearchBox({
 }: SearchBoxProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [isMobile, setIsMobile] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(subscribeToClient, getClientSnapshot, getServerSnapshot);
+  const isMobile = useSyncExternalStore(subscribeToViewport, getMobileSnapshot, getServerMobileSnapshot);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+  const searchResults = useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLocaleLowerCase('tr');
+    if (!normalizedQuery) return [];
+    return allProducts.filter((product) =>
+      product.name.toLocaleLowerCase('tr').includes(normalizedQuery)
+    );
+  }, [searchQuery, allProducts]);
+
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQuery('');
   }, []);
 
   // Tüm ürünleri yükle
@@ -66,12 +82,6 @@ export default function SearchBox({
     fetchAllProducts();
   }, []);
 
-  // Arama filtrele
-  useEffect(() => {
-    if (searchQuery.trim() === '') { setSearchResults([]); return; }
-    setSearchResults(allProducts.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())));
-  }, [searchQuery, allProducts]);
-
   // Modal açılınca input'a odaklan
   useEffect(() => {
     if (searchOpen && !isMobile) {
@@ -84,7 +94,7 @@ export default function SearchBox({
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeSearch(); };
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
-  }, []);
+  }, [closeSearch]);
 
   // Mobil: dışarı tıkla kapat
   useEffect(() => {
@@ -94,13 +104,7 @@ export default function SearchBox({
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isMobile]);
-
-  const closeSearch = () => {
-    setSearchOpen(false);
-    setSearchQuery('');
-    setSearchResults([]);
-  };
+  }, [isMobile, closeSearch]);
 
   const handleResultClick = () => {
     closeSearch();
@@ -199,7 +203,7 @@ export default function SearchBox({
             className="w-full py-2 pl-9 pr-8 bg-transparent text-white text-xs focus:outline-none focus:ring-1 focus:ring-brand-gold placeholder-brand-medium-gray"
           />
           {searchQuery && (
-            <button onClick={() => { setSearchQuery(''); setSearchResults([]); }} className="absolute right-2 text-brand-medium-gray hover:text-brand-gold transition-colors">
+            <button onClick={() => setSearchQuery('')} className="absolute right-2 text-brand-medium-gray hover:text-brand-gold transition-colors">
               <X className="w-3.5 h-3.5" />
             </button>
           )}

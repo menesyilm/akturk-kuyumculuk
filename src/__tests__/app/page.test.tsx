@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '@/app/page';
+import type { PropsWithChildren } from 'react';
 
 // ProductGallery componenti oldukça büyük ve kendi içerisinde başka bağımlılıklar içeriyor olabilir.
 // Bu testte ProductGallery'nin içeriğini değil, Home sayfasının davranışını test etmek istediğimiz için mock'luyoruz.
@@ -14,8 +15,8 @@ jest.mock('@/components/ProductGallery', () => {
 // Bu yüzden motion.div'i normal bir div gibi davranacak şekilde mock'luyoruz.
 jest.mock('framer-motion', () => ({
     motion: {
-        div: ({ children, ...props }: any) => (
-            <div {...props}>{children}</div>
+        div: ({ children }: PropsWithChildren) => (
+            <div>{children}</div>
         ),
     },
 }));
