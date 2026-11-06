@@ -30,7 +30,7 @@ export default function LayoutContent({
           <Sidebar />
         </>
       )}
-      <main id="ana-icerik" tabIndex={-1} className={hideNavigation ? "" : "pt-16 lg:pt-30"}>
+      <main id="ana-icerik" tabIndex={-1} className={hideNavigation ? "" : "pt-16 lg:pt-[8.5rem]"}>
         {children}
       </main>
       {!hideNavigation && <Footer />}

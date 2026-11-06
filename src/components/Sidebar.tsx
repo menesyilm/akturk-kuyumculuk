@@ -20,7 +20,7 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Navbar - Sadece mobilde görünür */}
-      <nav aria-label="Mobil menü" className="lg:hidden fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50 overflow-hidden">
+      <nav aria-label="Mobil menü" className="fixed top-0 left-0 right-0 z-50 overflow-hidden border-b border-brand-gold/70 bg-[#141414] shadow-2xl shadow-black/60 lg:hidden">
           {/* Orta Kısım - Logo ve Butonlar */}
         <div className="border-b border-brand-medium-gray">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
