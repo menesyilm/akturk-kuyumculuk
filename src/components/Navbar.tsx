@@ -17,9 +17,9 @@ export default function Navbar() {
   ];
 
   return (
-    <nav aria-label="Ana menü" className="hidden lg:block fixed top-0 left-0 right-0 bg-brand-dark-gray border-b-2 border-brand-gold z-50 shadow-2xl shadow-brand-light-gray/50">
+    <nav aria-label="Ana menü" className="fixed top-0 left-0 right-0 z-50 hidden border-b border-brand-gold/60 bg-[#141414] shadow-2xl shadow-black/60 lg:block">
       {/* Orta Kısım - Logo */}
-      <div className="border-b border-brand-medium-gray">
+      <div className="border-b border-white/10">
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo (sol) */}
@@ -70,18 +70,18 @@ export default function Navbar() {
       </div>
 
       {/* Alt Kısım - Menü */}
-      <div className="bg-white relative z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 bg-[#090909]">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8">
           <div className="flex items-center justify-center h-14 overflow-x-auto">
-            <div className="flex space-x-8">
+            <div className="flex items-center gap-4 xl:gap-7 2xl:gap-8">
               {menuItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`xl:text-lg lg:text-sm font-bold transition-colors whitespace-nowrap border-b-2 py-1 ${
+                  className={`text-xs xl:text-base 2xl:text-lg font-bold transition-colors whitespace-nowrap border-b-2 py-1 ${
                     item.featured
                       ? 'text-brand-gold border-brand-gold flex items-center gap-1.5'
-                      : 'text-black border-transparent hover:text-brand-gold hover:border-brand-gold'
+                      : 'text-white/80 border-transparent hover:text-brand-gold hover:border-brand-gold'
                   }`}
                 >
                   {item.featured && <BadgeCheck aria-hidden="true" className="h-4 w-4" />}
