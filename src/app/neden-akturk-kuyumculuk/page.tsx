@@ -1,542 +1,88 @@
-"use client";
-
-import { Award, Clock, Gem, Calculator, Package, Heart, Users, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { useState, useRef } from 'react';
+import Link from 'next/link';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
+
+const values = [
+  {
+    index: '01',
+    title: 'El işçiliği',
+    text: 'Her parça, hasırın karakterini koruyan ölçü ve oranlarla hazırlanır; form, denge ve kullanım rahatlığı birlikte değerlendirilir.',
+  },
+  {
+    index: '02',
+    title: 'Ürüne özel kayıt',
+    text: 'Ürün kodu, sertifika numarası ve teknik bilgiler aynı kayıtta bir araya gelir. Böylece ürünün kimliği sonradan da doğrulanabilir.',
+  },
+  {
+    index: '03',
+    title: 'Açık ürün bilgisi',
+    text: 'Ayar, gram, renk, üretim tarihi ve ürün içeriği gibi bilgiler sertifika kaydında açık ve anlaşılır biçimde gösterilir.',
+  },
+  {
+    index: '04',
+    title: 'Satış sonrası destek',
+    text: 'Bakım ve kullanım bilgileri ürünle birlikte sunulur; bakım talepleri ürün kaydı üzerinden daha düzenli biçimde takip edilir.',
+  },
+];
 
 export default function NedenAkturkKuyumculuk() {
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string>('');
-  const [isPaused, setIsPaused] = useState(false);
-  const isDraggingRef = useRef(false);
-  const hasMoved = useRef(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  // Galeri resimleri - Bu dizini kendinize göre güncelleyebilirsiniz
-  const galleryImages = [
-    '/images/gallery/1.jpg',
-    '/images/gallery/2.jpg',
-    '/images/gallery/3.jpg',
-    '/images/gallery/4.jpg',
-    '/images/gallery/5.jpg',
-    '/images/gallery/6.jpg',
-    '/images/gallery/7.jpg',
-    '/images/gallery/8.jpg',
-  ];
-
-  // Görselleri birçok kez kopyala (gerçek sonsuz döngü için)
-  const infiniteImages = Array(10).fill(galleryImages).flat();
-
-  const handleImageClick = (image: string) => {
-    if (!hasMoved.current) {
-      setSelectedImage(image);
-      setLightboxOpen(true);
-    }
-  };
-
-  // Mouse/Touch drag handlers
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsPaused(true);
-    isDraggingRef.current = true;
-    hasMoved.current = false;
-    const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
-    setStartX(pageX - (scrollContainerRef.current?.offsetLeft || 0));
-    setScrollLeft(scrollContainerRef.current?.scrollLeft || 0);
-  };
-
-  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDraggingRef.current) return;
-    e.preventDefault();
-    hasMoved.current = true;
-    const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
-    const x = pageX - (scrollContainerRef.current?.offsetLeft || 0);
-    const walk = (x - startX) * 2;
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-    }
-  };
-
-  const handleDragEnd = () => {
-    setIsPaused(false);
-    setTimeout(() => { isDraggingRef.current = false; }, 100);
-  };
-
   return (
-    <div className="min-h-screen lg:min-h-[calc(125vh-7.5rem)] bg-brand-black pt-8 pb-8 sm:pt-12 lg:pt-30">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-        {/* Başlık */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center pb-8 sm:pb-12 lg:pb-16"
-        >
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-serif text-brand-light-gray mb-2 sm:mb-3 lg:mb-4">
-            Neden Aktürk Kuyumculuk?
-          </h1>
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: "auto" }}
-            viewport={{ once: false, margin: "100px" }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="w-20 sm:w-24 lg:w-32 h-0.5 sm:h-1 bg-brand-gold mx-auto mb-3 sm:mb-4 lg:mb-6"
-          ></motion.div>
-          <p className="text-sm sm:text-base lg:text-lg xl:text-xl text-brand-medium-gray max-w-3xl mx-auto px-4">
-            Güven, ustalık ve zarafetin buluştuğu noktada; size özel, zamana değer katan tasarımlar sunuyoruz.
-          </p>
-        </motion.div>
-
-        {/* Ana Değerler Grid - 2x2 */}
-        <section className="mb-10 sm:mb-12 lg:mb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
-            {/* Kaliteyi Standart Değil, İlke Kabul Ediyoruz */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
-                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
-                  <Heart className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
-                    Kaliteyi Standart Değil, İlke Kabul Ediyoruz
-                  </h2>
-                </div>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
-                  Aktürk Kuyumculuk&apos;ta her ürün, yüksek saflıkta altın kullanılarak; kalite, dayanıklılık ve estetik kriterleri esas alınarak üretilir.
-                  Tüm tasarımlarımız, yalnızca bugünün değil; yıllar sonra da değerini koruyacak şekilde planlanır.
-                </p>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
-                  Üretim sürecimizin her aşaması, titiz kontrol ve uzman işçilik anlayışıyla yürütülür.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Ustalıkla Şekillenen Tasarımlar */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
-                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
-                  <Gem className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
-                    Ustalıkla Şekillenen Tasarımlar
-                  </h2>
-                </div>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
-                  Deneyimli ustalarımız, geleneksel kuyumculuk bilgisini modern tasarım anlayışıyla birleştirerek;
-                  her detayında zarafet ve denge barındıran özel parçalar üretir.
-                </p>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
-                  Ortaya çıkan her ürün; ölçü, form ve konfor açısından yüksek hassasiyetle hazırlanır ve kusursuz işçilikle tamamlanır.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Şeffaf ve Güvenilir Fiyatlandırma */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
-                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
-                  <Calculator className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
-                    Şeffaf ve Güvenilir Fiyatlandırma
-                  </h2>
-                </div>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
-                  Aktürk Kuyumculuk&apos;ta fiyatlandırma, güncel altın değerleri esas alınarak net ve anlaşılır şekilde yapılır.
-                  Ürün bedelleri; altın gramajı, işçilik ve tasarım detayları doğrultusunda şeffaf biçimde belirlenir.
-                </p>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
-                  Sürpriz maliyetlere veya belirsiz fiyatlandırmaya yer verilmez.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Kişiye Özel Değer Anlayışı */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 border border-brand-medium-gray shadow-xl h-full">
-                <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
-                  <Award className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
-                  <h2 className="text-lg sm:text-xl lg:text-2xl font-serif text-brand-light-gray">
-                    Kişiye Özel Değer Anlayışı
-                  </h2>
-                </div>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed mb-3 sm:mb-4">
-                  Her tasarım, sahibinin tarzını ve beklentisini yansıtacak şekilde ele alınır.
-                  Aktürk Kuyumculuk&apos;ta amaç; yalnızca bir takı sunmak değil, kişisel değeri olan kalıcı bir parça üretmektir.
-                </p>
-                <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base leading-relaxed">
-                  Bu anlayışla hazırlanan ürünler, nesiller boyu aktarılabilecek anlamlı birer değere dönüşür.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-        {/* Ürün Kimliği - Geçici olarak yorum satırında */}
-        {/* 
-        <motion.section
-          initial={{ opacity: 0, x: 50 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 80 }}
-          className="mb-10 sm:mb-12 lg:mb-20"
-        >
-          <div className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8 xl:p-12 border border-brand-medium-gray shadow-xl">
-            <div className="flex items-center mb-3 sm:mb-4 lg:mb-6">
-              <Shield className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-brand-gold mr-2 sm:mr-3 lg:mr-4" />
-              <h2 className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-serif text-brand-light-gray">
-                Ürün Kimliği Numarası
-              </h2>
-            </div>
-            <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base xl:text-lg leading-relaxed mb-3 sm:mb-4 lg:mb-6">
-              Ne yazık ki mücevherat sektöründe satılan ürünlerin birçoğu hurda olarak alınıp, temizlendikten sonra 
-              satılan ürünlerden oluşmaktadır. İkinci el ürünler, kim tarafından ne zaman üretildiği belli olmayan ürünlerdir. 
-              Birçok mücevher sever bu konuda mağdur olmuş ve bu olaylar haberlere dahi konu olmuştur.
+    <div className="bg-[#f4f0e8] text-[#10211e]">
+      <header className="border-b border-[#9b8050]/25 px-5 py-20 sm:px-9 sm:py-28 lg:px-14 lg:py-36">
+        <div className="mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[0.34fr_0.66fr] lg:gap-20">
+          <p className="pt-2 text-[0.65rem] font-bold uppercase tracking-[0.3em] text-[#876d3e]">Aktürk Hakkında</p>
+          <div>
+            <h1 className="max-w-[12ch] font-serif text-[3.35rem] leading-[0.98] tracking-[-0.04em] sm:text-7xl lg:text-[6rem]">Takının ötesinde, kaydı olan bir değer.</h1>
+            <p className="mt-9 max-w-2xl border-t border-[#9b8050]/30 pt-7 text-[1rem] leading-8 text-[#10211e]/60 sm:text-lg">
+              Aktürk Kuyumculuk; Trabzon hasırının el işçiliğini, ürüne özel kayıt ve satış sonrası bakım yaklaşımıyla birlikte sunar.
             </p>
-            <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base xl:text-lg leading-relaxed mb-3 sm:mb-4 lg:mb-6">
-              Firmamız kurulduğu günden itibaren bu konuda mücadelesini sürdürmektedir. Firmamız birinci el üretim 
-              yapmakta ve bunu <span className="text-brand-gold font-semibold">&quot;ÜRÜN KİMLİĞİ&quot;</span> uygulaması ile 
-              garanti altına almıştır
-            </p>
-            <div className="grid grid-cols-2 xl:grid-cols-1 gap-3 sm:gap-4 lg:gap-6 mt-4 sm:mt-6 lg:mt-8">
-              <div className="bg-brand-gold p-3 sm:p-4 lg:p-6  sm:">
-                <h3 className="text-brand-light-gray font-bold text-sm sm:text-base lg:text-lg xl:text-xl mb-2 sm:mb-3">Ürün Kimliği ile Neler Öğrenebilirsiniz?</h3>
-                <ul className="space-y-1 sm:space-y-2 text-brand-medium-gray">
-                  <li className="flex items-start">
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">•</span>
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">Ürünün firmamıza ait olduğunu</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">•</span>
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">Laboratuvar analiz sonuçlarını</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">•</span>
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">Ustalarının kim olduğunu</span>
-                  </li>
-                  <li className="flex items-start">
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">•</span>
-                    <span className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">Üretim tarihini ve detaylarını</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-brand-gold p-3 sm:p-4 lg:p-6 ">
-                <h3 className="text-brand-light-gray font-bold text-sm sm:text-base lg:text-lg xl:text-xl mb-2 sm:mb-3">Kayıp veya Çalınma Durumunda</h3>
-                <p className="text-brand-light-gray mr-2 text-xs sm:text-sm lg:text-base">
-                  Ürününüzün kaybolması ya da art niyetli kişilerin eline geçmesi durumunda, ürün kimliği numaranızı 
-                  bizimle paylaştığınız takdirde bu numara tüm dernek ve kuyumcularla paylaşılacak, ürün tespiti 
-                  ürün kimliği numarası ile gerçekleştirilebilecektir.
-                </p>
-              </div>
-            </div>
           </div>
-        </motion.section>
-        */}
+        </div>
+      </header>
 
-        {/* Ayrıcalıklar Grid */}
-        <section className="mb-10 sm:mb-12 lg:mb-20">
-          <motion.h2
-            initial={{ opacity: 0, y: -30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: "100px" }}
-            transition={{ duration: 0.6 }}
-            className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-serif text-brand-light-gray text-center mb-6 sm:mb-8 lg:mb-12"
-          >
-            Aktürk Kuyumculuk Ayrıcalıkları
-          </motion.h2>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {/* Ayar Garantisi */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8  sm: border border-brand-medium-gray hover:border-brand-gold transition-all duration-300 group"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-                <Award className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-brand-gold group-hover:scale-110 transition-transform" />
-              </div>
-              <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-serif text-brand-light-gray text-center mb-2 sm:mb-3 lg:mb-4">
-                Ayar Garantisi
-              </h3>
-              <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Tüm ürünlerimiz, yüksek saflıkta altın kullanılarak üretilir ve üretim süreci boyunca kalite kontrollerden geçirilir.
-                Altın ayarı, laboratuvar analizleriyle doğrulanır ve ürünlerimiz ayar garantisi kapsamında sunulur.
-                Her parça, kalite standartlarımıza uygunluğu onaylandıktan sonra teslim edilir.
-              </p>
-            </motion.div>
-
-            {/* Ömür Boyu Bakım */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8  sm: border border-brand-medium-gray hover:border-brand-gold transition-all duration-300 group"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-                <Clock className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-brand-gold group-hover:scale-110 transition-transform" />
-              </div>
-              <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-serif text-brand-light-gray text-center mb-2 sm:mb-3 lg:mb-4">
-                Ömür Boyu Ücretsiz Bakım
-              </h3>
-              <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Kullanıma bağlı olarak oluşabilecek küçük deformasyonlar ve ayar bozulmaları için ömür boyu ücretsiz bakım hizmeti sunuyoruz.
-                Bakım ve onarım işlemleri, ürünün estetik ve yapısal bütünlüğü korunarak uzman ustalarımız tarafından gerçekleştirilir.
-              </p>
-            </motion.div>
-
-            {/* Kalite Güvencesi */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8  sm: border border-brand-medium-gray hover:border-brand-gold transition-all duration-300 group"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-                <Gem className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-brand-gold group-hover:scale-110 transition-transform" />
-              </div>
-              <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-serif text-brand-light-gray text-center mb-2 sm:mb-3 lg:mb-4">
-                Sürdürülebilir Kalite
-              </h3>
-              <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Üretim anlayışımız; deneyim, disiplin ve süreklilik üzerine kuruludur.
-                Seçkin ustalarımız tarafından üretilen tüm ürünler, uzun ömürlü kullanım ve kalıcı değer hedefiyle kalite standartlarına uygun şekilde hazırlanır.
-              </p>
-            </motion.div>
-
-            {/* Patentli Teknik */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8  sm: border border-brand-medium-gray hover:border-brand-gold transition-all duration-300 group"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-                <Calculator className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-brand-gold group-hover:scale-110 transition-transform" />
-              </div>
-              <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-serif text-brand-light-gray text-center mb-2 sm:mb-3 lg:mb-4">
-                İleri Teknoloji Üretim
-              </h3>
-              <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Üretim süreçlerimizde, hassas ölçüm ve modern üretim tekniklerinden faydalanılır.
-                Bu sayede estetik, konfor ve dayanıklılık açısından üst düzey ürünler ortaya çıkarılır; kalite standartlarımız her aşamada korunur.
-              </p>
-            </motion.div>
-
-            {/* Özel Tasarım */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8  sm: border border-brand-medium-gray hover:border-brand-gold transition-all duration-300 group"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-                <Package className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-brand-gold group-hover:scale-110 transition-transform" />
-              </div>
-              <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-serif text-brand-light-gray text-center mb-2 sm:mb-3 lg:mb-4">
-                Kişiye Özel Üretim
-              </h3>
-              <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Müşteri beklentilerine göre şekillenen tasarımlar, ölçü ve detay hassasiyetiyle kişiye özel olarak üretilir.
-                Her parça, sahibinin tarzını ve kullanım alışkanlıklarını yansıtacak şekilde özenle hazırlanır.
-              </p>
-            </motion.div>
-
-            {/* Uzman Kadro */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 30 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: false, margin: "100px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-brand-dark-gray p-4 sm:p-6 lg:p-8  sm: border border-brand-medium-gray hover:border-brand-gold transition-all duration-300 group"
-            >
-              <div className="flex justify-center mb-3 sm:mb-4 lg:mb-6">
-                <Users className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 text-brand-gold group-hover:scale-110 transition-transform" />
-              </div>
-              <h3 className="text-base sm:text-lg lg:text-xl xl:text-2xl font-serif text-brand-light-gray text-center mb-2 sm:mb-3 lg:mb-4">
-                Uzman Kadro
-              </h3>
-              <p className="text-brand-medium-gray text-center leading-relaxed text-xs sm:text-sm lg:text-base">
-                Alanında deneyimli ustalarımız ve danışmanlarımız, sürecin her aşamasında profesyonel destek sağlar.
-                Tasarımdan üretime, kontrolden teslimata kadar tüm adımlar uzman kadromuz tarafından titizlikle yönetilir.
-              </p>
-            </motion.div>
+      <section className="px-5 py-24 sm:px-9 sm:py-32 lg:px-14 lg:py-40">
+        <div className="mx-auto grid max-w-[96rem] gap-14 lg:grid-cols-[0.48fr_0.52fr] lg:gap-20">
+          <div className="relative aspect-[4/5] overflow-hidden bg-[#ded5c8] lg:sticky lg:top-32 lg:self-start">
+            <Image src="/images/instagram/model-set-classic.jpg" alt="Model üzerinde Aktürk Kuyumculuk hasır seti" fill quality={90} sizes="(max-width: 1023px) 100vw, 48vw" className="object-cover object-[50%_47%]" />
           </div>
-        </section>
 
-        {/* Galeri - Otomatik Kayan */}
-        <section className="mb-10 sm:mb-12 lg:mb-20">
-          <motion.h2
-            initial={{ opacity: 0, y: -30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.6 }}
-            className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-serif text-brand-light-gray text-center mb-6 sm:mb-8 lg:mb-12"
-          >
-            Atölyemizden Kareler
-          </motion.h2>
-          
-          <div className="relative border-y-2 border-brand-gold py-6 sm:py-8 lg:py-10">
-            {/* Kayan Galeri Container */}
-            <div 
-              ref={scrollContainerRef}
-              className="overflow-x-auto overflow-y-hidden scrollbar-hide cursor-grab active:cursor-grabbing"
-              onMouseDown={handleDragStart}
-              onMouseMove={handleDragMove}
-              onMouseUp={handleDragEnd}
-              onMouseLeave={handleDragEnd}
-              onTouchStart={handleDragStart}
-              onTouchMove={handleDragMove}
-              onTouchEnd={handleDragEnd}
-              style={{
-                userSelect: 'none',
-                WebkitOverflowScrolling: 'touch',
-              }}
-            >
-              <div
-                className="flex gap-3 sm:gap-4 lg:gap-6"
-                style={{
-                  animation: 'scroll-left 40s linear infinite',
-                  animationPlayState: isPaused ? 'paused' : 'running',
-                  width: 'fit-content',
-                }}
-              >
-                {infiniteImages.map((image, index) => (
-                  <div
-                    key={index}
-                    className="relative cursor-pointer flex-shrink-0 bg-brand-dark-gray ring-2 ring-brand-gold overflow-hidden group hover:scale-105 transition-transform duration-300 select-none"
-                    style={{
-                      width: 'clamp(200px, 25vw, 350px)',
-                      height: 'clamp(150px, 18.75vw, 262px)',
-                    }}
-                    onClick={() => handleImageClick(image)}
-                  >
-                    <Image
-                      src={image}
-                      alt={`Galeri ${(index % galleryImages.length) + 1}`}
-                      fill
-                      className="object-cover transition-all duration-500 group-hover:brightness-75"
-                      sizes="(max-width: 640px) 200px, (max-width: 1024px) 250px, 350px"
-                      draggable={false}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-3 sm:pb-4">
-                      <span className="text-brand-gold font-semibold text-xs sm:text-sm lg:text-base">
-                        Büyütmek için tıklayın
-                      </span>
-                    </div>
+          <div>
+            <p className="text-[0.64rem] font-bold uppercase tracking-[0.28em] text-[#876d3e]">Neden Aktürk?</p>
+            <h2 className="mt-5 max-w-[12ch] font-serif text-5xl leading-[1.02] tracking-[-0.035em] sm:text-6xl">Her aşamada aynı özen.</h2>
+            <div className="mt-12 border-t border-[#9b8050]/30">
+              {values.map((value) => (
+                <article key={value.index} className="grid grid-cols-[3rem_1fr] gap-4 border-b border-[#9b8050]/24 py-8 sm:grid-cols-[4rem_1fr] sm:py-10">
+                  <span className="pt-1 font-serif text-sm italic text-[#94743b]">{value.index}</span>
+                  <div>
+                    <h3 className="font-serif text-3xl tracking-[-0.025em]">{value.title}</h3>
+                    <p className="mt-4 max-w-xl text-sm leading-7 text-[#10211e]/58 sm:text-base sm:leading-8">{value.text}</p>
                   </div>
-                ))}
-              </div>
+                </article>
+              ))}
             </div>
-            <style jsx>{`
-              @keyframes scroll-left {
-                0% {
-                  transform: translateX(0);
-                }
-                100% {
-                  transform: translateX(calc(-${galleryImages.length} * (clamp(200px, 25vw, 350px) + 1.5rem)));
-                }
-              }
-            `}</style>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Alt Bilgi */}
-        <motion.section
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: "100px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center bg-brand-dark-gray p-6 sm:p-8 lg:p-12 border border-brand-gold"
-        >
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-brand-light-gray mb-3 sm:mb-4 lg:mb-6">
-            Yaşayan Efsanenizi Bizimle Yaratın
-          </h2>
-          <p className="text-brand-medium-gray text-xs sm:text-sm lg:text-base xl:text-lg max-w-3xl mx-auto mb-4 sm:mb-6 lg:mb-8 px-4">
-            Aktürk Kuyumculuk olarak, sizlere sadece mücevher değil, nesilden nesile aktarılacak yaşayan efsaneler sunuyoruz. 
-            Her ürünümüz, özenle seçilmiş malzemeler ve ustalarımızın maharetli elleriyle hayat buluyor.
-          </p>
-          <div className="inline-block">
-            <a 
-              href="tel:05312831934" 
-              className="border-2 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 btn-primary text-xs sm:text-base"
-            >
-              Bizi Arayın: +90 531 283 19 34
-            </a>
+      <section className="bg-[#0a1714] px-5 py-20 text-white sm:px-9 sm:py-24 lg:px-14 lg:py-28">
+        <div className="mx-auto grid max-w-[96rem] gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <p className="text-[0.63rem] font-bold uppercase tracking-[0.28em] text-[#d7bd7c]">Ürün Kimliği</p>
+            <h2 className="mt-5 max-w-3xl font-serif text-4xl leading-tight tracking-[-0.03em] sm:text-5xl">Ürününüzün bilgileri, ihtiyaç duyduğunuzda ulaşılabilir kalır.</h2>
+            <p className="mt-6 max-w-2xl text-sm leading-7 text-white/56 sm:text-base sm:leading-8">Ürün veya sertifika koduyla teknik kayıtları kontrol edebilir, doğrulanmış sertifikayı PDF olarak indirebilirsiniz.</p>
           </div>
-        </motion.section>
-      </div>
+          <Link href="/sertifika" className="group inline-flex min-h-13 w-fit items-center gap-4 border border-[#d7bd7c]/65 px-7 py-3.5 text-[0.67rem] font-bold uppercase tracking-[0.18em] text-[#e4ce98] transition-colors hover:bg-[#d7bd7c] hover:text-[#0a1714]">
+            Ürünü Doğrulayın <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
-      {/* Lightbox - Büyük Görsel */}
-      <AnimatePresence>
-        {lightboxOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-brand-black/40 flex items-center justify-center p-4 sm:p-6 lg:p-8"
-            onClick={() => setLightboxOpen(false)}
-          >
-            <button
-              onClick={() => setLightboxOpen(false)}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 text-brand-gold hover:text-brand-light-gray transition-colors z-10"
-            >
-              <X className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
-            </button>
-            
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="relative max-w-7xl w-full h-full flex items-center justify-center"
-            >
-              <div className="relative w-full h-full max-h-[90vh] flex items-center justify-center">
-                <div className="relative inline-block ring-4 ring-brand-gold" onClick={(e) => e.stopPropagation()}>
-                  <Image
-                    src={selectedImage}
-                    alt="Galeri Büyük Görsel"
-                    width={0}
-                    height={0}
-                    sizes="90vw"
-                    style={{
-                      width: 'auto',
-                      height: 'auto',
-                      maxWidth: '90vw',
-                      maxHeight: '85vh',
-                      objectFit: 'contain'
-                    }}
-                    className="block"
-                  />
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <section className="px-5 py-14 sm:px-9 lg:px-14">
+        <div className="mx-auto flex max-w-[96rem] flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-serif text-2xl sm:text-3xl">Koleksiyonları yakından inceleyin.</p>
+          <Link href="/urunler/bileklik" className="group inline-flex w-fit items-center gap-3 text-[0.67rem] font-bold uppercase tracking-[0.18em] text-[#6f552b]">Koleksiyonlara Git <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link>
+        </div>
+      </section>
     </div>
   );
 }

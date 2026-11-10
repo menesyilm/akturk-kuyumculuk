@@ -305,7 +305,17 @@ export default function SertifikaPage() {
       }
 
       const safeCode = verificationCode.replace(/[^A-Z0-9_-]/gi, '-');
-      pdf.save(`Akturk-Sertifika-${safeCode}.pdf`);
+      const fileName = `Akturk-Sertifika-${safeCode}.pdf`;
+      const pdfBlob = pdf.output('blob');
+      const downloadUrl = URL.createObjectURL(pdfBlob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = downloadUrl;
+      downloadLink.download = fileName;
+      downloadLink.style.display = 'none';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1_000);
     } catch (pdfError) {
       console.error('PDF oluşturma hatası:', pdfError);
       setError('PDF belgesi oluşturulamadı. Lütfen tekrar deneyiniz.');
@@ -315,21 +325,22 @@ export default function SertifikaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-black pt-6 sm:pt-10 pb-12 sm:pb-16">
-      <div className="max-w-5xl mx-auto px-3 sm:px-5 lg:px-8">
+    <div className="min-h-screen bg-[#f4f0e8] pb-20 pt-14 text-[#10211e] sm:pb-28 sm:pt-20">
+      <div className="mx-auto max-w-5xl px-5 sm:px-9 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: -24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-7 sm:mb-10"
+          className="mb-10 sm:mb-14"
         >
-          <div className="flex justify-center mb-3">
-            <ShieldCheck className="w-14 h-14 sm:w-16 sm:h-16 text-brand-gold" />
+          <div className="mb-6 grid h-12 w-12 place-items-center border border-[#9b8050]/45 text-[#8b6d39]">
+            <ShieldCheck className="h-6 w-6" />
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-brand-gold mb-3">
+          <p className="mb-4 text-[0.64rem] font-bold uppercase tracking-[0.3em] text-[#876d3e]">Ürün Kimliği</p>
+          <h1 className="mb-5 max-w-3xl font-serif text-5xl leading-none tracking-[-0.04em] text-[#10211e] sm:text-6xl lg:text-7xl">
             Sertifika Doğrulama
           </h1>
-          <p className="text-brand-light-gray text-sm sm:text-base">
+          <p className="max-w-2xl text-sm leading-7 text-[#10211e]/58 sm:text-base sm:leading-8">
             Ürün, sertifika, takip veya ürün üzerindeki kazıma koduyla sorgulama yapabilirsiniz.
           </p>
         </motion.div>
@@ -338,11 +349,11 @@ export default function SertifikaPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-brand-dark-gray ring-2 ring-brand-gold p-4 sm:p-6 lg:p-8 mb-7"
+          className="mb-7 border border-[#9b8050]/30 bg-white p-5 sm:p-7 lg:p-9"
         >
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <div className="flex-1">
-              <label htmlFor="productCode" className="block text-brand-light-gray text-sm mb-2">Doğrulama Kodu</label>
+              <label htmlFor="productCode" className="mb-2 block text-[0.64rem] font-bold uppercase tracking-[0.17em] text-[#10211e]/52">Doğrulama Kodu</label>
               <input
                 id="productCode"
                 type="text"
@@ -353,7 +364,7 @@ export default function SertifikaPage() {
                 onKeyDown={(event) => {
                   if (event.key === 'Enter') void performSearch(productCode);
                 }}
-                className="w-full px-4 py-3 bg-brand-black text-brand-light-gray border-2 border-brand-medium-gray focus:border-brand-gold focus:outline-none text-sm sm:text-base"
+                className="w-full border border-[#9b8050]/35 bg-[#fbfaf7] px-4 py-3.5 text-sm text-[#10211e] outline-none transition-colors placeholder:text-[#10211e]/32 focus:border-[#8b6d39] sm:text-base"
               />
             </div>
             <div className="flex items-end">
@@ -361,7 +372,7 @@ export default function SertifikaPage() {
                 type="button"
                 onClick={() => void performSearch(productCode)}
                 disabled={loading}
-                className="w-full sm:w-auto btn-primary text-brand-black px-7 py-3 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex min-h-13 w-full items-center justify-center gap-2 bg-[#0a1714] px-8 py-3 text-[0.67rem] font-bold uppercase tracking-[0.17em] text-white transition-colors hover:bg-[#8b6d39] disabled:opacity-50 sm:w-auto"
               >
                 {loading ? (
                   <><span className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand-black" /> Aranıyor...</>
@@ -371,35 +382,35 @@ export default function SertifikaPage() {
               </button>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-brand-gold/30 flex items-start gap-2 text-brand-light-gray text-xs sm:text-sm">
-            <QrCode className="w-5 h-5 text-brand-gold flex-shrink-0" />
+          <div className="mt-5 flex items-start gap-3 border-t border-[#9b8050]/24 pt-5 text-xs leading-6 text-[#10211e]/50 sm:text-sm">
+            <QrCode className="h-5 w-5 flex-shrink-0 text-[#8b6d39]" />
             <span>Sertifika üzerindeki QR kod okutulduğunda doğrulama kodu otomatik sorgulanır.</span>
           </div>
         </motion.div>
 
         {error && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-red-950/40 ring-2 ring-red-500 p-5 mb-7">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-7 border border-red-300 bg-red-50 p-5">
             <div className="flex items-start gap-3">
               <XCircle className="w-7 h-7 text-red-500 flex-shrink-0" />
               <div>
-                <h2 className="text-red-400 font-semibold text-lg">Kayıt Doğrulanamadı</h2>
-                <p className="text-red-300 text-sm mt-1">{error}</p>
+                <h2 className="text-lg font-semibold text-red-800">Kayıt Doğrulanamadı</h2>
+                <p className="mt-1 text-sm text-red-700">{error}</p>
               </div>
             </div>
           </motion.div>
         )}
 
         {record && searchPerformed && (
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="bg-brand-dark-gray ring-2 ring-brand-gold overflow-hidden">
-            <div className={`${isActive ? 'bg-green-950/50 border-green-500' : 'bg-red-950/50 border-red-500'} border-b-2 p-4 sm:p-5`}>
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden border border-[#9b8050]/30 bg-white">
+            <div className={`${isActive ? 'bg-[#e8f1eb] border-[#5b8c70]' : 'bg-red-50 border-red-400'} border-b p-4 sm:p-5`}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-3">
                 {isActive ? <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0" /> : <XCircle className="w-8 h-8 text-red-500 flex-shrink-0" />}
                 <div>
-                  <h2 className={`${isActive ? 'text-green-400' : 'text-red-400'} font-semibold text-lg sm:text-xl`}>
+                  <h2 className={`${isActive ? 'text-[#2f6b4b]' : 'text-red-800'} font-semibold text-lg sm:text-xl`}>
                     {isActive ? 'Sertifika Doğrulandı' : 'Sertifika Geçersiz / İptal Edilmiş'}
                   </h2>
-                  <p className={`${isActive ? 'text-green-300' : 'text-red-300'} text-sm mt-1`}>
+                  <p className={`${isActive ? 'text-[#416c55]' : 'text-red-700'} text-sm mt-1`}>
                     {isActive ? 'Kod, Aktürk Kuyumculuk kayıt sistemiyle eşleşmektedir.' : 'Bu belge güncel sistemde aktif değildir. Mağaza ile iletişime geçiniz.'}
                   </p>
                 </div>
@@ -409,7 +420,7 @@ export default function SertifikaPage() {
                     type="button"
                     onClick={() => void downloadCertificatePdf()}
                     disabled={pdfLoading}
-                    className="inline-flex min-h-11 items-center justify-center gap-2 border border-brand-gold bg-brand-black px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-brand-gold transition-colors hover:bg-brand-gold hover:text-brand-black disabled:cursor-wait disabled:opacity-60"
+                    className="inline-flex min-h-11 items-center justify-center gap-2 border border-[#0a1714] bg-[#0a1714] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-[#8b6d39] disabled:cursor-wait disabled:opacity-60"
                   >
                     {pdfLoading ? <LoaderCircle aria-hidden="true" className="h-4 w-4 animate-spin" /> : <Download aria-hidden="true" className="h-4 w-4" />}
                     {pdfLoading ? 'PDF hazırlanıyor' : 'PDF sertifikayı indir'}
@@ -421,15 +432,15 @@ export default function SertifikaPage() {
             <div className="p-4 sm:p-6 lg:p-8">
               <div className={`grid ${record.image ? 'md:grid-cols-[280px_1fr]' : ''} gap-6`}>
                 {record.image && (
-                  <div className="relative h-64 bg-brand-black ring-1 ring-brand-gold overflow-hidden">
+                  <div className="relative h-64 overflow-hidden border border-[#9b8050]/30 bg-[#ded5c8]">
                     <Image src={record.image} alt={title} unoptimized fill className="object-cover" />
                   </div>
                 )}
 
                 <div>
                   <div className="mb-5">
-                    <p className="text-brand-light-gray text-xs uppercase tracking-[0.2em] mb-2">Aktürk Kuyumculuk Ürün Kimliği</p>
-                    <h2 className="text-2xl sm:text-3xl text-brand-gold font-serif">{title}</h2>
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#876d3e]">Aktürk Kuyumculuk Ürün Kimliği</p>
+                    <h2 className="font-serif text-2xl text-[#10211e] sm:text-3xl">{title}</h2>
                   </div>
 
                   <div className="space-y-5">
@@ -460,12 +471,12 @@ export default function SertifikaPage() {
                       },
                     ].map((section) => (
                       <section key={section.title}>
-                        <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-brand-light-gray">{section.title}</h3>
-                        <div className="grid sm:grid-cols-2 gap-px bg-brand-gold/30 ring-1 ring-brand-gold/30">
+                        <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#10211e]/48">{section.title}</h3>
+                        <div className="grid gap-px border border-[#9b8050]/24 bg-[#d8cdbb] sm:grid-cols-2">
                           {section.items.map(([label, value]) => (
-                            <div key={String(label)} className="bg-brand-black p-3 sm:p-4">
-                              <p className="text-brand-light-gray text-xs mb-1">{label}</p>
-                              <p className="text-brand-gold text-sm sm:text-base font-semibold break-words">{displayValue(value)}</p>
+                            <div key={String(label)} className="bg-[#fbfaf7] p-3 sm:p-4">
+                              <p className="mb-1 text-xs text-[#10211e]/45">{label}</p>
+                              <p className="break-words text-sm font-semibold text-[#10211e] sm:text-base">{displayValue(value)}</p>
                             </div>
                           ))}
                         </div>
@@ -477,23 +488,23 @@ export default function SertifikaPage() {
 
               {parts.length > 0 && (
                 <div className="mt-7">
-                  <h3 className="text-brand-gold text-xl font-semibold mb-4">Ürün ve Kod Dökümü</h3>
-                  <div className="overflow-x-auto ring-1 ring-brand-gold/40">
+                  <h3 className="mb-4 font-serif text-2xl text-[#10211e]">Ürün ve Kod Dökümü</h3>
+                  <div className="overflow-x-auto border border-[#9b8050]/30">
                     <table className="w-full min-w-[780px] text-sm">
-                      <thead className="bg-brand-gold text-brand-black">
+                      <thead className="bg-[#0a1714] text-white">
                         <tr>
                           <th className="text-left p-3">No</th><th className="text-left p-3">Ürün</th><th className="text-left p-3">Takip Kodu</th><th className="text-left p-3">Kazıma</th><th className="text-left p-3">Gram / Ayar</th><th className="text-left p-3">Renk / Taş</th>
                         </tr>
                       </thead>
                       <tbody>
                         {parts.map((part, index) => (
-                          <tr key={`${part.code || 'part'}-${index}`} className="border-b border-brand-gold/20 last:border-0">
-                            <td className="p-3 text-brand-light-gray">{index + 1}</td>
-                            <td className="p-3 text-brand-light-gray">{displayValue(part.type)}{part.sira ? ` • Sıra ${part.sira}` : ''}</td>
-                            <td className="p-3 text-brand-gold font-semibold">{displayValue(part.code)}</td>
-                            <td className="p-3 text-brand-gold font-semibold">{displayValue(part.markCode)}</td>
-                            <td className="p-3 text-brand-light-gray">{displayValue(part.gram)} gr / {displayValue(part.ayar)}</td>
-                            <td className="p-3 text-brand-light-gray">{displayValue(part.color)} / {displayValue(part.stone)}</td>
+                          <tr key={`${part.code || 'part'}-${index}`} className="border-b border-[#9b8050]/20 last:border-0">
+                            <td className="p-3 text-[#10211e]/60">{index + 1}</td>
+                            <td className="p-3 text-[#10211e]/70">{displayValue(part.type)}{part.sira ? ` • Sıra ${part.sira}` : ''}</td>
+                            <td className="p-3 font-semibold text-[#765a2d]">{displayValue(part.code)}</td>
+                            <td className="p-3 font-semibold text-[#765a2d]">{displayValue(part.markCode)}</td>
+                            <td className="p-3 text-[#10211e]/70">{displayValue(part.gram)} gr / {displayValue(part.ayar)}</td>
+                            <td className="p-3 text-[#10211e]/70">{displayValue(part.color)} / {displayValue(part.stone)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -505,22 +516,22 @@ export default function SertifikaPage() {
               {(record.warrantyInfo || record.careInstructions) && (
                 <div className="grid lg:grid-cols-2 gap-5 mt-7">
                   {record.warrantyInfo && (
-                    <section className="bg-brand-black ring-1 ring-brand-gold/40 p-5">
-                      <h3 className="text-brand-gold text-lg font-semibold mb-3">Garanti ve Hizmet Kapsamı</h3>
-                      <p className="text-brand-light-gray text-sm leading-6 whitespace-pre-line">{record.warrantyInfo}</p>
+                    <section className="border border-[#9b8050]/25 bg-[#f7f3eb] p-5">
+                      <h3 className="mb-3 font-serif text-xl text-[#10211e]">Garanti ve Hizmet Kapsamı</h3>
+                      <p className="whitespace-pre-line text-sm leading-6 text-[#10211e]/62">{record.warrantyInfo}</p>
                     </section>
                   )}
                   {record.careInstructions && (
-                    <section className="bg-brand-black ring-1 ring-brand-gold/40 p-5">
-                      <h3 className="text-brand-gold text-lg font-semibold mb-3">Bakım ve Kullanım</h3>
-                      <p className="text-brand-light-gray text-sm leading-6 whitespace-pre-line">{record.careInstructions}</p>
+                    <section className="border border-[#9b8050]/25 bg-[#f7f3eb] p-5">
+                      <h3 className="mb-3 font-serif text-xl text-[#10211e]">Bakım ve Kullanım</h3>
+                      <p className="whitespace-pre-line text-sm leading-6 text-[#10211e]/62">{record.careInstructions}</p>
                     </section>
                   )}
                 </div>
               )}
 
               {record.source === 'catalog' && record.collectionName && (
-                <Link href={`/urunler/${record.collectionName}/${record.id}`} className="block mt-6 w-full bg-brand-black text-brand-gold ring-2 ring-brand-gold hover:bg-brand-gold hover:text-brand-black transition-all py-3 text-center font-semibold">
+                <Link href={`/urunler/${record.collectionName}/${record.id}`} className="mt-6 block w-full bg-[#0a1714] py-3 text-center text-[0.67rem] font-bold uppercase tracking-[0.17em] text-white transition-colors hover:bg-[#8b6d39]">
                   Ürün Detayına Git
                 </Link>
               )}
@@ -529,9 +540,9 @@ export default function SertifikaPage() {
         )}
 
         {!searchPerformed && !loading && (
-          <div className="bg-brand-dark-gray ring-1 ring-brand-gold/50 p-5 sm:p-7 mt-7">
-            <h3 className="text-brand-gold font-semibold text-lg mb-3">Güvenli Doğrulama</h3>
-            <p className="text-brand-light-gray text-sm leading-6">
+          <div className="mt-7 border border-[#9b8050]/25 bg-[#eee7dc] p-5 sm:p-7">
+            <h3 className="mb-3 font-serif text-2xl text-[#10211e]">Güvenli Doğrulama</h3>
+            <p className="text-sm leading-7 text-[#10211e]/58">
               Bu sayfada yalnızca ürüne ve sertifikaya ait teknik bilgiler gösterilir. Müşteri adı, iletişim, ödeme ve satış tutarı bilgileri internete aktarılmaz.
             </p>
           </div>

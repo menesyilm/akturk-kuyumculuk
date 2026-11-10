@@ -33,7 +33,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-7 max-w-md font-serif text-2xl leading-[1.35] text-white/84 sm:text-3xl">
-              Trabzon&apos;da doğar. Sizinle tamamlanır.
+              Altının yaşayan çizgisi, Trabzon’dan.
             </p>
             <div className="mt-8 flex gap-3">
               <a

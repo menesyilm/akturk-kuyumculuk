@@ -18,18 +18,17 @@ jest.mock('framer-motion', () => ({
 describe('Home Page', () => {
   test('renders the focused hero and a single primary collection action', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/altın, sizinle\s*biçim kazanır\./i);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/altının yaşayan çizgisi\./i);
     expect(screen.getByRole('link', { name: 'Koleksiyonları Keşfet' })).toHaveAttribute('href', '/urunler/bileklik');
     expect(screen.queryByRole('link', { name: 'Sertifika Doğrula' })).not.toBeInTheDocument();
   });
 
-  test('uses a varied real-product collage instead of the rejected video', () => {
+  test('uses one strong real-product hero instead of the rejected video collage', () => {
     const { container } = render(<Home />);
     expect(container.querySelector('video')).not.toBeInTheDocument();
-    const collage = screen.getByTestId('hero-collage');
-    expect(within(collage).getAllByRole('img')).toHaveLength(3);
-    expect(within(collage).getByRole('img', { name: /bileklik yakın planı/i })).toBeInTheDocument();
-    expect(within(collage).getByRole('img', { name: /yüzük yakın planı/i })).toBeInTheDocument();
+    const hero = screen.getByTestId('hero-visual');
+    expect(within(hero).getAllByRole('img')).toHaveLength(1);
+    expect(within(hero).getByRole('img', { name: /uzun aktürk kuyumculuk hasır kolye/i })).toBeInTheDocument();
   });
 
   test('matches every collection title with a relevant model image', () => {
@@ -56,7 +55,7 @@ describe('Home Page', () => {
 
   test('keeps product verification available without making it a primary pitch', () => {
     render(<Home />);
-    const verificationLink = screen.getByRole('link', { name: 'Ürün kaydını doğrula' });
+    const verificationLink = screen.getByRole('link', { name: 'Ürün Kaydını Doğrula' });
     expect(verificationLink).toHaveAttribute('href', '/sertifika');
   });
 });
