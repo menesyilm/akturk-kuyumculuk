@@ -1,95 +1,54 @@
 'use client';
-import Link from 'next/link';
-import Image from 'next/image';
 
-import { BadgeCheck } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import SearchBox from './SearchBox';
 
+const menuItems = [
+  { name: 'Bileklik', href: '/urunler/bileklik' },
+  { name: 'Kolye', href: '/urunler/kolye' },
+  { name: 'Yüzük & Küpe', href: '/urunler/yuzukvekupe' },
+  { name: 'Set', href: '/urunler/set' },
+  { name: 'Altın Fiyatları', href: '/altin-fiyatlari' },
+];
+
 export default function Navbar() {
-
-  const menuItems = [
-    { name: 'BİLEKLİK', href: '/urunler/bileklik' },
-    { name: 'KOLYE', href: '/urunler/kolye' },
-    { name: 'YÜZÜK VE KÜPE', href: '/urunler/yuzukvekupe' },
-    { name: 'SET', href: '/urunler/set' },
-    { name: 'ALTIN FİYATLARI', href: '/altin-fiyatlari' },
-    { name: 'SERTİFİKA DOĞRULA', href: '/sertifika', featured: true },
-  ];
-
   return (
-    <nav aria-label="Ana menü" className="fixed top-0 left-0 right-0 z-50 hidden border-b border-brand-gold/60 bg-[#141414] shadow-2xl shadow-black/60 lg:block">
-      {/* Orta Kısım - Logo */}
-      <div className="border-b border-white/10">
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo (sol) */}
-            <div className="flex-1 flex justify-start">
-              <Link href="/" className="flex items-center">
-                <div className="relative xl:h-20 xl:w-20 lg:h-16 lg:w-16">
-                  <Image
-                    src="/images/logo-no-background.png"
-                    alt="Aktürk Kuyumculuk"
-                    fill
-                    sizes="80px"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              </Link>
-            </div>
+    <nav aria-label="Ana menü" className="fixed inset-x-0 top-0 z-50 hidden border-b border-white/15 bg-[#080a09]/88 text-white shadow-[0_12px_40px_rgba(0,0,0,.18)] backdrop-blur-xl lg:block">
+      <div className="mx-auto grid h-[5.25rem] max-w-[96rem] grid-cols-[15rem_1fr_17rem] items-center gap-6 px-8 xl:px-12">
+        <Link href="/" className="flex w-fit items-center gap-3" aria-label="Aktürk Kuyumculuk ana sayfa">
+          <span className="relative h-12 w-12 flex-none">
+            <Image src="/images/logo-no-background.png" alt="" fill sizes="48px" className="object-contain" priority />
+          </span>
+          <span>
+            <span className="block font-serif text-[1.05rem] tracking-[0.08em] text-[#e4c982]">AKTÜRK</span>
+            <span className="mt-0.5 block text-[0.5rem] uppercase tracking-[0.32em] text-white/45">Kuyumculuk</span>
+          </span>
+        </Link>
 
-            {/* Caption (ortada) */}
-            <div className="flex-1 flex justify-center mt-4">
-              <div className="relative xl:h-125 xl:w-125 lg:h-100 lg:w-100">
-                <Image
-                  src="/images/caption-2.png"
-                  alt="Caption"
-                  fill
-                  sizes="(min-width: 1280px) 500px, 400px"
-                  className="object-contain"
-                  priority
-                />
-              </div>
-            </div>
-
-            {/* Arama + Bize Ulaşın (sağda) */}
-            <div className="flex-1 flex justify-end items-center gap-3 xl:gap-4">
-              <SearchBox 
-                inputWidth="xl:w-56 lg:w-40"
-                iconSize="xl:w-8 xl:h-8 lg:w-6 lg:h-6"
-              />
-              <Link
-                href="/iletisim"
-                 className="text-xs block btn-primary text-brand-black px-1.5 py-1.5"
-              >
-                Bize Ulaşın
-              </Link>
-            </div>
-          </div>
+        <div className="flex items-center justify-center gap-5 xl:gap-8">
+          {menuItems.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="relative py-2 text-[0.64rem] font-semibold uppercase tracking-[0.17em] text-white/72 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-right after:scale-x-0 after:bg-[#d8ba74] after:transition-transform hover:text-white hover:after:origin-left hover:after:scale-x-100 xl:text-[0.68rem]"
+            >
+              {item.name}
+            </Link>
+          ))}
         </div>
-      </div>
 
-      {/* Alt Kısım - Menü */}
-      <div className="relative z-10 bg-[#090909]">
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 xl:px-8">
-          <div className="flex items-center justify-center h-14 overflow-x-auto">
-            <div className="flex items-center gap-4 xl:gap-7 2xl:gap-8">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`text-xs xl:text-base 2xl:text-lg font-bold transition-colors whitespace-nowrap border-b-2 py-1 ${
-                    item.featured
-                      ? 'text-brand-gold border-brand-gold flex items-center gap-1.5'
-                      : 'text-white/80 border-transparent hover:text-brand-gold hover:border-brand-gold'
-                  }`}
-                >
-                  {item.featured && <BadgeCheck aria-hidden="true" className="h-4 w-4" />}
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
+        <div className="flex items-center justify-end gap-4">
+          <Link href="/sertifika" className="text-[0.56rem] font-semibold uppercase tracking-[0.15em] text-white/42 transition-colors hover:text-white/80">
+            Ürün Doğrulama
+          </Link>
+          <SearchBox inputWidth="w-52" iconSize="h-[1.1rem] w-[1.1rem]" />
+          <Link
+            href="/iletisim"
+            className="inline-flex min-h-10 items-center border border-white/28 px-4 py-2 text-[0.58rem] font-bold uppercase tracking-[0.15em] text-white/78 transition-colors hover:border-[#d8ba74] hover:text-[#e3ca8d]"
+          >
+            İletişim
+          </Link>
         </div>
       </div>
     </nav>

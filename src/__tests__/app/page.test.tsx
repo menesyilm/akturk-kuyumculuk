@@ -3,77 +3,60 @@ import '@testing-library/jest-dom';
 import Home from '@/app/page';
 import type { PropsWithChildren } from 'react';
 
-jest.mock('@/components/ProductGallery', () => {
-  return function MockProductGallery() {
-    return <div data-testid="product-gallery">Product Gallery</div>;
-  };
-});
-
 jest.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: PropsWithChildren<Record<string, unknown>>) => {
-      const { initial, animate, transition, whileInView, viewport, ...safeProps } = props;
+      const { initial, animate, transition, ...safeProps } = props;
       void initial;
       void animate;
       void transition;
-      void whileInView;
-      void viewport;
       return <div {...safeProps}>{children}</div>;
-    },
-    article: ({ children, ...props }: PropsWithChildren<Record<string, unknown>>) => {
-      const { initial, animate, transition, whileInView, viewport, ...safeProps } = props;
-      void initial;
-      void animate;
-      void transition;
-      void whileInView;
-      void viewport;
-      return <article {...safeProps}>{children}</article>;
     },
   },
 }));
 
 describe('Home Page', () => {
-  test('renders the live product gallery', () => {
+  test('renders the focused hero and a single primary collection action', () => {
     render(<Home />);
-    expect(screen.getByTestId('product-gallery')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/altın, sizinle\s*biçim kazanır\./i);
+    expect(screen.getByRole('link', { name: 'Koleksiyonları Keşfet' })).toHaveAttribute('href', '/urunler/bileklik');
+    expect(screen.queryByRole('link', { name: 'Sertifika Doğrula' })).not.toBeInTheDocument();
   });
 
-  test('renders the primary hero actions', () => {
-    render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/el işçiliğinin\s+altın hâli/i);
-    expect(screen.getByRole('link', { name: 'Koleksiyonları İncele' })).toHaveAttribute('href', '/urunler/bileklik');
-    expect(screen.getAllByRole('link', { name: 'Sertifika Doğrula' })[0]).toHaveAttribute('href', '/sertifika');
+  test('uses a varied real-product collage instead of the rejected video', () => {
+    const { container } = render(<Home />);
+    expect(container.querySelector('video')).not.toBeInTheDocument();
+    const collage = screen.getByTestId('hero-collage');
+    expect(within(collage).getAllByRole('img')).toHaveLength(3);
+    expect(within(collage).getByRole('img', { name: /bileklik yakın planı/i })).toBeInTheDocument();
+    expect(within(collage).getByRole('img', { name: /yüzük yakın planı/i })).toBeInTheDocument();
   });
 
-  test('renders all collection entrances', () => {
+  test('matches every collection title with a relevant model image', () => {
     render(<Home />);
-    expect(screen.getByRole('link', { name: /bileklik/i })).toHaveAttribute('href', '/urunler/bileklik');
-    expect(screen.getByRole('link', { name: /kolye/i })).toHaveAttribute('href', '/urunler/kolye');
-    expect(screen.getByRole('link', { name: /yüzük ve küpe/i })).toHaveAttribute('href', '/urunler/yuzukvekupe');
-    expect(screen.getByRole('link', { name: /set takım/i })).toHaveAttribute('href', '/urunler/set');
+    const expected = [
+      ['Bileklik', '/urunler/bileklik'],
+      ['Kolye', '/urunler/kolye'],
+      ['Yüzük ve Küpe', '/urunler/yuzukvekupe'],
+      ['Set Takım', '/urunler/set'],
+    ];
+
+    for (const [name, href] of expected) {
+      const link = screen.getByRole('link', { name: new RegExp(name, 'i') });
+      expect(link).toHaveAttribute('href', href);
+      expect(within(link).getByRole('img', { name: new RegExp(name, 'i') })).toBeInTheDocument();
+    }
   });
 
-  test('renders the complete design-to-identity journey', () => {
+  test('does not place workshop content on the homepage', () => {
     render(<Home />);
-    const journey = screen.getByTestId('craft-journey');
-    expect(within(journey).getByRole('heading', { name: 'Önce karakteri çizilir.' })).toBeInTheDocument();
-    expect(within(journey).getByRole('heading', { name: 'Sonra elle tamamlanır.' })).toBeInTheDocument();
-    expect(within(journey).getByRole('heading', { name: 'Ve yalnızca ona ait bir kayıt oluşur.' })).toBeInTheDocument();
-    expect(within(journey).getByText('Ürüne özel kazıma kodu')).toBeInTheDocument();
+    expect(screen.queryByText(/atölye/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/üretim anlayışımız/i)).not.toBeInTheDocument();
   });
 
-  test('renders three assurance layers', () => {
+  test('keeps product verification available without making it a primary pitch', () => {
     render(<Home />);
-    const list = screen.getByTestId('assurance-list');
-    expect(within(list).getAllByRole('article')).toHaveLength(3);
-    expect(within(list).getByText('Kendine özgü üretim')).toBeInTheDocument();
-    expect(within(list).getByText('Şeffaf teknik kayıt')).toBeInTheDocument();
-    expect(within(list).getByText('Doğrulanabilir kimlik')).toBeInTheDocument();
-  });
-
-  test('links the product identity story to certificate verification', () => {
-    render(<Home />);
-    expect(screen.getByRole('link', { name: 'Ürün kimliğini doğrula' })).toHaveAttribute('href', '/sertifika');
-    expect(screen.getByRole('link', { name: /sertifika doğrulamaya git/i })).toHaveAttribute('href', '/sertifika');
+    const verificationLink = screen.getByRole('link', { name: 'Ürün kaydını doğrula' });
+    expect(verificationLink).toHaveAttribute('href', '/sertifika');
   });
 });

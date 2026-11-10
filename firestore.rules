@@ -2,37 +2,44 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isStaff() {
+      return request.auth != null
+        && request.auth.token.email == 'kuyumculukakturk@gmail.com';
+    }
+
     match /yuzukvekupe/{productId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isStaff();
     }
 
     match /bileklik/{productId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isStaff();
     }
 
     match /kolye/{productId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isStaff();
     }
 
     match /set/{productId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isStaff();
     }
 
     // Public certificate verification exposes technical data only.
-    // Certificate writes remain restricted to authenticated staff.
+    // Field queries used by the verification page must request at most one
+    // result. Certificate writes remain restricted to the staff account.
     match /sertifikalar/{certificateId} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      allow get: if true;
+      allow list: if request.query.limit != null && request.query.limit <= 1;
+      allow write: if isStaff();
     }
 
     // Legacy collection kept for backward compatibility.
     match /products/{productId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isStaff();
     }
   }
 }

@@ -1,145 +1,91 @@
 'use client';
+
 import { useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { BadgeCheck, Menu, X } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
 import SearchBox from './SearchBox';
+
+const menuItems = [
+  { name: 'Bileklik', href: '/urunler/bileklik' },
+  { name: 'Kolye', href: '/urunler/kolye' },
+  { name: 'Yüzük ve Küpe', href: '/urunler/yuzukvekupe' },
+  { name: 'Set Takım', href: '/urunler/set' },
+  { name: 'Altın Fiyatları', href: '/altin-fiyatlari' },
+];
 
 export default function Sidebar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const menuItems = [
-    { name: 'BİLEKLİK', href: '/urunler/bileklik' },
-    { name: 'KOLYE', href: '/urunler/kolye' },
-    { name: 'YÜZÜK VE KÜPE', href: '/urunler/yuzukvekupe' },
-    { name: 'SET', href: '/urunler/set' },
-    { name: 'ALTIN FİYATLARI', href: '/altin-fiyatlari' },
-    { name: 'SERTİFİKA DOĞRULA', href: '/sertifika', featured: true },
-  ];
+  const closeMenu = () => setMobileMenuOpen(false);
 
   return (
     <>
-      {/* Mobile Navbar - Sadece mobilde görünür */}
-      <nav aria-label="Mobil menü" className="fixed top-0 left-0 right-0 z-50 overflow-hidden border-b border-brand-gold/70 bg-[#141414] shadow-2xl shadow-black/60 lg:hidden">
-          {/* Orta Kısım - Logo ve Butonlar */}
-        <div className="border-b border-brand-medium-gray">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="flex items-center justify-between h-16">
-              {/* Logo (sol) */}
-              <Link href="/" className="flex items-center">
-                <div className="relative h-16 w-16">
-                  <Image
-                    src="/images/logo-no-background.png"
-                    alt="Aktürk Kuyumculuk"
-                    fill
-                    sizes="64px"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              </Link>
-
-              
-
-              {/* Caption - Sadece Tablet */}
-              <div className="hidden sm:flex flex-1 justify-center overflow-hidden">
-                <div className="relative h-88 w-full max-w-88">
-                  <Image
-                    src="/images/caption-2.png"
-                    alt="Caption"
-                    fill
-                    sizes="(min-width: 640px) 352px, 1px"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              </div>
-
-              {/* Bize Ulaşın + Hamburger Menu Button (sağ) */}
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/iletisim"
-                  className="text-xs block btn-primary text-brand-black px-1.5 py-1.5"
-                >
-                  Bize Ulaşın
-                </Link>
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
-                  aria-label={mobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
-                  aria-expanded={mobileMenuOpen}
-                  aria-controls="mobil-yan-menu"
-                >
-                  {mobileMenuOpen ? (
-                    <X className="w-6 h-6" />
-                  ) : (
-                    <Menu className="w-6 h-6" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
+      <nav aria-label="Mobil menü" className="fixed inset-x-0 top-0 z-50 border-b border-white/15 bg-[#080a09]/90 text-white shadow-lg backdrop-blur-xl lg:hidden">
+        <div className="flex h-[4.5rem] items-center justify-between px-4 sm:px-7">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="Aktürk Kuyumculuk ana sayfa">
+            <span className="relative h-11 w-11">
+              <Image src="/images/logo-no-background.png" alt="" fill sizes="44px" className="object-contain" priority />
+            </span>
+            <span>
+              <span className="block font-serif text-base tracking-[0.08em] text-[#e2c77f]">AKTÜRK</span>
+              <span className="block text-[0.44rem] uppercase tracking-[0.3em] text-white/45">Kuyumculuk</span>
+            </span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="grid h-11 w-11 place-items-center border border-white/20 text-[#e2c77f] transition-colors hover:border-[#e2c77f]"
+            aria-label="Menüyü aç"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobil-yan-menu"
+          >
+            <Menu aria-hidden="true" className="h-5 w-5" />
+          </button>
         </div>
       </nav>
 
-      {/* Sidebar Menü - Sağdan Açılır */}
       <div
         id="mobil-yan-menu"
         aria-hidden={!mobileMenuOpen}
-        className={`lg:hidden fixed inset-y-0 right-0 w-full sm:w-80 bg-brand-black border-l-2 border-brand-gold transform transition-transform duration-300 ease-in-out z-50 ${
+        className={`fixed inset-0 z-[60] bg-[#0a0d0b] text-white transition-transform duration-500 ease-[cubic-bezier(.76,0,.24,1)] lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="flex flex-col h-full">
-          {/* Sidebar Header */}
-          <div className="flex items-center justify-between p-4 border-b border-brand-gold">
-            <h2 className="text-brand-gold font-bold text-md">Menü</h2>
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              className="p-2 text-brand-gold hover:bg-brand-medium-gray/20 transition-colors"
-              aria-label="Menüyü kapat"
-            >
-              <X className="w-5 h-5" />
+        <div className="flex h-full flex-col">
+          <div className="flex h-[4.5rem] items-center justify-between border-b border-white/12 px-4 sm:px-7">
+            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#e0c482]">Menü</span>
+            <button type="button" onClick={closeMenu} className="grid h-11 w-11 place-items-center border border-white/20 text-[#e0c482]" aria-label="Menüyü kapat">
+              <X aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>
 
-          {/* Arama */}
-          <div className="px-4 py-3 border-b border-brand-medium-gray">
-            <SearchBox
-              alwaysOpen
-              onResultClick={() => setMobileMenuOpen(false)}
-            />
+          <div className="border-b border-white/12 px-5 py-5 sm:px-8">
+            <SearchBox alwaysOpen onResultClick={closeMenu} />
           </div>
-          {/* Menu Items */}
-          <div data-lenis-prevent className="flex-1 overflow-y-auto py-4">
-            <div className="space-y-1 px-2">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-3 hover:bg-brand-dark-gray transition-colors font-semibold text-sm ${
-                    item.featured
-                      ? 'flex items-center gap-2 text-brand-gold border border-brand-gold/60'
-                      : 'block text-brand-light-gray hover:text-brand-gold'
-                  }`}
-                >
-                  {item.featured && <BadgeCheck aria-hidden="true" className="h-5 w-5" />}
-                  {item.name}
+
+          <div data-lenis-prevent className="flex-1 overflow-y-auto px-5 py-7 sm:px-8">
+            <div className="divide-y divide-white/12 border-y border-white/12">
+              {menuItems.map((item, index) => (
+                <Link key={item.name} href={item.href} onClick={closeMenu} className="group flex items-center justify-between py-5">
+                  <span className="flex items-baseline gap-4">
+                    <span className="font-serif text-sm italic text-[#b7934d]">0{index + 1}</span>
+                    <span className="font-serif text-3xl text-white/92 sm:text-4xl">{item.name}</span>
+                  </span>
+                  <ArrowUpRight aria-hidden="true" className="h-5 w-5 text-white/35 transition-colors group-hover:text-[#e0c482]" />
                 </Link>
               ))}
             </div>
+
+            <Link href="/iletisim" onClick={closeMenu} className="mt-7 flex items-center justify-center bg-[#d8ba74] px-5 py-4 text-xs font-bold uppercase tracking-[0.17em] text-[#111411]">
+              Bize Ulaşın
+            </Link>
+            <Link href="/sertifika" onClick={closeMenu} className="mt-5 block text-center text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-white/42 transition-colors hover:text-white/70">
+              Ürün kaydını doğrula
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Mobile Overlay */}
-      {mobileMenuOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
     </>
   );
 }
