@@ -14,6 +14,7 @@ export default function LayoutContent({
   
   // Admin paneli ve login sayfalarında navbar/sidebar/footer gösterme
   const hideNavigation = pathname?.startsWith('/admin') || pathname?.startsWith('/giris');
+  const isHomePage = pathname === '/';
 
   return (
     <>
@@ -30,7 +31,11 @@ export default function LayoutContent({
           <Sidebar />
         </>
       )}
-      <main id="ana-icerik" tabIndex={-1} className={hideNavigation ? "" : "pt-16 lg:pt-30"}>
+      <main
+        id="ana-icerik"
+        tabIndex={-1}
+        className={hideNavigation || isHomePage ? '' : 'pt-[4.5rem] lg:pt-[5.25rem]'}
+      >
         {children}
       </main>
       {!hideNavigation && <Footer />}

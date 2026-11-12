@@ -1,86 +1,61 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '@/app/page';
 import type { PropsWithChildren } from 'react';
 
-// ProductGallery componenti oldukça büyük ve kendi içerisinde başka bağımlılıklar içeriyor olabilir.
-// Bu testte ProductGallery'nin içeriğini değil, Home sayfasının davranışını test etmek istediğimiz için mock'luyoruz.
-jest.mock('@/components/ProductGallery', () => {
-    return function MockProductGallery() {
-        return <div data-testid="product-gallery">Product Gallery</div>;
-    };
-});
-
-// Framer Motion animasyonları test ortamında çalışmaz.
-// Bu yüzden motion.div'i normal bir div gibi davranacak şekilde mock'luyoruz.
 jest.mock('framer-motion', () => ({
-    motion: {
-        div: ({ children }: PropsWithChildren) => (
-            <div>{children}</div>
-        ),
+  motion: {
+    div: ({ children, ...props }: PropsWithChildren<Record<string, unknown>>) => {
+      const { initial, animate, transition, ...safeProps } = props;
+      void initial;
+      void animate;
+      void transition;
+      return <div {...safeProps}>{children}</div>;
     },
+  },
 }));
 
 describe('Home Page', () => {
+  test('renders the focused hero and a single primary collection action', () => {
+    render(<Home />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/altının yaşayan çizgisi\./i);
+    expect(screen.getByRole('link', { name: 'Koleksiyonları Keşfet' })).toHaveAttribute('href', '/urunler/bileklik');
+    expect(screen.queryByRole('link', { name: 'Sertifika Doğrula' })).not.toBeInTheDocument();
+  });
 
-    test('renders successfully', () => {
+  test('uses one strong real-product hero instead of the rejected video collage', () => {
+    const { container } = render(<Home />);
+    expect(container.querySelector('video')).not.toBeInTheDocument();
+    const hero = screen.getByTestId('hero-visual');
+    expect(within(hero).getAllByRole('img')).toHaveLength(1);
+    expect(within(hero).getByRole('img', { name: /uzun aktürk kuyumculuk hasır kolye/i })).toBeInTheDocument();
+  });
 
-        // Home sayfasını render ediyoruz.
-        render(<Home />);
+  test('matches every collection title with a relevant model image', () => {
+    render(<Home />);
+    const expected = [
+      ['Bileklik', '/urunler/bileklik'],
+      ['Kolye', '/urunler/kolye'],
+      ['Yüzük ve Küpe', '/urunler/yuzukvekupe'],
+      ['Set Takım', '/urunler/set'],
+    ];
 
-        // Mock'ladığımız ProductGallery sayfada var mı kontrol ediyoruz.
-        // Eğer bulunamazsa sayfa düzgün render olmamış demektir.
-        expect(screen.getByTestId('product-gallery')).toBeInTheDocument();
-    });
+    for (const [name, href] of expected) {
+      const link = screen.getByRole('link', { name: new RegExp(name, 'i') });
+      expect(link).toHaveAttribute('href', href);
+      expect(within(link).getByRole('img', { name: new RegExp(name, 'i') })).toBeInTheDocument();
+    }
+  });
 
-    test('renders all feature titles', () => {
+  test('does not place workshop content on the homepage', () => {
+    render(<Home />);
+    expect(screen.queryByText(/atölye/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/üretim anlayışımız/i)).not.toBeInTheDocument();
+  });
 
-        render(<Home />);
-
-        // Kullanıcının ekranda görmesi gereken başlıklar var mı?
-        // Eğer herhangi biri silinirse veya yanlış yazılırsa test fail olur.
-
-        expect(screen.getByText('Kalite Garantisi')).toBeInTheDocument();
-        expect(screen.getByText('Güvenilir Hizmet')).toBeInTheDocument();
-        expect(screen.getByText('Uzman Ekip')).toBeInTheDocument();
-        expect(screen.getByText('Özel Tasarım')).toBeInTheDocument();
-        expect(screen.getByText('Şeffaf Fiyatlandırma')).toBeInTheDocument();
-        expect(screen.getByText('El İşçiliği')).toBeInTheDocument();
-    });
-
-    test('renders 6 feature cards', () => {
-
-        render(<Home />);
-
-        // Sayfadaki tüm heading elemanlarını alıyoruz.
-        // Feature başlıkları <h3> ile oluşturulduğu için
-        // her biri heading olarak algılanır.
-
-        const headings = screen.getAllByRole('heading');
-
-        // Toplam 6 adet feature kartı oluşmuş mu?
-        // Eğer biri silinirse veya eksik render edilirse test fail olur.
-
-        expect(headings).toHaveLength(6);
-    });
-
-    test('renders feature descriptions', () => {
-
-        render(<Home />);
-
-        // Feature açıklamalarından bazı kritik metinlerin
-        // ekranda görünür olduğunu doğruluyoruz.
-
-        expect(
-            screen.getByText(/yüksek saflıkta altın/i)
-        ).toBeInTheDocument();
-
-        expect(
-            screen.getByText(/güvenilir ve şeffaf hizmet/i)
-        ).toBeInTheDocument();
-
-        expect(
-            screen.getByText(/alanında uzman ustalarımızla/i)
-        ).toBeInTheDocument();
-    });
+  test('keeps product verification available without making it a primary pitch', () => {
+    render(<Home />);
+    const verificationLink = screen.getByRole('link', { name: 'Ürün Kaydını Doğrula' });
+    expect(verificationLink).toHaveAttribute('href', '/sertifika');
+  });
 });

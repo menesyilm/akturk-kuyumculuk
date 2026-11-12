@@ -40,6 +40,36 @@ Aktürk Kuyumculuk, modern bir kuyumculuk web uygulamasıdır. Proje; ürün vit
 - Firebase (Auth + Firestore)
 - Cloudinary
 
+### Windows'ta Kurulum
+
+Gereksinim: Node.js 22.
+
+```powershell
+Copy-Item .env.example .env.local
+npm ci
+npm run dev
+```
+
+Ardından `http://localhost:3000` adresini açın. Üretim kontrolü için:
+
+```powershell
+npm run lint
+npm test -- --runInBand
+npm run build
+```
+
+### Güvenlik
+
+- `.env.local` ve özel anahtarlar GitHub'a yüklenmez.
+- `.env.example` yalnızca tarayıcı uygulamasında zaten kullanılan herkese açık Firebase kimliklerini ve Cloudinary yükleme ayarını içerir.
+- `CLOUDINARY_API_SECRET`, özel API anahtarları ve parolalar kaynak koduna veya `NEXT_PUBLIC_*` değişkenlerine eklenmemelidir.
+- Firestore yazma işlemleri yalnızca `kuyumculukakturk@gmail.com` yönetici hesabına açıktır.
+- Çevrimiçi sertifika kayıtlarında müşteri, iletişim, ödeme ve satış tutarı bilgileri tutulmaz.
+
+### Sertifika Doğrulama
+
+`/sertifika` sayfası ürün kodu, sertifika numarası, alt ürün kodu veya kazıma koduyla sorgulama yapar. Doğrulanmış kayıtlarda teknik ürün bilgileri, ürün görseli, QR doğrulama bağlantısı ve indirilebilir PDF sertifika sunulur. Set ve toptan satış belgelerinde her fiziksel ürün kendi takip ve kazıma koduyla listelenir.
+
 ### Renk Paledi | Color Palette
 <img width="1918" height="518" alt="image" src="https://github.com/user-attachments/assets/119a93b3-1da7-49da-85b8-05e556666f68" />
 

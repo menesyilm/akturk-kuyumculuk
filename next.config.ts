@@ -16,12 +16,9 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    // Allow product images from Unsplash (fallback samples) and Cloudinary (real uploads)
+    qualities: [75, 90],
+    // Product media must come from the verified Cloudinary account or local assets.
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
       {
         protocol: "https",
         hostname: "res.cloudinary.com",

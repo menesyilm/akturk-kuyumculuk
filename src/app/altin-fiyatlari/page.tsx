@@ -147,18 +147,28 @@ export default function AltinFiyatlari() {
   }, [connectionState]);
 
   return (
-    <main className="min-h-screen bg-brand-black pb-12 pt-10 lg:pb-16 lg:pt-16">
-      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8">
+    <div className="min-h-screen bg-[#f4f0e8] pb-20 text-[#10211e] lg:pb-28">
+      <header className="border-b border-[#9b8050]/25 px-5 py-16 sm:px-9 sm:py-20 lg:px-14 lg:py-24">
+        <div className="mx-auto max-w-[96rem]">
+          <p className="text-[0.64rem] font-bold uppercase tracking-[0.3em] text-[#876d3e]">Canlı Piyasa</p>
+          <div className="mt-5 grid gap-7 lg:grid-cols-[1fr_0.65fr] lg:items-end">
+            <h1 className="font-serif text-[3.5rem] leading-none tracking-[-0.04em] sm:text-7xl lg:text-[5.8rem]">Altın fiyatları</h1>
+            <p className="max-w-xl text-sm leading-7 text-[#10211e]/58 sm:text-base sm:leading-8 lg:justify-self-end">Piyasa verilerini canlı olarak takip edin. Ürüne özel satış fiyatı için bizimle iletişime geçin.</p>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[96rem] px-5 pt-10 sm:px-9 sm:pt-14 lg:px-14">
         <motion.section
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="overflow-hidden border border-brand-medium-gray bg-brand-dark-gray shadow-2xl"
+          className="overflow-hidden border border-[#9b8050]/30 bg-brand-dark-gray"
         >
-          <div className="flex flex-col gap-2 bg-brand-black px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-            <h1 className="text-base font-bold text-brand-gold sm:text-xl lg:text-2xl">
-              ALTIN FİYATLARI
-            </h1>
+          <div className="flex flex-col gap-2 bg-[#0a1714] px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <h2 className="text-[0.67rem] font-bold uppercase tracking-[0.22em] text-[#d7bd7c]">
+              Canlı fiyat tablosu
+            </h2>
             <div className="flex items-center gap-2 text-[10px] sm:gap-3 sm:text-xs lg:text-sm">
               <span className={`flex items-center gap-1.5 font-semibold ${status.color}`}>
                 <Radio className={connectionState === "connected" ? "h-4 w-4 animate-pulse" : "h-4 w-4"} />
@@ -192,11 +202,7 @@ export default function AltinFiyatlari() {
                   const change = getChange(price);
                   const isUp = change >= 0;
                   const flash = priceFlashes[definition.code];
-                  const rowStartColor = flash
-                    ? flash.direction === "up"
-                      ? "rgba(16, 185, 129, 0.42)"
-                      : "rgba(239, 68, 68, 0.42)"
-                    : "rgba(62, 62, 62, 1)";
+                  const rowStartColor = "rgba(62, 62, 62, 1)";
 
                   return (
                     <motion.div
@@ -204,11 +210,11 @@ export default function AltinFiyatlari() {
                       initial={{ backgroundColor: rowStartColor }}
                       animate={{
                         backgroundColor: flash
-                          ? [rowStartColor, "rgba(62, 62, 62, 1)", rowStartColor]
+                          ? [rowStartColor, "rgba(62, 62, 62, 1)"]
                           : "rgba(62, 62, 62, 1)",
                       }}
                       transition={flash
-                        ? { duration: 2, ease: "easeInOut", repeat: Infinity }
+                        ? { duration: 1.2, ease: "easeOut" }
                         : { duration: 0 }}
                       className="isolate grid grid-cols-[150px_1fr_1fr_0.8fr] items-center gap-3 px-3 py-3 hover:bg-brand-gold/5 sm:grid-cols-[190px_1fr_1fr_0.8fr] sm:px-4 sm:py-4 lg:grid-cols-[1.4fr_1fr_1fr_0.8fr]"
                     >
@@ -216,11 +222,11 @@ export default function AltinFiyatlari() {
                         initial={{ backgroundColor: rowStartColor }}
                         animate={{
                           backgroundColor: flash
-                            ? [rowStartColor, "rgba(62, 62, 62, 1)", rowStartColor]
+                            ? [rowStartColor, "rgba(62, 62, 62, 1)"]
                             : "rgba(62, 62, 62, 1)",
                         }}
                         transition={flash
-                          ? { duration: 2, ease: "easeInOut", repeat: Infinity }
+                          ? { duration: 1.2, ease: "easeOut" }
                           : { duration: 0 }}
                         className="sticky left-0 z-40 -my-3 -ml-3 flex h-[calc(100%+1.5rem)] flex-col justify-center border-r-2 border-brand-dark-gray pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-my-4 sm:-ml-4 sm:h-[calc(100%+2rem)] sm:pl-4"
                       >
@@ -249,13 +255,13 @@ export default function AltinFiyatlari() {
           </div>
         </motion.section>
 
-        <div className="mt-6 border border-brand-gold bg-brand-gold/20 p-4">
-          <p className="text-xs leading-relaxed text-white">
-            <span className="font-semibold text-brand-gold">Not: </span>
+        <div className="mt-6 border border-[#9b8050]/30 bg-[#eee7dc] p-5">
+          <p className="text-xs leading-6 text-[#10211e]/62 sm:text-sm">
+            <span className="font-semibold text-[#765a2d]">Bilgilendirme: </span>
             Fiyatlar canlı piyasa yayınından anlık olarak gösterilir ve bilgi amaçlıdır. Gerçek alış-satış fiyatları için mağazamızı ziyaret edebilir veya bizimle iletişime geçebilirsiniz.
           </p>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

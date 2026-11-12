@@ -1,118 +1,97 @@
-﻿'use client';
-import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { BadgeCheck, Clock, Instagram } from 'lucide-react';
+import Link from 'next/link';
+import { Clock, Instagram, MessageCircle } from 'lucide-react';
+
+const collectionLinks = [
+  { label: 'Bileklik', href: '/urunler/bileklik' },
+  { label: 'Kolye', href: '/urunler/kolye' },
+  { label: 'Yüzük ve Küpe', href: '/urunler/yuzukvekupe' },
+  { label: 'Set Takım', href: '/urunler/set' },
+];
+
+const corporateLinks = [
+  { label: 'Neden Aktürk?', href: '/neden-akturk-kuyumculuk' },
+  { label: 'Üretim', href: '/uretim' },
+  { label: 'İletişim', href: '/iletisim' },
+  { label: 'Altın Fiyatları', href: '/altin-fiyatlari' },
+  { label: 'Ürün Doğrulama', href: '/sertifika' },
+];
 
 export default function Footer() {
-  const panelVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { delay: 0.2, duration: 0.6 } },
-  };
-
   return (
-    <footer className="border-t-2 border-brand-gold bg-brand-dark-gray">
-      <div className="max-w-8xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8 xl:py-10">
-
-        {/* Ana Layout: Sol sütun + Sağ sütun */}
-        <div className="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-8 md:items-stretch">
-
-          {/* SOL SÜTUN: Logo → Çalışma+Bize Ulaşın → Linkler */}
-          <div className="flex flex-col justify-between flex-1">
-
-            {/* Logo + Mobil Sosyal İkonlar (aynı satır) */}
-            <motion.div variants={panelVariants} initial="hidden" whileInView="visible" viewport={{ once: false, margin: "100px" }}
-              className="flex items-center justify-between md:justify-start"
-            >
-              <Link href="/">
-                <div className="relative h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20">
-                  <Image src="/images/logo-no-background.png" alt="Aktürk Kuyumculuk" fill sizes="96px" className="object-contain" />
-                </div>
-              </Link>
-
-              {/* Sosyal İkonlar - Sadece Mobil/Tablet */}
-              <div className="flex md:hidden gap-3">
-                <a href="https://www.instagram.com/akturk_kuyumculuk?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer"
-                  className="p-2 bg-brand-dark-gray hover:bg-brand-gold hover:text-brand-black transition-colors rounded-sm">
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a href="https://wa.me/905312831934" target="_blank" rel="noopener noreferrer"
-                  className="p-2 bg-brand-dark-gray hover:bg-brand-gold hover:text-brand-black transition-colors rounded-sm">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                  </svg>
-                </a>
-              </div>
-            </motion.div>
-
-            {/* Çalışma Saatleri + Bize Ulaşın */}
-            <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 lg:gap-14">
-              <motion.div variants={panelVariants} initial="hidden" whileInView="visible" viewport={{ once: false, margin: "100px" }} className="space-y-1.5">
-                <h3 className="text-xs sm:text-sm lg:text-base xl:text-lg font-bold text-brand-gold">Çalışma Saatleri</h3>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-brand-light-gray text-[10px] sm:text-xs lg:text-sm">
-                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span><strong className="text-brand-gold">Hafta İçi:</strong> 09:00 - 17:00</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-brand-light-gray text-[10px] sm:text-xs lg:text-sm">
-                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span><strong className="text-brand-gold">Cumartesi:</strong> 10:00 - 16:00</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 sm:gap-2 text-brand-light-gray text-[10px] sm:text-xs lg:text-sm">
-                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span><strong className="text-brand-gold">Pazar:</strong> Kapalı</span>
-                  </div>
-                </div>
-              </motion.div>
-
-
+    <footer className="border-t border-[#d6b56d]/35 bg-[#090b0a] text-white">
+      <div className="mx-auto max-w-[96rem] px-5 py-16 sm:px-9 sm:py-20 lg:px-14 lg:py-24">
+        <div className="grid gap-14 border-b border-white/12 pb-14 lg:grid-cols-[1.35fr_.65fr_.65fr_.85fr] lg:gap-12 lg:pb-20">
+          <div>
+            <Link href="/" className="flex w-fit items-center gap-4" aria-label="Aktürk Kuyumculuk ana sayfa">
+              <span className="relative h-16 w-16">
+                <Image src="/images/logo-no-background.png" alt="" fill sizes="64px" className="object-contain" />
+              </span>
+              <span>
+                <span className="block font-serif text-xl tracking-[0.1em] text-[#e2c77f]">AKTÜRK</span>
+                <span className="block text-[0.55rem] uppercase tracking-[0.34em] text-white/42">Kuyumculuk</span>
+              </span>
+            </Link>
+            <p className="mt-7 max-w-md font-serif text-2xl leading-[1.35] text-white/84 sm:text-3xl">
+              Altının yaşayan çizgisi, Trabzon’dan.
+            </p>
+            <div className="mt-8 flex gap-3">
+              <a
+                href="https://www.instagram.com/akturk_kuyumculuk?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid h-11 w-11 place-items-center border border-white/18 text-white/70 transition-colors hover:border-[#d8ba74] hover:text-[#d8ba74]"
+                aria-label="Aktürk Kuyumculuk Instagram"
+              >
+                <Instagram aria-hidden="true" className="h-5 w-5" />
+              </a>
+              <a
+                href="https://wa.me/905312831934"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="grid h-11 w-11 place-items-center border border-white/18 text-white/70 transition-colors hover:border-[#d8ba74] hover:text-[#d8ba74]"
+                aria-label="Aktürk Kuyumculuk WhatsApp"
+              >
+                <MessageCircle aria-hidden="true" className="h-5 w-5" />
+              </a>
             </div>
-
-            {/* Neden Aktürk + Üretim */}
-            <motion.div variants={panelVariants} initial="hidden" whileInView="visible" viewport={{ once: false, margin: "100px" }}
-              className="flex flex-col sm:flex-row gap-2 sm:gap-6 my-3"
-            >
-              <Link href="/neden-akturk-kuyumculuk" className="text-brand-gold hover:opacity-75 transition-opacity text-xs sm:text-sm lg:text-base xl:text-lg font-bold">
-                Neden Aktürk Kuyumculuk?
-              </Link>
-              <Link href="/uretim" className="text-brand-gold hover:opacity-75 transition-opacity text-xs sm:text-sm lg:text-base xl:text-lg font-bold">
-                Üretim
-              </Link>
-              <Link href="/sertifika" className="inline-flex items-center gap-1.5 text-brand-gold hover:opacity-75 transition-opacity text-xs sm:text-sm lg:text-base xl:text-lg font-bold">
-                <BadgeCheck aria-hidden="true" className="h-4 w-4" /> Sertifika Doğrula
-              </Link>
-            </motion.div>
-
           </div>
 
-          {/* SAĞ SÜTUN: Sosyal ikonlar */}
-          <div className="flex flex-col justify-between gap-3 w-full md:w-[280px] lg:w-[320px] xl:w-[380px] md:self-stretch">
-
-            {/* Sosyal İkonlar - Sadece Desktop */}
-            <motion.div variants={panelVariants} initial="hidden" whileInView="visible" viewport={{ once: false, margin: "100px" }}
-              className="hidden md:flex justify-end gap-3 sm:gap-4"
-            >
-              <a href="https://www.instagram.com/akturk_kuyumculuk?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer"
-                className="p-2 sm:p-2.5 lg:p-3 bg-brand-dark-gray hover:bg-brand-gold hover:text-brand-black transition-colors rounded-sm">
-                <Instagram className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
-              </a>
-              <a href="https://wa.me/905312831934" target="_blank" rel="noopener noreferrer"
-                className="p-2 sm:p-2.5 lg:p-3 bg-brand-dark-gray hover:bg-brand-gold hover:text-brand-black transition-colors rounded-sm">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                </svg>
-              </a>
-            </motion.div>
-
+          <div>
+            <h2 className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-[#d8ba74]">Koleksiyonlar</h2>
+            <ul className="mt-6 space-y-3.5">
+              {collectionLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-sm text-white/58 transition-colors hover:text-white">{item.label}</Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
+          <div>
+            <h2 className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-[#d8ba74]">Aktürk</h2>
+            <ul className="mt-6 space-y-3.5">
+              {corporateLinks.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="text-sm text-white/58 transition-colors hover:text-white">{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-[0.62rem] font-bold uppercase tracking-[0.24em] text-[#d8ba74]">Çalışma Saatleri</h2>
+            <div className="mt-6 space-y-4 text-sm text-white/58">
+              <p className="flex items-start gap-3"><Clock aria-hidden="true" className="mt-0.5 h-4 w-4 flex-none text-[#d8ba74]" /> <span>Hafta içi<br /><strong className="font-normal text-white/82">09.00 — 17.00</strong></span></p>
+              <p className="flex items-start gap-3"><Clock aria-hidden="true" className="mt-0.5 h-4 w-4 flex-none text-[#d8ba74]" /> <span>Cumartesi<br /><strong className="font-normal text-white/82">10.00 — 16.00</strong></span></p>
+              <p className="pl-7 text-white/42">Pazar kapalı</p>
+            </div>
+          </div>
         </div>
 
-        {/* Alt Kısım - Copyright */}
-        <div className="border-t border-brand-gold/30 mt-6 sm:mt-8 lg:mt-10 xl:mt-12 pt-4 sm:pt-6 lg:pt-8 text-center">
-          <p className="text-brand-light-gray text-[10px] sm:text-xs lg:text-sm xl:text-base">
-            © {new Date().getFullYear()} Aktürk Kuyumculuk. Tüm hakları saklıdır.
-          </p>
+        <div className="flex flex-col gap-3 pt-7 text-[0.62rem] uppercase tracking-[0.16em] text-white/32 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Aktürk Kuyumculuk. Tüm hakları saklıdır.</p>
+          <p>Aktürk Kuyumculuk · Trabzon</p>
         </div>
       </div>
     </footer>

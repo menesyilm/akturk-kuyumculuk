@@ -28,6 +28,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: "Bodoni MT", "Bodoni 72", Didot, Baskerville, Georgia, serif;
   
   /* Aktürk Kuyumculuk Marka Renkleri - Tailwind için */
   --color-brand-black: #000000;
@@ -42,22 +43,21 @@
   --color-brand-secondary: #3E3E3E;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #3E3E3E;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f0e8;
+  color: #10211e;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 html {
-  zoom: 0.8;
   scroll-behavior: smooth;
+}
+
+::selection {
+  background: #d7bd7c;
+  color: #10211e;
 }
 
 .skip-link {
@@ -300,4 +300,20 @@ html {
 
 .gallery-scroll-right {
   animation: gallery-scroll-right 70s linear infinite;
+}
+
+/* Aktürk'ün örgü işçiliğini temsil eden özgün altın iz hareketi */
+@keyframes gold-thread-flow {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -180; }
+}
+
+.gold-thread-flow {
+  stroke-dasharray: 16 10;
+  animation: gold-thread-flow 12s linear infinite;
+}
+
+.gold-thread-flow-delay {
+  animation-delay: -4s;
+  animation-duration: 16s;
 }
