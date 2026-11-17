@@ -53,10 +53,10 @@ npm run dev
 Ardından `http://localhost:3000` adresini açın. Üretim kontrolü için:
 
 ```powershell
-npm run lint
-npm test -- --runInBand
-npm run build
+npm run check
 ```
+
+Bu komut adımları sırayla çalıştırır: özel anahtar taraması, Firestore yetki regresyon kontrolü, lint denetimi, tek işçili testler ve üretim derlemesi. Aynı kalite kapısı her pull request ve `main` güncellemesinde GitHub Actions üzerinde otomatik uygulanır.
 
 ### Güvenlik
 

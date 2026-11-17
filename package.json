@@ -11,7 +11,10 @@
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "security:secrets": "node scripts/check-secrets.mjs",
+    "verify:firestore-rules": "node scripts/verify-firestore-rules.mjs",
+    "check": "npm run security:secrets && npm run verify:firestore-rules && npm run lint && npm test -- --runInBand && npm run build"
   },
   "dependencies": {
     "firebase": "^12.15.0",
@@ -37,7 +40,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^10",
+    "eslint": "^9.39.5",
     "eslint-config-next": "^16.2.9",
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
