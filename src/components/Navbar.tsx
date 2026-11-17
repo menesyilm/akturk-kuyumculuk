@@ -21,7 +21,7 @@ export default function Navbar() {
           </span>
           <span>
             <span className="block font-serif text-[1.05rem] tracking-[0.08em] text-[#e4c982]">AKTÜRK</span>
-            <span className="mt-0.5 block text-[0.5rem] uppercase tracking-[0.32em] text-white/45">Kuyumculuk</span>
+            <span className="mt-0.5 block text-[0.62rem] uppercase tracking-[0.28em] text-white/45">Kuyumculuk</span>
           </span>
         </Link>
 
@@ -30,7 +30,7 @@ export default function Navbar() {
             <Link
               key={item.name}
               href={item.href}
-              className="relative py-2 text-[0.69rem] font-semibold uppercase tracking-[0.18em] text-white/70 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-right after:scale-x-0 after:bg-[#d8ba74] after:transition-transform hover:text-white hover:after:origin-left hover:after:scale-x-100"
+              className="relative py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-right after:scale-x-0 after:bg-[#d8ba74] after:transition-transform hover:text-white hover:after:origin-left hover:after:scale-x-100"
             >
               {item.name}
             </Link>
@@ -38,13 +38,13 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center justify-end gap-5">
-          <Link href="/altin-fiyatlari" className="text-[0.63rem] font-semibold uppercase tracking-[0.16em] text-white/52 transition-colors hover:text-white/85">
+          <Link href="/altin-fiyatlari" className="text-xs font-semibold uppercase tracking-[0.14em] text-white/52 transition-colors hover:text-white/85">
             Altın Fiyatları
           </Link>
           <SearchBox inputWidth="w-52" iconSize="h-5 w-5" />
           <Link
             href="/iletisim"
-            className="inline-flex min-h-11 items-center border border-white/24 px-5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.17em] text-white/78 transition-colors hover:border-[#d8ba74] hover:text-[#e3ca8d]"
+            className="inline-flex min-h-11 items-center border border-white/24 px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] text-white/78 transition-colors hover:border-[#d8ba74] hover:text-[#e3ca8d]"
           >
             İletişim
           </Link>
