@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowDown, ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
 
 const collections = [
   {
@@ -51,61 +51,51 @@ const collections = [
 export default function Home() {
   return (
     <div className="overflow-hidden bg-[#f4f0e8] text-[#10211e]">
-      <section className="relative bg-[#06110f] text-white">
-        <div className="mx-auto grid max-w-[118rem] lg:min-h-[100svh] lg:grid-cols-[0.42fr_0.58fr]">
-          <div data-testid="hero-visual" className="relative order-1 aspect-[3/4] overflow-hidden bg-[#141815] sm:aspect-[4/5] lg:order-2 lg:aspect-auto lg:min-h-[100svh]">
+      <section className="relative bg-[#071310] pt-[4.5rem] text-white lg:pt-20">
+        <div className="mx-auto grid max-w-[118rem] lg:min-h-[calc(100svh-5rem)] lg:grid-cols-[0.46fr_0.54fr]">
+          <div data-testid="hero-visual" className="relative order-1 aspect-[3/4] overflow-hidden border-white/[0.08] bg-[#111714] sm:aspect-[4/5] lg:order-2 lg:aspect-auto lg:min-h-[calc(100svh-5rem)] lg:border-l">
             <Image
               src="/images/instagram/model-necklace-long.jpg"
               alt="Model üzerinde uzun Aktürk Kuyumculuk hasır kolye"
               fill
               priority
-              unoptimized
-              sizes="(max-width: 1023px) 100vw, 58vw"
-              className="object-cover object-[50%_53%] lg:object-[50%_54%]"
+              quality={90}
+              sizes="(max-width: 1023px) 100vw, 54vw"
+              className="object-cover object-[50%_57%] lg:object-[50%_76%]"
             />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_52%,rgba(3,10,8,.5)_100%)] lg:bg-[linear-gradient(90deg,rgba(3,12,10,.12)_0%,transparent_20%)]" />
-            <p className="absolute bottom-6 left-5 border-l border-[#d7bd7c]/70 pl-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/72 sm:bottom-9 sm:left-9 lg:bottom-10 lg:left-10">
-              Aktürk Hasır Kolye · Trabzon
-            </p>
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_72%,rgba(3,10,8,.22)_100%)] lg:bg-[linear-gradient(90deg,rgba(3,12,10,.1)_0%,transparent_18%)]" />
           </div>
 
-          <div className="relative order-2 flex flex-col justify-center bg-[#06110f] px-5 pb-20 pt-16 sm:px-10 sm:pb-24 lg:order-1 lg:min-h-[100svh] lg:px-14 lg:pb-20 lg:pt-36 xl:px-20">
+          <div className="relative order-2 flex flex-col justify-center bg-[#071310] px-5 py-16 sm:px-10 sm:py-24 lg:order-1 lg:min-h-[calc(100svh-5rem)] lg:px-14 lg:py-20 xl:px-20">
             <motion.div
-              initial={{ opacity: 0, y: 18 }}
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.85, ease: 'easeOut' }}
-              className="max-w-[41rem]"
+              transition={{ duration: 0.75, ease: 'easeOut' }}
+              className="max-w-[36rem]"
             >
-              <p className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#d7bd7c]">
-                <span className="h-px w-10 bg-[#c5a665]" /> Aktürk Kuyumculuk · Trabzon
+              <p className="text-[0.72rem] font-medium uppercase tracking-[0.18em] text-[#c6a75f]">
+                Trabzon Hasırı
               </p>
-              <h1 className="mt-8 max-w-[11ch] font-serif text-[3.45rem] font-normal leading-[0.94] tracking-[-0.045em] text-[#fbf8f0] sm:text-[4.75rem] lg:text-[5rem] xl:text-[5.8rem]">
+              <h1 className="mt-6 max-w-[10.5ch] font-serif text-[3.35rem] font-normal leading-[0.98] tracking-[-0.038em] text-[#f6f1e8] sm:text-[4.25rem] lg:text-[clamp(4.1rem,4.05vw,4.8rem)]">
                 Trabzon’da altın örülür.
               </h1>
-              <p className="mt-8 max-w-lg text-[0.98rem] leading-8 text-white/68 sm:text-[1.05rem]">
+              <p className="mt-7 max-w-[29rem] text-[1rem] leading-7 text-white/62 sm:text-[1.05rem] sm:leading-8">
                 Trabzon hasırını ölçü ve gram tercihinize göre elde hazırlıyoruz.
               </p>
-              <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
+              <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-8">
                 <Link
                   href="/urunler/bileklik"
-                  className="group inline-flex min-h-13 w-fit items-center justify-center gap-4 bg-[#f3eee4] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-[#10211e] transition-colors hover:bg-[#d6bb78]"
+                  className="group inline-flex min-h-11 w-fit items-center gap-3 border-b border-[#c6a75f] pb-1 text-[0.76rem] font-semibold tracking-[0.05em] text-[#f3ede1] transition-colors hover:border-[#e3ca8d] hover:text-white"
                 >
                   Koleksiyonları İnceleyin
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
-                <Link href="/iletisim" className="group inline-flex w-fit items-center gap-3 py-3 text-xs font-semibold uppercase tracking-[0.17em] text-white/72 transition-colors hover:text-[#e2cb94]">
+                <Link href="/iletisim" className="group inline-flex min-h-11 w-fit items-center gap-2 text-[0.76rem] font-medium tracking-[0.04em] text-white/52 transition-colors hover:text-[#e2cb94]">
                   Bilgi Alın
-                  <span className="block h-px w-8 bg-white/35 transition-all group-hover:w-12 group-hover:bg-[#d6bb78]" />
+                  <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </motion.div>
-
-            <div className="mt-16 flex items-end justify-between border-t border-white/16 pt-5 lg:absolute lg:inset-x-14 lg:bottom-8 lg:mt-0 xl:inset-x-20">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/46">Altın Tel · El Örgüsü</p>
-              <span className="hidden items-center gap-3 text-xs uppercase tracking-[0.2em] text-white/42 sm:flex">
-                Keşfet <ArrowDown aria-hidden="true" className="h-4 w-4 animate-bounce" />
-              </span>
-            </div>
           </div>
         </div>
       </section>

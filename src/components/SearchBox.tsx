@@ -298,7 +298,12 @@ export default function SearchBox({
       {mounted && !isMobile && createPortal(desktopModal, document.body)}
 
       {!alwaysOpen && (
-        <button onClick={() => setSearchOpen(!searchOpen)} className="p-1">
+        <button
+          type="button"
+          aria-label={searchOpen ? 'Aramayı kapat' : 'Ürün ara'}
+          onClick={() => setSearchOpen(!searchOpen)}
+          className="inline-flex h-10 w-10 items-center justify-center text-[#c9aa62] transition-colors hover:text-[#e2cc96]"
+        >
           <Search className={`${iconSize} text-brand-gold`} />
         </button>
       )}
