@@ -11,7 +11,7 @@ const collections = [
     name: 'Bileklik',
     href: '/urunler/bileklik',
     image: '/images/instagram/model-bracelet.jpg',
-    line: 'İnce, geniş ya da taşlı; bilekte rahat duran hasır modeller.',
+    line: 'Farklı sıra ve ölçülerde hazırlanan Trabzon hasırı bileklikler.',
     card: 'lg:col-span-7',
     ratio: 'aspect-[4/5] sm:aspect-[5/4]',
     position: 'object-center',
@@ -21,7 +21,7 @@ const collections = [
     name: 'Kolye',
     href: '/urunler/kolye',
     image: '/images/instagram/hasir-model.jpg',
-    line: 'Tek başına takılan ya da setle tamamlanan hasır kolyeler.',
+    line: 'Tek başına veya setin parçası olarak kullanılabilen hasır kolyeler.',
     card: 'lg:col-span-5 lg:pt-24',
     ratio: 'aspect-[4/5]',
     position: 'object-[50%_34%]',
@@ -31,7 +31,7 @@ const collections = [
     name: 'Yüzük ve Küpe',
     href: '/urunler/yuzukvekupe',
     image: '/images/instagram/model-ring.jpg',
-    line: 'Takımı tamamlayan küçük ama fark edilen parçalar.',
+    line: 'Hasır modelleri tamamlayan yüzük ve küpe seçenekleri.',
     card: 'lg:col-span-5 lg:pt-6',
     ratio: 'aspect-[4/5]',
     position: 'object-center',
@@ -41,7 +41,7 @@ const collections = [
     name: 'Set Takım',
     href: '/urunler/set',
     image: '/images/instagram/model-set-crystal.jpg',
-    line: 'Kolye, bileklik, yüzük ve küpeyi aynı modelde bir araya getirin.',
+    line: 'Kolye, bileklik, yüzük ve küpenin aynı modelde bir araya geldiği setler.',
     card: 'lg:col-span-7 lg:pt-28',
     ratio: 'aspect-[4/5] sm:aspect-[5/4]',
     position: 'object-[50%_34%]',
@@ -79,29 +79,29 @@ export default function Home() {
               <p className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.28em] text-[#d7bd7c]">
                 <span className="h-px w-10 bg-[#c5a665]" /> Aktürk Kuyumculuk · Trabzon
               </p>
-              <h1 className="mt-8 max-w-[11ch] font-serif text-[3.45rem] font-normal leading-[0.94] tracking-[-0.045em] text-[#fbf8f0] sm:text-[4.75rem] lg:text-[5rem] xl:text-[5.8rem]">
-                Kutuya değil, hayatınıza yakışsın.
+              <h1 className="mt-8 max-w-[10ch] font-serif text-[3.45rem] font-normal leading-[0.94] tracking-[-0.045em] text-[#fbf8f0] sm:text-[4.75rem] lg:text-[5rem] xl:text-[5.8rem]">
+                Trabzon Hasırı
               </h1>
               <p className="mt-8 max-w-lg text-[0.98rem] leading-8 text-white/68 sm:text-[1.05rem]">
-                Seçtiğiniz modeli ölçünüze, gram tercihinize ve kullanımınıza göre hazırlayalım.
+                Her model, seçilen ölçü ve gram tercihine göre elde hazırlanır.
               </p>
               <div className="mt-10 flex flex-col gap-5 sm:flex-row sm:items-center">
                 <Link
                   href="/urunler/bileklik"
                   className="group inline-flex min-h-13 w-fit items-center justify-center gap-4 bg-[#f3eee4] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.18em] text-[#10211e] transition-colors hover:bg-[#d6bb78]"
                 >
-                  Modellere Bakın
+                  Koleksiyonları İnceleyin
                   <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
                 <Link href="/iletisim" className="group inline-flex w-fit items-center gap-3 py-3 text-xs font-semibold uppercase tracking-[0.17em] text-white/72 transition-colors hover:text-[#e2cb94]">
-                  Bize Danışın
+                  Bilgi Alın
                   <span className="block h-px w-8 bg-white/35 transition-all group-hover:w-12 group-hover:bg-[#d6bb78]" />
                 </Link>
               </div>
             </motion.div>
 
             <div className="mt-16 flex items-end justify-between border-t border-white/16 pt-5 lg:absolute lg:inset-x-14 lg:bottom-8 lg:mt-0 xl:inset-x-20">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/46">Trabzon Hasırı · Elde Hazırlanır</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/46">Trabzon Hasırı · El İşçiliği</p>
               <span className="hidden items-center gap-3 text-xs uppercase tracking-[0.2em] text-white/42 sm:flex">
                 Keşfet <ArrowDown aria-hidden="true" className="h-4 w-4 animate-bounce" />
               </span>
@@ -115,14 +115,14 @@ export default function Home() {
           <p className="pt-2 text-xs font-bold uppercase tracking-[0.24em] text-[#876d3e]">El İşçiliği</p>
           <div>
             <h2 className="max-w-[13ch] font-serif text-[2.9rem] leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[5.4rem]">
-              Birbirine benzer. Birebir aynı olmaz.
+              Her parça elde tamamlanır.
             </h2>
             <div className="mt-10 grid gap-8 border-t border-[#9b8050]/32 pt-7 md:grid-cols-[1fr_auto] md:items-start">
               <p className="max-w-2xl text-[0.98rem] leading-8 text-[#10211e]/62">
-                Her parça elde hazırlandığı için gram ve ölçüde küçük farklar olur. El işçiliğini güzel yapan da budur.
+                Aynı modelde dahi gram ve ölçüde küçük farklılıklar oluşabilir. Ürün tamamlandığında ayar, gram ve kod bilgileriyle kayıt altına alınır.
               </p>
               <Link href="/neden-akturk-kuyumculuk" className="group inline-flex w-fit items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-[#6f552b]">
-                Nasıl Hazırlıyoruz?
+                Üretim Sürecini İnceleyin
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
@@ -135,9 +135,9 @@ export default function Home() {
           <div className="mb-16 flex flex-col gap-6 border-b border-[#9b8050]/30 pb-8 sm:mb-24 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#876d3e]">Koleksiyonlar</p>
-              <h2 className="mt-4 font-serif text-5xl tracking-[-0.035em] sm:text-6xl">Siz hangisini daha çok takarsınız?</h2>
+              <h2 className="mt-4 font-serif text-5xl tracking-[-0.035em] sm:text-6xl">Aktürk Koleksiyonları</h2>
             </div>
-            <p className="max-w-md text-sm leading-7 text-[#10211e]/56">Bileklikten sete, günlük kullanıma uygun modellerimizi bir araya getirdik.</p>
+            <p className="max-w-md text-sm leading-7 text-[#10211e]/56">Farklı ölçü ve modellerde hazırlanan bileklik, kolye, yüzük, küpe ve setler.</p>
           </div>
 
           <div className="grid gap-x-6 gap-y-20 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-28">
@@ -187,13 +187,13 @@ export default function Home() {
           </div>
           <div className="flex items-center px-5 py-20 sm:px-12 sm:py-24 lg:px-16 xl:px-24">
             <div className="max-w-xl">
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d7bd7c]">Birlikte Seçin</p>
-              <h2 className="mt-6 max-w-[11ch] font-serif text-5xl leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.7rem]">Takım olsun, gerçekten takım olsun.</h2>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d7bd7c]">Set Takımları</p>
+              <h2 className="mt-6 max-w-[11ch] font-serif text-5xl leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.7rem]">Aynı modelin tüm parçaları.</h2>
               <p className="mt-7 max-w-lg text-[0.98rem] leading-8 text-white/60">
-                Kolye, bileklik, yüzük ve küpeyi aynı modelde bir araya getiren setleri inceleyin.
+                Kolye, bileklik, yüzük ve küpeyi bir arada inceleyin; set içeriğini tercihinize göre belirleyin.
               </p>
               <Link href="/urunler/set" className="group mt-10 inline-flex min-h-13 items-center gap-4 border border-[#d7bd7c]/65 px-7 py-3.5 text-xs font-bold uppercase tracking-[0.17em] text-[#e4ce98] transition-colors hover:bg-[#d7bd7c] hover:text-[#0a1714]">
-                Setlere Bakın
+                Set Koleksiyonunu İnceleyin
                 <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </Link>
             </div>
@@ -205,8 +205,8 @@ export default function Home() {
         <div className="mx-auto flex max-w-[96rem] flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#876d3e]">Ürün Kaydı</p>
-            <p className="mt-2 font-serif text-2xl text-[#10211e] sm:text-3xl">Ne aldığınızı bilin.</p>
-            <p className="mt-2 text-sm leading-6 text-[#10211e]/56">Ayar, gram, ürün kodu ve sertifika bilgileri tek kayıtta.</p>
+            <p className="mt-2 font-serif text-2xl text-[#10211e] sm:text-3xl">Ürüne ait bilgiler, tek kayıtta.</p>
+            <p className="mt-2 text-sm leading-6 text-[#10211e]/56">Ayar, gram, üretim tarihi, ürün kodu ve sertifika bilgilerine ürün doğrulama sayfasından ulaşın.</p>
           </div>
           <Link href="/sertifika" className="group inline-flex w-fit items-center gap-3 text-xs font-bold uppercase tracking-[0.16em] text-[#6f552b]">
             Ürün Kaydını Doğrula
