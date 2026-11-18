@@ -18,7 +18,7 @@ jest.mock('framer-motion', () => ({
 describe('Home Page', () => {
   test('renders the focused hero and a single primary collection action', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/trabzon hasırı/i);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/trabzon’da altın örülür\./i);
     expect(screen.getByRole('link', { name: 'Koleksiyonları İnceleyin' })).toHaveAttribute('href', '/urunler/bileklik');
     expect(screen.queryByRole('link', { name: 'Sertifika Doğrula' })).not.toBeInTheDocument();
   });
