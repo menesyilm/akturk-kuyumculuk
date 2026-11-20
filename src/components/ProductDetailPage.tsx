@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { ArrowLeft, Expand, MessageCircle, X } from 'lucide-react';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebaseDb';
 import ImageWithLoader from '@/components/ImageWithLoader';
 
 interface Product {

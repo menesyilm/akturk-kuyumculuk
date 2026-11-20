@@ -28,7 +28,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: "Bodoni MT", "Bodoni 72", Didot, Baskerville, Georgia, serif;
+  --font-serif: var(--font-bodoni-moda), "Bodoni MT", Didot, Georgia, serif;
   
   /* Aktürk Kuyumculuk Marka Renkleri - Tailwind için */
   --color-brand-black: #000000;

@@ -4,7 +4,7 @@ const contactRows = [
   { icon: MapPin, label: 'Adres', content: 'Kemerkaya Mah. Kunduracılar Cad. Çarşı Sok. Çarşı Han Kat: 2, Ortahisar / Trabzon' },
   { icon: Phone, label: 'Cep Telefonu', content: '+90 531 283 19 34', href: 'tel:+905312831934' },
   { icon: Phone, label: 'Sabit Telefon', content: '+90 462 321 06 68', href: 'tel:+904623210668' },
-  { icon: Mail, label: 'E-posta', content: 'kuyumculukakturk@gmail.com', href: 'mailto:kuyumculukakturk@gmail.com' },
+  { icon: Mail, label: 'E-posta', content: 'official@akturkkuyumculuk.com', href: 'mailto:official@akturkkuyumculuk.com' },
 ];
 
 export default function IletisimPage() {

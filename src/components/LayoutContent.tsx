@@ -26,9 +26,9 @@ export default function LayoutContent({
       {!hideNavigation && (
         <>
           {/* Desktop: Navbar */}
-          <Navbar />
+          <Navbar overlay={isHomePage} />
           {/* Mobile: Sidebar */}
-          <Sidebar />
+          <Sidebar overlay={isHomePage} />
         </>
       )}
       <main

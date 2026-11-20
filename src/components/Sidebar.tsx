@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
@@ -14,14 +14,63 @@ const menuItems = [
   { name: 'Altın Fiyatları', href: '/altin-fiyatlari' },
 ];
 
-export default function Sidebar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+type SidebarProps = {
+  overlay?: boolean;
+};
 
-  const closeMenu = () => setMobileMenuOpen(false);
+export default function Sidebar({ overlay = false }: SidebarProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const menuPanelRef = useRef<HTMLDivElement>(null);
+
+  const closeMenu = useCallback(() => {
+    setMobileMenuOpen(false);
+    requestAnimationFrame(() => menuTriggerRef.current?.focus());
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeMenu();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+
+      const focusableElements = Array.from(
+        menuPanelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements.at(-1);
+      if (!firstElement || !lastElement) return;
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    requestAnimationFrame(() => closeButtonRef.current?.focus());
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [closeMenu, mobileMenuOpen]);
 
   return (
     <>
-      <nav aria-label="Mobil menü" className="fixed inset-x-0 top-0 z-50 border-b border-white/15 bg-[#080a09]/90 text-white shadow-lg backdrop-blur-xl lg:hidden">
+      <nav aria-label="Mobil menü" className={`${overlay ? 'absolute bg-gradient-to-b from-black/60 to-transparent' : 'fixed border-b border-white/15 bg-[#080a09]/90 shadow-lg backdrop-blur-xl'} inset-x-0 top-0 z-50 text-white lg:hidden`}>
         <div className="flex h-[4.5rem] items-center justify-between px-4 sm:px-7">
           <Link href="/" className="flex items-center gap-2.5" aria-label="Aktürk Kuyumculuk ana sayfa">
             <span className="relative h-11 w-11">
@@ -33,6 +82,7 @@ export default function Sidebar() {
             </span>
           </Link>
           <button
+            ref={menuTriggerRef}
             type="button"
             onClick={() => setMobileMenuOpen(true)}
             className="grid h-11 w-11 place-items-center border border-white/20 text-[#e2c77f] transition-colors hover:border-[#e2c77f]"
@@ -46,16 +96,21 @@ export default function Sidebar() {
       </nav>
 
       <div
+        ref={menuPanelRef}
         id="mobil-yan-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mobil-menu-baslik"
         aria-hidden={!mobileMenuOpen}
+        inert={!mobileMenuOpen}
         className={`fixed inset-0 z-[60] bg-[#0a0d0b] text-white transition-transform duration-500 ease-[cubic-bezier(.76,0,.24,1)] lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="flex h-full flex-col">
           <div className="flex h-[4.5rem] items-center justify-between border-b border-white/12 px-4 sm:px-7">
-            <span className="text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#e0c482]">Menü</span>
-            <button type="button" onClick={closeMenu} className="grid h-11 w-11 place-items-center border border-white/20 text-[#e0c482]" aria-label="Menüyü kapat">
+            <span id="mobil-menu-baslik" className="text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#e0c482]">Menü</span>
+            <button ref={closeButtonRef} type="button" onClick={closeMenu} className="grid h-11 w-11 place-items-center border border-white/20 text-[#e0c482]" aria-label="Menüyü kapat">
               <X aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>

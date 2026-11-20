@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  turbopack: {
+    // Keep local builds scoped to this project even when a parent folder has another lockfile.
+    root: process.cwd(),
+  },
   async headers() {
     return [
       {

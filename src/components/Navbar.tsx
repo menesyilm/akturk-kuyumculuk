@@ -11,40 +11,44 @@ const menuItems = [
   { name: 'Set Takım', href: '/urunler/set' },
 ];
 
-export default function Navbar() {
+type NavbarProps = {
+  overlay?: boolean;
+};
+
+export default function Navbar({ overlay = false }: NavbarProps) {
   return (
-    <nav aria-label="Ana menü" className="fixed inset-x-0 top-0 z-50 hidden border-b border-white/12 bg-[#06100e]/90 text-white backdrop-blur-xl lg:block">
-      <div className="mx-auto grid h-24 max-w-[104rem] grid-cols-[1fr_auto_1fr] items-center gap-8 px-10 xl:px-16">
-        <Link href="/" className="flex w-fit items-center gap-3" aria-label="Aktürk Kuyumculuk ana sayfa">
-          <span className="relative h-12 w-12 flex-none">
-            <Image src="/images/logo-no-background.png" alt="" fill sizes="48px" className="object-contain" priority />
+    <nav
+      aria-label="Ana menü"
+      className={`${overlay ? 'absolute bg-gradient-to-b from-black/55 via-black/20 to-transparent' : 'fixed border-b border-white/[0.08] bg-[#071310]/95 backdrop-blur-md'} inset-x-0 top-0 z-50 hidden text-white lg:block`}
+    >
+      <div className={`${overlay ? 'h-24' : 'h-20'} mx-auto grid max-w-[118rem] grid-cols-[1fr_auto_1fr] items-center gap-8 px-14 xl:px-20`}>
+        <Link href="/" className="flex w-fit items-center gap-3.5" aria-label="Aktürk Kuyumculuk ana sayfa">
+          <span className={`${overlay ? 'h-12 w-12' : 'h-10 w-10'} relative flex-none`}>
+            <Image src="/images/logo-no-background.png" alt="" fill sizes={overlay ? '48px' : '40px'} className="scale-125 object-contain" priority />
           </span>
-          <span>
-            <span className="block font-serif text-[1.05rem] tracking-[0.08em] text-[#e4c982]">AKTÜRK</span>
-            <span className="mt-0.5 block text-[0.5rem] uppercase tracking-[0.32em] text-white/45">Kuyumculuk</span>
-          </span>
+          <span className={`${overlay ? 'text-[1.4rem] text-[#f5e4b2]' : 'text-[1.12rem] text-[#dfc47f]'} font-serif font-medium tracking-[0.08em]`}>AKTÜRK</span>
         </Link>
 
-        <div className="flex items-center justify-center gap-7 xl:gap-10">
+        <div className="flex items-center justify-center gap-7 xl:gap-9">
           {menuItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="relative py-2 text-[0.69rem] font-semibold uppercase tracking-[0.18em] text-white/70 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-right after:scale-x-0 after:bg-[#d8ba74] after:transition-transform hover:text-white hover:after:origin-left hover:after:scale-x-100"
+              className="relative py-2 text-[0.82rem] font-medium tracking-[0.03em] text-white/78 transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-px after:origin-right after:scale-x-0 after:bg-[#c9aa62] after:transition-transform hover:text-white hover:after:origin-left hover:after:scale-x-100"
             >
               {item.name}
             </Link>
           ))}
         </div>
 
-        <div className="flex items-center justify-end gap-5">
-          <Link href="/altin-fiyatlari" className="text-[0.63rem] font-semibold uppercase tracking-[0.16em] text-white/52 transition-colors hover:text-white/85">
+        <div className="flex items-center justify-end gap-4">
+          <Link href="/altin-fiyatlari" className="hidden text-[0.78rem] font-medium tracking-[0.03em] text-white/70 transition-colors hover:text-white xl:block">
             Altın Fiyatları
           </Link>
-          <SearchBox inputWidth="w-52" iconSize="h-5 w-5" />
+          <SearchBox inputWidth="w-52" iconSize="h-[1.1rem] w-[1.1rem]" />
           <Link
             href="/iletisim"
-            className="inline-flex min-h-11 items-center border border-white/24 px-5 py-2 text-[0.62rem] font-bold uppercase tracking-[0.17em] text-white/78 transition-colors hover:border-[#d8ba74] hover:text-[#e3ca8d]"
+            className="inline-flex min-h-10 items-center border-b border-[#c9aa62]/70 text-[0.78rem] font-medium tracking-[0.03em] text-white/86 transition-colors hover:border-[#e7cf92] hover:text-white"
           >
             İletişim
           </Link>

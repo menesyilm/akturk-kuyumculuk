@@ -4,9 +4,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Download, LoaderCircle, QrCode, Search, ShieldCheck, XCircle } from 'lucide-react';
 import { collection, getDocs, limit, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebaseDb';
 import Image from 'next/image';
 import Link from 'next/link';
+
+const CERTIFICATE_VERIFICATION_ORIGIN = 'https://www.akturkkuyumculuk.com';
+const PDF_IMAGE_WAIT_TIMEOUT_MS = 5_000;
 
 interface CertificatePart {
   type?: string;
@@ -86,6 +89,35 @@ function inferProductionDate(productCode?: string) {
   return `${day}.${month}.20${year}`;
 }
 
+export function buildVerificationUrl(code: string) {
+  return `${CERTIFICATE_VERIFICATION_ORIGIN}/sertifika?code=${encodeURIComponent(code)}`;
+}
+
+async function waitForTemplateImages(template: HTMLElement) {
+  const images = Array.from(template.querySelectorAll('img'));
+
+  await Promise.all(images.map((image) => new Promise<void>((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timeoutId);
+      image.removeEventListener('load', finish);
+      image.removeEventListener('error', finish);
+      resolve();
+    };
+    const timeoutId = window.setTimeout(finish, PDF_IMAGE_WAIT_TIMEOUT_MS);
+
+    if (image.complete) {
+      void image.decode().catch(() => undefined).finally(finish);
+      return;
+    }
+
+    image.addEventListener('load', finish, { once: true });
+    image.addEventListener('error', finish, { once: true });
+  })));
+}
+
 export default function SertifikaPage() {
   const [productCode, setProductCode] = useState('');
   const [record, setRecord] = useState<CertificateRecord | null>(null);
@@ -95,6 +127,7 @@ export default function SertifikaPage() {
   const [pdfLoading, setPdfLoading] = useState(false);
   const [qrDataUrl, setQrDataUrl] = useState('');
   const pdfTemplateRef = useRef<HTMLDivElement>(null);
+  const searchRequestIdRef = useRef(0);
 
   const performSearch = useCallback(async (rawCode: string) => {
     const normalizedCode = rawCode.trim().toUpperCase();
@@ -103,6 +136,7 @@ export default function SertifikaPage() {
       return;
     }
 
+    const requestId = ++searchRequestIdRef.current;
     setLoading(true);
     setError('');
     setRecord(null);
@@ -116,6 +150,7 @@ export default function SertifikaPage() {
         limit(1)
       );
       const certificateSnapshot = await getDocs(certificateQuery);
+      if (requestId !== searchRequestIdRef.current) return;
 
       if (!certificateSnapshot.empty) {
         const certificateDocument = certificateSnapshot.docs[0];
@@ -131,36 +166,40 @@ export default function SertifikaPage() {
       }
 
       const categories = ['bileklik', 'kolye', 'yuzukvekupe', 'set'];
-      for (const category of categories) {
+      const catalogSnapshots = await Promise.all(categories.map(async (category) => {
         const catalogQuery = query(
           collection(db, category),
           where('productCode', '==', normalizedCode),
           limit(1)
         );
         const catalogSnapshot = await getDocs(catalogQuery);
-        if (!catalogSnapshot.empty) {
-          const catalogDocument = catalogSnapshot.docs[0];
-          setRecord({
-            id: catalogDocument.id,
-            source: 'catalog',
-            collectionName: category,
-            category,
-            certificateStatus: 'active',
-            ...catalogDocument.data(),
-          } as CertificateRecord);
-          setSearchPerformed(true);
-          return;
-        }
+        return { category, catalogSnapshot };
+      }));
+      if (requestId !== searchRequestIdRef.current) return;
+
+      const catalogMatch = catalogSnapshots.find(({ catalogSnapshot }) => !catalogSnapshot.empty);
+      if (catalogMatch) {
+        const catalogDocument = catalogMatch.catalogSnapshot.docs[0];
+        setRecord({
+          id: catalogDocument.id,
+          source: 'catalog',
+          collectionName: catalogMatch.category,
+          category: catalogMatch.category,
+          ...catalogDocument.data(),
+        } as CertificateRecord);
+        setSearchPerformed(true);
+        return;
       }
 
       setSearchPerformed(true);
       setError('Bu kodla eşleşen aktif bir ürün veya sertifika kaydı bulunamadı.');
     } catch (searchError) {
+      if (requestId !== searchRequestIdRef.current) return;
       console.error('Sertifika arama hatası:', searchError);
       setSearchPerformed(true);
       setError('Doğrulama sistemine şu anda ulaşılamıyor. Lütfen daha sonra tekrar deneyiniz.');
     } finally {
-      setLoading(false);
+      if (requestId === searchRequestIdRef.current) setLoading(false);
     }
   }, []);
 
@@ -177,19 +216,21 @@ export default function SertifikaPage() {
     }
   }, [performSearch]);
 
-  const isActive = record?.certificateStatus !== 'cancelled';
+  const isCertificateRecord = record?.source === 'certificate';
+  const isCatalogRecord = record?.source === 'catalog';
+  const isActive = isCertificateRecord && record?.certificateStatus?.toLowerCase() === 'active';
   const parts = record?.parts || [];
   const engravingCodes = parseStringArray(record?.engravingCodesJson);
   const title = record?.productName || record?.name || record?.productType || 'Sertifikalı Ürün';
   const productionDate = record?.productionDate || inferProductionDate(record?.productCode);
 
   const downloadCertificatePdf = async () => {
-    if (!record || pdfLoading) return;
+    if (!record || !isActive || pdfLoading) return;
     setPdfLoading(true);
 
     try {
       const verificationCode = record.productCode || record.certificateNumber || productCode;
-      const verificationUrl = `${window.location.origin}/sertifika?code=${encodeURIComponent(verificationCode)}`;
+      const verificationUrl = buildVerificationUrl(verificationCode);
       const [{ default: html2canvas }, { jsPDF }, { default: QRCode }] = await Promise.all([
         import('html2canvas'),
         import('jspdf'),
@@ -209,17 +250,7 @@ export default function SertifikaPage() {
         template = pdfTemplateRef.current;
       }
       if (!template) throw new Error('PDF şablonu hazırlanamadı.');
-      const images = Array.from(template.querySelectorAll('img'));
-      await Promise.all(images.map(async (image) => {
-        if (image.complete) {
-          await image.decode().catch(() => undefined);
-          return;
-        }
-        await new Promise<void>((resolve) => {
-          image.addEventListener('load', () => resolve(), { once: true });
-          image.addEventListener('error', () => resolve(), { once: true });
-        });
-      }));
+      await waitForTemplateImages(template);
 
       const canvas = await html2canvas(template, {
         scale: 2,
@@ -362,8 +393,9 @@ export default function SertifikaPage() {
                 value={productCode}
                 onChange={(event) => setProductCode(event.target.value.toUpperCase())}
                 onKeyDown={(event) => {
-                  if (event.key === 'Enter') void performSearch(productCode);
+                  if (event.key === 'Enter' && !loading) void performSearch(productCode);
                 }}
+                aria-busy={loading}
                 className="w-full border border-[#9b8050]/35 bg-[#fbfaf7] px-4 py-3.5 text-sm text-[#10211e] outline-none transition-colors placeholder:text-[#10211e]/32 focus:border-[#8b6d39] sm:text-base"
               />
             </div>
@@ -402,16 +434,26 @@ export default function SertifikaPage() {
 
         {record && searchPerformed && (
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden border border-[#9b8050]/30 bg-white">
-            <div className={`${isActive ? 'bg-[#e8f1eb] border-[#5b8c70]' : 'bg-red-50 border-red-400'} border-b p-4 sm:p-5`}>
+            <div className={`${isActive ? 'border-[#5b8c70] bg-[#e8f1eb]' : isCatalogRecord ? 'border-[#b48635] bg-[#fbf5e8]' : 'border-red-400 bg-red-50'} border-b p-4 sm:p-5`}>
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex items-start gap-3">
-                {isActive ? <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0" /> : <XCircle className="w-8 h-8 text-red-500 flex-shrink-0" />}
+                {isActive ? (
+                  <CheckCircle className="h-8 w-8 flex-shrink-0 text-green-600" />
+                ) : isCatalogRecord ? (
+                  <ShieldCheck className="h-8 w-8 flex-shrink-0 text-[#9a7434]" />
+                ) : (
+                  <XCircle className="h-8 w-8 flex-shrink-0 text-red-500" />
+                )}
                 <div>
-                  <h2 className={`${isActive ? 'text-[#2f6b4b]' : 'text-red-800'} font-semibold text-lg sm:text-xl`}>
-                    {isActive ? 'Sertifika Doğrulandı' : 'Sertifika Geçersiz / İptal Edilmiş'}
+                  <h2 className={`${isActive ? 'text-[#2f6b4b]' : isCatalogRecord ? 'text-[#765a2d]' : 'text-red-800'} text-lg font-semibold sm:text-xl`}>
+                    {isActive ? 'Sertifika Doğrulandı' : isCatalogRecord ? 'Ürün Katalogda Bulundu' : 'Sertifika Geçersiz / İptal Edilmiş'}
                   </h2>
-                  <p className={`${isActive ? 'text-[#416c55]' : 'text-red-700'} text-sm mt-1`}>
-                    {isActive ? 'Kod, Aktürk Kuyumculuk kayıt sistemiyle eşleşmektedir.' : 'Bu belge güncel sistemde aktif değildir. Mağaza ile iletişime geçiniz.'}
+                  <p className={`${isActive ? 'text-[#416c55]' : isCatalogRecord ? 'text-[#765a2d]' : 'text-red-700'} mt-1 text-sm`}>
+                    {isActive
+                      ? 'Kod, Aktürk Kuyumculuk sertifika kayıt sistemiyle eşleşmektedir.'
+                      : isCatalogRecord
+                        ? 'Ürün kaydı bulundu; ancak bu kodla eşleşen aktif bir sertifika bulunmadı.'
+                        : 'Bu belge güncel sistemde aktif değildir. Mağaza ile iletişime geçiniz.'}
                   </p>
                 </div>
                 </div>
@@ -490,10 +532,10 @@ export default function SertifikaPage() {
                 <div className="mt-7">
                   <h3 className="mb-4 font-serif text-2xl text-[#10211e]">Ürün ve Kod Dökümü</h3>
                   <div className="overflow-x-auto border border-[#9b8050]/30">
-                    <table className="w-full min-w-[780px] text-sm">
+                    <table className="w-full min-w-[900px] text-sm">
                       <thead className="bg-[#0a1714] text-white">
                         <tr>
-                          <th className="text-left p-3">No</th><th className="text-left p-3">Ürün</th><th className="text-left p-3">Takip Kodu</th><th className="text-left p-3">Kazıma</th><th className="text-left p-3">Gram / Ayar</th><th className="text-left p-3">Renk / Taş</th>
+                          <th className="p-3 text-left">No</th><th className="p-3 text-left">Ürün</th><th className="p-3 text-left">Takip Kodu</th><th className="p-3 text-left">Kazıma</th><th className="p-3 text-left">Gram / Ayar</th><th className="p-3 text-left">Renk / Taş</th><th className="p-3 text-left">Parti No</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -505,6 +547,7 @@ export default function SertifikaPage() {
                             <td className="p-3 font-semibold text-[#765a2d]">{displayValue(part.markCode)}</td>
                             <td className="p-3 text-[#10211e]/70">{displayValue(part.gram)} gr / {displayValue(part.ayar)}</td>
                             <td className="p-3 text-[#10211e]/70">{displayValue(part.color)} / {displayValue(part.stone)}</td>
+                            <td className="p-3 text-[#10211e]/70">{displayValue(part.batchNumber)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -559,9 +602,9 @@ export default function SertifikaPage() {
               <header className="flex items-start justify-between gap-8 border-b border-[#d8c8aa] pb-6">
                 <div>
                   <p className="font-serif text-[30px] tracking-[0.16em] text-[#9a7434]">AKTÜRK</p>
-                  <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.38em] text-[#47605c]">Kuyumculuk · Trabzon</p>
+                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#47605c]">Kuyumculuk · Trabzon</p>
                   <h2 className="mt-6 font-serif text-[25px] leading-tight text-[#12302d]">Ürün Kimlik ve Garanti Belgesi</h2>
-                  <p className="mt-2 text-[10px] leading-4 text-[#47605c]">Bu belge, Aktürk Kuyumculuk kayıt sistemindeki doğrulanmış teknik ürün bilgilerini içerir.</p>
+                  <p className="mt-2 text-[11px] leading-[1.55] text-[#47605c]">Bu belge, Aktürk Kuyumculuk kayıt sistemindeki doğrulanmış teknik ürün bilgilerini içerir.</p>
                 </div>
                 <div className="flex flex-col items-center text-center">
                   {qrDataUrl ? (
@@ -569,7 +612,7 @@ export default function SertifikaPage() {
                   ) : (
                     <div className="h-28 w-28 border border-[#e1d4bd] bg-[#f7f3ea]" />
                   )}
-                  <p className="mt-2 text-[8px] font-bold uppercase tracking-[0.16em] text-[#47605c]">Çevrimiçi doğrula</p>
+                  <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47605c]">Çevrimiçi doğrula</p>
                 </div>
               </header>
 
@@ -580,9 +623,9 @@ export default function SertifikaPage() {
                   </div>
                 )}
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-[#9a7434]">Sertifikalı ürün</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a7434]">Sertifikalı ürün</p>
                   <h3 className="mt-2 max-w-[620px] font-serif text-[23px] leading-tight text-[#12302d]">{title}</h3>
-                  <p className={`mt-3 inline-block border px-4 py-1 text-[9px] font-bold uppercase tracking-[0.16em] ${isActive ? 'border-[#2f7d5a] text-[#2f7d5a]' : 'border-red-700 text-red-700'}`}>
+                  <p className={`mt-3 inline-block border px-4 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${isActive ? 'border-[#2f7d5a] text-[#2f7d5a]' : 'border-red-700 text-red-700'}`}>
                     {isActive ? 'Kayıt doğrulandı' : 'Kayıt geçersiz / iptal edilmiş'}
                   </p>
                 </div>
@@ -604,17 +647,17 @@ export default function SertifikaPage() {
                   ['Taş Durumu / Sıra', `${displayValue(record.stoneType)}${record.sira ? ` · Sıra ${record.sira}` : ''}`],
                 ].map(([label, value]) => (
                   <div key={String(label)} className="bg-white px-4 py-3">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.13em] text-[#6f7f7c]">{label}</p>
-                    <p className="mt-1 text-[11px] font-semibold text-[#12302d]">{displayValue(value)}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#61716e]">{label}</p>
+                    <p className="mt-1 text-[12px] font-semibold text-[#12302d]">{displayValue(value)}</p>
                   </div>
                 ))}
               </section>
 
               {parts.length > 0 && (
                 <section data-pdf-break-before className="mt-6">
-                  <h4 className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#9a7434]">Ürün ve Kod Dökümü</h4>
-                  <table className="w-full border-collapse text-left text-[9px]">
-                    <thead><tr className="bg-[#12302d] text-white"><th className="p-2">No</th><th className="p-2">Ürün</th><th className="p-2">Takip / Kazıma</th><th className="p-2">Gram / Ayar</th><th className="p-2">Renk / Taş</th></tr></thead>
+                  <h4 className="mb-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#9a7434]">Ürün ve Kod Dökümü</h4>
+                  <table className="w-full border-collapse text-left text-[10px]">
+                    <thead><tr className="bg-[#12302d] text-white"><th className="p-2">No</th><th className="p-2">Ürün</th><th className="p-2">Takip / Kazıma</th><th className="p-2">Gram / Ayar</th><th className="p-2">Renk / Taş / Parti</th></tr></thead>
                     <tbody>
                       {parts.map((part, index) => (
                         <tr key={`${part.code || 'pdf-part'}-${index}`} data-pdf-break-after className="border-b border-[#e8decb]">
@@ -622,7 +665,7 @@ export default function SertifikaPage() {
                           <td className="p-2">{displayValue(part.type)}{part.sira ? ` · Sıra ${part.sira}` : ''}</td>
                           <td className="p-2 font-semibold">{displayValue(part.code)}<br />{displayValue(part.markCode)}</td>
                           <td className="p-2">{displayValue(part.gram)} gr / {displayValue(part.ayar)}</td>
-                          <td className="p-2">{displayValue(part.color)} / {displayValue(part.stone)}</td>
+                          <td className="p-2">{displayValue(part.color)} / {displayValue(part.stone)}<br />{displayValue(part.batchNumber)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -633,17 +676,17 @@ export default function SertifikaPage() {
               {(record.warrantyInfo || record.careInstructions) && (
                 <section data-pdf-break-before className="mt-6 grid grid-cols-2 gap-5 border-t border-[#e1d4bd] pt-5">
                   <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9a7434]">Garanti ve Hizmet</h4>
-                    <p className="mt-2 whitespace-pre-line text-[8px] leading-[1.55] text-[#354b48]">{record.warrantyInfo || '—'}</p>
+                    <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#9a7434]">Garanti ve Hizmet</h4>
+                    <p className="mt-2 whitespace-pre-line text-[10px] leading-[1.6] text-[#354b48]">{record.warrantyInfo || '—'}</p>
                   </div>
                   <div>
-                    <h4 className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#9a7434]">Bakım ve Kullanım</h4>
-                    <p className="mt-2 whitespace-pre-line text-[8px] leading-[1.55] text-[#354b48]">{record.careInstructions || '—'}</p>
+                    <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#9a7434]">Bakım ve Kullanım</h4>
+                    <p className="mt-2 whitespace-pre-line text-[10px] leading-[1.6] text-[#354b48]">{record.careInstructions || '—'}</p>
                   </div>
                 </section>
               )}
 
-              <footer className="mt-6 flex items-end justify-between border-t border-[#e1d4bd] pt-4 text-[8px] text-[#6f7f7c]">
+              <footer className="mt-6 flex items-end justify-between border-t border-[#e1d4bd] pt-4 text-[9px] text-[#61716e]">
                 <p>Belge kodu: <strong className="text-[#12302d]">{displayValue(record.certificateNumber)}</strong></p>
                 <p className="text-right">Müşteri, iletişim, ödeme ve satış tutarı bilgileri bu çevrimiçi kopyada yer almaz.</p>
               </footer>
