@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { collection, getDocs } from 'firebase/firestore';
 import { ArrowUpRight } from 'lucide-react';
-import { db } from '@/lib/firebase';
+import { db } from '@/lib/firebaseDb';
 import ImageWithLoader from '@/components/ImageWithLoader';
 
 type SortOption = 'recommended' | 'name-asc' | 'name-desc';

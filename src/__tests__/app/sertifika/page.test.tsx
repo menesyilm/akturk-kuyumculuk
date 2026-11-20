@@ -14,7 +14,7 @@ jest.mock('firebase/firestore', () => ({
   where: jest.fn(),
 }));
 
-jest.mock('@/lib/firebase', () => ({ db: {} }));
+jest.mock('@/lib/firebaseDb', () => ({ db: {} }));
 
 jest.mock('framer-motion', () => ({
   motion: {
@@ -22,7 +22,7 @@ jest.mock('framer-motion', () => ({
   },
 }));
 
-import SertifikaPage from '@/app/sertifika/page';
+import SertifikaPage, { buildVerificationUrl } from '@/app/sertifika/page';
 
 const emptySnapshot = { empty: true, docs: [] };
 
@@ -63,6 +63,7 @@ describe('Sertifika doğrulama sayfası', () => {
                 ayar: '22K',
                 color: 'Sarı',
                 stone: 'Taşlı Ürün',
+                batchNumber: 'URT-2026-H45-KLY',
               },
             ]),
           }),
@@ -80,6 +81,7 @@ describe('Sertifika doğrulama sayfası', () => {
     expect(screen.getByText('STK-261102-001-01')).toBeInTheDocument();
     expect(screen.getAllByText('AK2GSQKL')).toHaveLength(2);
     expect(screen.getByText('18,50 gr / 22K')).toBeInTheDocument();
+    expect(screen.getByText('URT-2026-H45-KLY')).toBeInTheDocument();
     expect(screen.getByText('02.11.2026')).toBeInTheDocument();
     expect(screen.getByText('URT-2026-H45-SET')).toBeInTheDocument();
     expect(screen.getByText('22K')).toBeInTheDocument();
@@ -128,5 +130,67 @@ describe('Sertifika doğrulama sayfası', () => {
 
     expect(await screen.findByText('Sertifika Doğrulandı')).toBeInTheDocument();
     expect(screen.getByText('06.11.2026')).toBeInTheDocument();
+  });
+
+  test('katalog ürünü aktif sertifika gibi göstermez ve PDF sunmaz', async () => {
+    mockGetDocs
+      .mockResolvedValueOnce(emptySnapshot)
+      .mockResolvedValueOnce({
+        empty: false,
+        docs: [
+          {
+            id: 'catalog-product-1',
+            data: () => ({
+              productCode: 'BLK-KATALOG-001',
+              name: 'Katalog Bileklik',
+            }),
+          },
+        ],
+      })
+      .mockResolvedValue(emptySnapshot);
+
+    render(<SertifikaPage />);
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Doğrulama Kodu'), 'BLK-KATALOG-001');
+    await user.click(screen.getByRole('button', { name: /sorgula/i }));
+
+    expect(await screen.findByText('Ürün Katalogda Bulundu')).toBeInTheDocument();
+    expect(screen.getByText(/aktif bir sertifika bulunmadı/i)).toBeInTheDocument();
+    expect(screen.queryByText('Sertifika Doğrulandı')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /pdf sertifikayı indir/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /ürün detayına git/i })).toHaveAttribute(
+      'href',
+      '/urunler/bileklik/catalog-product-1'
+    );
+  });
+
+  test('beklenmeyen sertifika durumunu güvenli varsayılanla geçersiz sayar', async () => {
+    mockGetDocs.mockResolvedValueOnce({
+      empty: false,
+      docs: [
+        {
+          id: 'BLK-BEKLEMEDE-001',
+          data: () => ({
+            certificateStatus: 'pending',
+            productCode: 'BLK-BEKLEMEDE-001',
+            productName: 'Kontrol Bekleyen Bileklik',
+          }),
+        },
+      ],
+    });
+
+    render(<SertifikaPage />);
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText('Doğrulama Kodu'), 'BLK-BEKLEMEDE-001');
+    await user.click(screen.getByRole('button', { name: /sorgula/i }));
+
+    expect(await screen.findByText('Sertifika Geçersiz / İptal Edilmiş')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /pdf sertifikayı indir/i })).not.toBeInTheDocument();
+  });
+
+  test('PDF QR adresini önizleme alan adı yerine kalıcı üretim adresine bağlar', () => {
+    expect(buildVerificationUrl('BLK 261106/001')).toBe(
+      'https://www.akturkkuyumculuk.com/sertifika?code=BLK%20261106%2F001'
+    );
   });
 });

@@ -18,17 +18,25 @@ jest.mock('framer-motion', () => ({
 describe('Home Page', () => {
   test('renders the focused hero and a single primary collection action', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/trabzon’da altın örülür\./i);
-    expect(screen.getByRole('link', { name: 'Koleksiyonları İnceleyin' })).toHaveAttribute('href', '/urunler/bileklik');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/güvenle takılır,\s*nesillerce aktarılır\./i);
+    expect(screen.getByRole('link', { name: 'Koleksiyonları Keşfedin' })).toHaveAttribute('href', '/urunler/bileklik');
     expect(screen.queryByRole('link', { name: 'Sertifika Doğrula' })).not.toBeInTheDocument();
   });
 
-  test('uses one strong real-product hero instead of the rejected video collage', () => {
+  test('uses the video as a full-bleed stage with centered overlay copy', () => {
+    render(<Home />);
+    expect(screen.getByTestId('home-hero')).toHaveClass('min-h-[100svh]');
+    expect(screen.getByTestId('hero-visual')).toHaveClass('absolute', 'inset-0');
+    expect(screen.getByTestId('hero-copy')).toHaveClass('text-center', 'items-center');
+  });
+
+  test('keeps the real-product image as a fallback for the process video', async () => {
     const { container } = render(<Home />);
-    expect(container.querySelector('video')).not.toBeInTheDocument();
     const hero = screen.getByTestId('hero-visual');
     expect(within(hero).getAllByRole('img')).toHaveLength(1);
-    expect(within(hero).getByRole('img', { name: /uzun aktürk kuyumculuk hasır kolye/i })).toBeInTheDocument();
+    expect(within(hero).getByRole('img', { name: /trabzon hasırı üretim süreci/i })).toBeInTheDocument();
+    expect(await within(hero).findByTestId('hero-video')).toHaveAttribute('preload', 'metadata');
+    expect(container.querySelector('video[controls]')).not.toBeInTheDocument();
   });
 
   test('matches every collection title with a relevant model image', () => {
@@ -55,7 +63,7 @@ describe('Home Page', () => {
 
   test('keeps product verification available without making it a primary pitch', () => {
     render(<Home />);
-    const verificationLink = screen.getByRole('link', { name: 'Ürün Kaydını Doğrula' });
+    const verificationLink = screen.getByRole('link', { name: 'Ürün Kaydını Sorgulayın' });
     expect(verificationLink).toHaveAttribute('href', '/sertifika');
   });
 });
