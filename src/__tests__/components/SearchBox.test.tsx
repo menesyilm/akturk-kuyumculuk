@@ -8,7 +8,10 @@ jest.mock('firebase/firestore', () => ({
   getDocs: jest.fn(async ({ category }: { category: string }) => ({
     docs: [{
       id: `${category}-1`,
-      data: () => ({ name: `${category} ürünü`, image: 'https://example.com/product.jpg' }),
+      data: () => ({
+        name: `${category} ürünü`,
+        image: 'https://res.cloudinary.com/dyhd8ltve/image/upload/v1/product.jpg',
+      }),
     }],
   })),
 }));
@@ -37,10 +40,16 @@ describe('SearchBox', () => {
     await waitFor(() => expect(getDocs).toHaveBeenCalledTimes(4));
 
     const searchInput = within(dialog).getByRole('textbox', { name: 'Ürün ara' });
-    const closeButton = within(dialog).getByRole('button', { name: 'Aramayı kapat' });
-    closeButton.focus();
+    fireEvent.change(searchInput, { target: { value: 'yuzukvekupe' } });
+    expect(await within(dialog).findByText('Yüzük ve Küpe')).toBeInTheDocument();
+
+    const lastResult = within(dialog).getByRole('link');
+    lastResult.focus();
     fireEvent.keyDown(document, { key: 'Tab' });
     expect(searchInput).toHaveFocus();
+
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(lastResult).toHaveFocus();
 
     fireEvent.click(triggers[1]);
     await waitFor(() => expect(screen.getAllByRole('dialog', { name: 'Ürün arama' })).toHaveLength(2));

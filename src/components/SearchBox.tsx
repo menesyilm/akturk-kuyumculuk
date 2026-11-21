@@ -22,6 +22,16 @@ interface SearchBoxProps {
 }
 
 const productCategories = ['bileklik', 'kolye', 'yuzukvekupe', 'set'] as const;
+const categoryLabels: Record<(typeof productCategories)[number], string> = {
+  bileklik: 'Bileklik',
+  kolye: 'Kolye',
+  yuzukvekupe: 'Yüzük ve Küpe',
+  set: 'Set Takım',
+};
+
+function displayCategory(category: string) {
+  return categoryLabels[category as keyof typeof categoryLabels] ?? category;
+}
 
 let productCatalogCache: Product[] | null = null;
 let productCatalogRequest: Promise<Product[]> | null = null;
@@ -245,7 +255,6 @@ export default function SearchBox({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.2 }}
-                    data-lenis-prevent
                     className="mt-2 bg-brand-black/90 border-2 border-brand-gold max-h-[400px] overflow-y-auto rounded-sm scrollbar-brand"
                   >
                     {catalogStatus === 'loading' ? (
@@ -264,7 +273,7 @@ export default function SearchBox({
                         </div>
                         <div>
                           <p className="text-white font-semibold text-base">{product.name}</p>
-                          <p className="text-brand-gold text-sm uppercase">{product.category}</p>
+                          <p className="text-brand-gold text-sm uppercase">{displayCategory(product.category)}</p>
                         </div>
                       </Link>
                     )) : (
@@ -296,7 +305,7 @@ export default function SearchBox({
               setSearchQuery(e.target.value);
               if (catalogStatus === 'idle') void ensureProductsLoaded();
             }}
-            className="w-full py-2 pl-9 pr-8 bg-transparent text-white text-xs focus:outline-none focus:ring-1 focus:ring-brand-gold placeholder-brand-medium-gray"
+            className="w-full py-2.5 pl-9 pr-8 bg-transparent text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-gold placeholder-brand-light-gray"
           />
           {searchQuery && (
             <button type="button" aria-label="Aramayı temizle" onClick={() => setSearchQuery('')} className="absolute right-2 text-brand-medium-gray hover:text-brand-gold transition-colors">
@@ -311,13 +320,12 @@ export default function SearchBox({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              data-lenis-prevent
               className="absolute top-full left-0 right-0 mt-1 bg-brand-black border border-brand-gold/60 max-h-[280px] overflow-y-auto z-50 rounded-sm"
             >
               {catalogStatus === 'loading' ? (
-                <p className="text-brand-medium-gray text-xs text-center py-4" role="status">Ürünler yükleniyor…</p>
+                <p className="py-4 text-center text-sm text-brand-light-gray" role="status">Ürünler yükleniyor…</p>
               ) : catalogStatus === 'error' ? (
-                <p className="text-brand-medium-gray text-xs text-center py-4" role="status">Ürünler şu anda yüklenemiyor</p>
+                <p className="py-4 text-center text-sm text-brand-light-gray" role="status">Ürünler şu anda yüklenemiyor</p>
               ) : searchResults.length > 0 ? searchResults.map((product) => (
                 <Link
                   key={`${product.category}-${product.id}`}
@@ -329,12 +337,12 @@ export default function SearchBox({
                     <Image src={product.image} alt={product.name} fill loader={cloudinaryImageLoader} sizes="40px" className="object-cover rounded-sm" />
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-xs">{product.name}</p>
-                    <p className="text-brand-gold text-[10px] uppercase">{product.category}</p>
+                    <p className="text-sm font-semibold text-white">{product.name}</p>
+                    <p className="text-xs uppercase text-brand-gold">{displayCategory(product.category)}</p>
                   </div>
                 </Link>
               )) : (
-                <p className="text-brand-medium-gray text-xs text-center py-4">Ürün bulunamadı</p>
+                <p className="py-4 text-center text-sm text-brand-light-gray">Ürün bulunamadı</p>
               )}
             </motion.div>
           )}
@@ -366,7 +374,7 @@ export default function SearchBox({
                 autoFocus
               />
               {searchQuery && searchResults.length > 0 && (
-                <div data-lenis-prevent className="absolute top-full right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl max-h-[288px] overflow-y-auto z-50 w-64 sm:w-80">
+                <div className="absolute top-full right-0 mt-2 bg-white border-2 border-brand-gold shadow-2xl max-h-[288px] overflow-y-auto z-50 w-64 sm:w-80">
                   {searchResults.map((product) => (
                     <Link
                       key={`${product.category}-${product.id}`}
@@ -379,7 +387,7 @@ export default function SearchBox({
                       </div>
                       <div>
                         <p className="text-brand-black font-semibold text-xs">{product.name}</p>
-                        <p className="text-brand-medium-gray uppercase text-xs">{product.category}</p>
+                        <p className="text-xs uppercase text-brand-medium-gray">{displayCategory(product.category)}</p>
                       </div>
                     </Link>
                   ))}

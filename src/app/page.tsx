@@ -1,8 +1,5 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import HeroMedia from '@/components/HeroMedia';
 
 const collections = [
@@ -57,12 +54,9 @@ export default function Home() {
 
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,9,7,.42)_0%,rgba(2,9,7,.08)_34%,rgba(2,9,7,.18)_56%,rgba(2,9,7,.82)_100%)]" />
 
-        <motion.div
+        <div
           data-testid="hero-copy"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, ease: 'easeOut' }}
-          className="relative z-10 mx-auto flex w-full max-w-[62rem] flex-col items-center px-5 pb-16 pt-36 text-center sm:px-10 sm:pb-20 lg:pb-[7vh] lg:pt-44"
+          className="hero-copy-enter relative z-10 mx-auto flex w-full max-w-[62rem] flex-col items-center px-5 pb-16 pt-36 text-center sm:px-10 sm:pb-20 lg:pb-[7vh] lg:pt-44"
         >
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#ead69f]">
             Trabzon Hasırı · El İşçiliği
@@ -89,7 +83,7 @@ export default function Home() {
               Bizimle Görüşün
             </Link>
           </div>
-        </motion.div>
+        </div>
       </section>
 
       <section className="border-b border-[#9b8050]/25 px-5 py-24 sm:px-9 sm:py-32 lg:px-14 lg:py-40">
