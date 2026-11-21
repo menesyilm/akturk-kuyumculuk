@@ -161,6 +161,52 @@ requirePattern(
   staffBlock,
 );
 
+const publicCertificateFields = [
+  "ayar",
+  "batchNumber",
+  "careInstructions",
+  "category",
+  "certificateDate",
+  "certificateNumber",
+  "certificatePartsJson",
+  "certificateStatus",
+  "certificateUpdatedAt",
+  "childProductCodesJson",
+  "engravingCodesJson",
+  "goldColor",
+  "gram",
+  "image",
+  "lookupCodes",
+  "physicalCount",
+  "productCode",
+  "productName",
+  "productType",
+  "productionDate",
+  "saleType",
+  "sira",
+  "stoneType",
+  "warrantyInfo",
+  "warrantyPolicyVersion",
+].sort();
+const certificateSchemaBlock = extractBlock(
+  /function\s+hasOnlyPublicCertificateFields\s*\(\s*data\s*\)\s*\{/,
+  "hasOnlyPublicCertificateFields",
+);
+requirePattern(
+  /return\s+data\.keys\(\)\.hasOnly\s*\(/,
+  "sertifika alan sözleşmesi hasOnly kullanmalı.",
+  certificateSchemaBlock,
+);
+const actualPublicCertificateFields = [...certificateSchemaBlock.matchAll(/[\'"]([^\'"]+)[\'"]/g)]
+  .map((match) => match[1])
+  .sort();
+if (
+  actualPublicCertificateFields.length !== publicCertificateFields.length ||
+  actualPublicCertificateFields.some((field, index) => field !== publicCertificateFields[index])
+) {
+  fail("sertifika alan sözleşmesi beklenen teknik alan listesinden farklı.");
+}
+
 const publicProductCollections = [
   ["\\/yuzukvekupe\\/\\{productId\\}", "yuzukvekupe"],
   ["\\/bileklik\\/\\{productId\\}", "bileklik"],
@@ -185,12 +231,19 @@ const certificateBlock = extractMatchBlock("\\/sertifikalar\\/\\{certificateId\\
 requireExactAllows(
   certificateBlock,
   [
-    { operations: ["get"], condition: "true" },
+    {
+      operations: ["get"],
+      condition: "isStaff() || hasOnlyPublicCertificateFields(resource.data)",
+    },
     {
       operations: ["list"],
-      condition: "request.query.limit != null && request.query.limit <= 1",
+      condition: "isStaff() || (request.query.limit != null && request.query.limit <= 1)",
     },
-    { operations: ["write"], condition: "isStaff()" },
+    {
+      operations: ["create", "update"],
+      condition: "isStaff() && hasOnlyPublicCertificateFields(request.resource.data)",
+    },
+    { operations: ["delete"], condition: "isStaff()" },
   ],
   "sertifikalar",
 );
@@ -203,7 +256,7 @@ for (const { operations, condition } of parseAllows(rules, "kural dosyası")) {
   const mutatesData = operations.some((operation) =>
     ["write", "create", "update", "delete"].includes(operation),
   );
-  if (mutatesData && condition !== "isStaff()") {
+  if (mutatesData && !condition.startsWith("isStaff()")) {
     fail("tüm yazma, oluşturma, güncelleme ve silme izinleri yalnızca isStaff() kullanmalı.");
   }
 }

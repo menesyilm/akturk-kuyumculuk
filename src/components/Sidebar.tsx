@@ -74,11 +74,11 @@ export default function Sidebar({ overlay = false }: SidebarProps) {
         <div className="flex h-[4.5rem] items-center justify-between px-4 sm:px-7">
           <Link href="/" className="flex items-center gap-2.5" aria-label="Aktürk Kuyumculuk ana sayfa">
             <span className="relative h-11 w-11">
-              <Image src="/images/logo-no-background.png" alt="" fill sizes="44px" className="object-contain" priority />
+              <Image src="/images/logo-mark.webp" alt="" fill sizes="44px" className="object-contain" />
             </span>
             <span>
               <span className="block font-serif text-base tracking-[0.08em] text-[#e2c77f]">AKTÜRK</span>
-              <span className="block text-[0.44rem] uppercase tracking-[0.3em] text-white/45">Kuyumculuk</span>
+              <span className="block text-xs uppercase tracking-[0.22em] text-white/62">Kuyumculuk</span>
             </span>
           </Link>
           <button
@@ -109,7 +109,7 @@ export default function Sidebar({ overlay = false }: SidebarProps) {
       >
         <div className="flex h-full flex-col">
           <div className="flex h-[4.5rem] items-center justify-between border-b border-white/12 px-4 sm:px-7">
-            <span id="mobil-menu-baslik" className="text-[0.6rem] font-semibold uppercase tracking-[0.28em] text-[#e0c482]">Menü</span>
+            <span id="mobil-menu-baslik" className="text-xs font-semibold uppercase tracking-[0.24em] text-[#e0c482]">Menü</span>
             <button ref={closeButtonRef} type="button" onClick={closeMenu} className="grid h-11 w-11 place-items-center border border-white/20 text-[#e0c482]" aria-label="Menüyü kapat">
               <X aria-hidden="true" className="h-5 w-5" />
             </button>
@@ -119,7 +119,7 @@ export default function Sidebar({ overlay = false }: SidebarProps) {
             <SearchBox alwaysOpen onResultClick={closeMenu} />
           </div>
 
-          <div data-lenis-prevent className="flex-1 overflow-y-auto px-5 py-7 sm:px-8">
+          <div className="flex-1 overflow-y-auto px-5 py-7 sm:px-8">
             <div className="divide-y divide-white/12 border-y border-white/12">
               {menuItems.map((item, index) => (
                 <Link key={item.name} href={item.href} onClick={closeMenu} className="group flex items-center justify-between py-5">
@@ -135,7 +135,7 @@ export default function Sidebar({ overlay = false }: SidebarProps) {
             <Link href="/iletisim" onClick={closeMenu} className="mt-7 flex items-center justify-center bg-[#d8ba74] px-5 py-4 text-xs font-bold uppercase tracking-[0.17em] text-[#111411]">
               Bize Ulaşın
             </Link>
-            <Link href="/sertifika" onClick={closeMenu} className="mt-5 block text-center text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-white/42 transition-colors hover:text-white/70">
+            <Link href="/sertifika" onClick={closeMenu} className="mt-5 block text-center text-xs font-semibold uppercase tracking-[0.16em] text-white/65 transition-colors hover:text-white">
               Ürün kaydını doğrula
             </Link>
           </div>

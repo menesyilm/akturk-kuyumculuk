@@ -25,11 +25,11 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex w-fit items-center gap-4" aria-label="Aktürk Kuyumculuk ana sayfa">
               <span className="relative h-16 w-16">
-                <Image src="/images/logo-no-background.png" alt="" fill sizes="64px" className="object-contain" />
+                <Image src="/images/logo-mark.webp" alt="" fill sizes="64px" className="object-contain" />
               </span>
               <span>
                 <span className="block font-serif text-xl tracking-[0.1em] text-[#e2c77f]">AKTÜRK</span>
-                <span className="block text-[0.68rem] uppercase tracking-[0.28em] text-white/42">Kuyumculuk</span>
+                <span className="block text-xs uppercase tracking-[0.24em] text-white/62">Kuyumculuk</span>
               </span>
             </Link>
             <p className="mt-7 max-w-md font-serif text-2xl leading-[1.35] text-white/84 sm:text-3xl">
@@ -62,7 +62,7 @@ export default function Footer() {
             <ul className="mt-6 space-y-3.5">
               {collectionLinks.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-sm text-white/58 transition-colors hover:text-white">{item.label}</Link>
+                  <Link href={item.href} className="text-sm text-white/68 transition-colors hover:text-white">{item.label}</Link>
                 </li>
               ))}
             </ul>
@@ -73,7 +73,7 @@ export default function Footer() {
             <ul className="mt-6 space-y-3.5">
               {corporateLinks.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-sm text-white/58 transition-colors hover:text-white">{item.label}</Link>
+                  <Link href={item.href} className="text-sm text-white/68 transition-colors hover:text-white">{item.label}</Link>
                 </li>
               ))}
             </ul>
@@ -81,15 +81,15 @@ export default function Footer() {
 
           <div>
             <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[#d8ba74]">Çalışma Saatleri</h2>
-            <div className="mt-6 space-y-4 text-sm text-white/58">
+            <div className="mt-6 space-y-4 text-sm text-white/68">
               <p className="flex items-start gap-3"><Clock aria-hidden="true" className="mt-0.5 h-4 w-4 flex-none text-[#d8ba74]" /> <span>Hafta içi<br /><strong className="font-normal text-white/82">09.00 — 17.00</strong></span></p>
               <p className="flex items-start gap-3"><Clock aria-hidden="true" className="mt-0.5 h-4 w-4 flex-none text-[#d8ba74]" /> <span>Cumartesi<br /><strong className="font-normal text-white/82">10.00 — 16.00</strong></span></p>
-              <p className="pl-7 text-white/42">Pazar kapalı</p>
+              <p className="pl-7 text-white/62">Pazar kapalı</p>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 pt-7 text-xs uppercase tracking-[0.14em] text-white/32 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 pt-7 text-xs uppercase tracking-[0.14em] text-white/55 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Aktürk Kuyumculuk. Tüm hakları saklıdır.</p>
           <p>Aktürk Kuyumculuk · Trabzon</p>
         </div>

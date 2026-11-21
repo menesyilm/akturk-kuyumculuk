@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "lenis/dist/lenis.css";
 
 :root {
   --background: #ffffff;
@@ -53,6 +52,21 @@ body {
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes hero-copy-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1.125rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-copy-enter {
+  animation: hero-copy-enter 850ms ease-out both;
 }
 
 ::selection {

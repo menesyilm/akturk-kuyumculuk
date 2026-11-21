@@ -231,7 +231,7 @@ export default function AltinFiyatlari() {
                         className="sticky left-0 z-40 -my-3 -ml-3 flex h-[calc(100%+1.5rem)] flex-col justify-center border-r-2 border-brand-dark-gray pl-3 shadow-[6px_0_10px_rgba(0,0,0,0.28)] sm:-my-4 sm:-ml-4 sm:h-[calc(100%+2rem)] sm:pl-4"
                       >
                         <div className="text-xs font-bold text-brand-light-gray sm:text-sm lg:text-base">{definition.name}</div>
-                        <div className="text-[9px] text-brand-medium-gray sm:text-[10px] lg:text-xs">{definition.name}</div>
+                        <div className="text-xs text-brand-medium-gray">{definition.code}</div>
                       </motion.div>
                       <div className="text-right font-mono text-xs text-brand-light-gray sm:text-sm lg:text-base">
                         {price ? formatPrice(price.alis, definition.decimals) : "—"}

@@ -3,7 +3,6 @@ import { Bodoni_Moda, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import FirebaseProvider from "@/components/FirebaseProvider";
 import LayoutContent from "@/components/LayoutContent";
-import SmoothScroll from "@/components/SmoothScroll";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +42,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   icons: {
-    icon: '/images/logo-no-background.png',
+    icon: '/icon.png',
   },
 };
 
@@ -58,7 +57,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${bodoniModa.variable} antialiased`}
       >
         <FirebaseProvider>
-          <SmoothScroll />
           <LayoutContent>{children}</LayoutContent>
         </FirebaseProvider>
       </body>
