@@ -7,6 +7,36 @@ service cloud.firestore {
         && request.auth.token.email == 'kuyumculukakturk@gmail.com';
     }
 
+    function hasOnlyPublicCertificateFields(data) {
+      return data.keys().hasOnly([
+        'ayar',
+        'batchNumber',
+        'careInstructions',
+        'category',
+        'certificateDate',
+        'certificateNumber',
+        'certificatePartsJson',
+        'certificateStatus',
+        'certificateUpdatedAt',
+        'childProductCodesJson',
+        'engravingCodesJson',
+        'goldColor',
+        'gram',
+        'image',
+        'lookupCodes',
+        'physicalCount',
+        'productCode',
+        'productName',
+        'productType',
+        'productionDate',
+        'saleType',
+        'sira',
+        'stoneType',
+        'warrantyInfo',
+        'warrantyPolicyVersion'
+      ]);
+    }
+
     match /yuzukvekupe/{productId} {
       allow read: if true;
       allow write: if isStaff();
@@ -27,13 +57,19 @@ service cloud.firestore {
       allow write: if isStaff();
     }
 
-    // Public certificate verification exposes technical data only.
-    // Field queries used by the verification page must request at most one
-    // result. Certificate writes remain restricted to the staff account.
+    // Public certificate verification exposes technical data only. Firestore
+    // read rules cannot redact fields, so the public collection is kept on an
+    // allow-listed technical schema at write time. Lookup queries must also
+    // request at most one result. Certificate writes remain staff-only.
     match /sertifikalar/{certificateId} {
-      allow get: if true;
-      allow list: if request.query.limit != null && request.query.limit <= 1;
-      allow write: if isStaff();
+      allow get: if isStaff()
+        || hasOnlyPublicCertificateFields(resource.data);
+      allow list: if isStaff()
+        || (request.query.limit != null
+          && request.query.limit <= 1);
+      allow create, update: if isStaff()
+        && hasOnlyPublicCertificateFields(request.resource.data);
+      allow delete: if isStaff();
     }
 
     // Legacy collection kept for backward compatibility.

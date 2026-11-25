@@ -27,22 +27,27 @@ interface ProductCollectionPageProps {
 export default function ProductCollectionPage({ collectionName, title, description }: ProductCollectionPageProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('recommended');
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
+      setLoadError(false);
       try {
         const querySnapshot = await getDocs(collection(db, collectionName));
         setProducts(querySnapshot.docs.map((item) => ({ id: item.id, ...item.data() })) as Product[]);
       } catch (error) {
         console.error('Ürünler yüklenirken hata:', error);
+        setLoadError(true);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [collectionName]);
+  }, [collectionName, retryKey]);
 
   const sortedProducts = useMemo(() => {
     const sorted = [...products];
@@ -55,10 +60,10 @@ export default function ProductCollectionPage({ collectionName, title, descripti
     <div className="min-h-screen bg-[#f4f0e8] text-[#10211e]">
       <header className="border-b border-[#9b8050]/25 px-5 py-16 sm:px-9 sm:py-20 lg:px-14 lg:py-28">
         <div className="mx-auto max-w-[96rem]">
-          <p className="text-[0.64rem] font-bold uppercase tracking-[0.3em] text-[#876d3e]">Aktürk Koleksiyonları</p>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#876d3e]">Aktürk Koleksiyonları</p>
           <div className="mt-5 grid gap-7 lg:grid-cols-[1fr_0.65fr] lg:items-end">
             <h1 className="font-serif text-[3.7rem] leading-none tracking-[-0.04em] sm:text-7xl lg:text-[6.4rem]">{title}</h1>
-            <p className="max-w-xl text-sm leading-7 text-[#10211e]/58 sm:text-base sm:leading-8 lg:justify-self-end">{description}</p>
+            <p className="max-w-xl text-base leading-8 text-[#10211e]/68 lg:justify-self-end">{description}</p>
           </div>
         </div>
       </header>
@@ -66,15 +71,15 @@ export default function ProductCollectionPage({ collectionName, title, descripti
       <section className="px-5 pb-24 pt-8 sm:px-9 sm:pb-32 lg:px-14 lg:pb-40">
         <div className="mx-auto max-w-[96rem]">
           <div className="mb-10 flex items-center justify-between border-b border-[#9b8050]/25 pb-5 sm:mb-14">
-            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[#10211e]/46">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#10211e]/65">
               {loading ? 'Koleksiyon yükleniyor' : `${sortedProducts.length} ürün`}
             </p>
-            <label className="flex items-center gap-3 text-[0.64rem] font-semibold uppercase tracking-[0.16em] text-[#10211e]/48">
+            <label className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#10211e]/65">
               Sırala
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value as SortOption)}
-                className="border-0 border-b border-[#8c6f3a]/50 bg-transparent py-2 pl-1 pr-7 text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-[#10211e] outline-none"
+                className="border-0 border-b border-[#8c6f3a]/50 bg-transparent py-2 pl-1 pr-7 text-sm font-semibold uppercase tracking-[0.06em] text-[#10211e] outline-none"
               >
                 <option value="recommended">Önerilen</option>
                 <option value="name-asc">İsim A—Z</option>
@@ -93,10 +98,18 @@ export default function ProductCollectionPage({ collectionName, title, descripti
                 </div>
               ))}
             </div>
+          ) : loadError ? (
+            <div className="border-y border-[#9b8050]/25 py-20 text-center">
+              <p className="font-serif text-3xl" role="alert">Koleksiyon şu anda yüklenemiyor.</p>
+              <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-[#10211e]/68">Bağlantıyı kontrol edip yeniden deneyebilirsiniz. Sorun sürerse bizimle iletişime geçin.</p>
+              <button type="button" onClick={() => setRetryKey((value) => value + 1)} className="mt-7 min-h-11 border-b border-[#765a2d] text-sm font-bold uppercase tracking-[0.12em] text-[#765a2d]">
+                Yeniden Dene
+              </button>
+            </div>
           ) : sortedProducts.length === 0 ? (
             <div className="border-y border-[#9b8050]/25 py-24 text-center">
               <p className="font-serif text-3xl">Bu koleksiyona yakında yeni parçalar eklenecek.</p>
-              <Link href="/iletisim" className="mt-7 inline-flex items-center gap-3 text-[0.66rem] font-bold uppercase tracking-[0.18em] text-[#765a2d]">
+              <Link href="/iletisim" className="mt-7 inline-flex items-center gap-3 text-sm font-bold uppercase tracking-[0.12em] text-[#765a2d]">
                 Bilgi Alın <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
               </Link>
             </div>
@@ -137,7 +150,7 @@ export default function ProductCollectionPage({ collectionName, title, descripti
                     </div>
                     <div className="border-b border-[#9b8050]/24 pb-5 pt-4">
                       <h2 className="font-serif text-lg leading-tight sm:text-2xl">{product.name}</h2>
-                      {product.description && <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#10211e]/48 sm:text-sm sm:leading-6">{product.description}</p>}
+                      {product.description && <p className="mt-2 line-clamp-2 text-sm leading-6 text-[#10211e]/65">{product.description}</p>}
                     </div>
                   </Link>
                 </motion.div>
