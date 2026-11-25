@@ -5,24 +5,11 @@ import { motion } from 'framer-motion';
 import { CheckCircle, Download, LoaderCircle, QrCode, Search, ShieldCheck, XCircle } from 'lucide-react';
 import { collection, getDocs, limit, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebaseDb';
+import type { CertificatePart } from '@/lib/certificatePdf';
 import Image from 'next/image';
 import Link from 'next/link';
 
 const CERTIFICATE_VERIFICATION_ORIGIN = 'https://www.akturkkuyumculuk.com';
-const PDF_IMAGE_WAIT_TIMEOUT_MS = 5_000;
-
-interface CertificatePart {
-  type?: string;
-  code?: string;
-  markCode?: string;
-  sira?: string;
-  gram?: string;
-  ayar?: string;
-  color?: string;
-  stone?: string;
-  batchNumber?: string;
-}
-
 interface CertificateRecord {
   id: string;
   source: 'certificate' | 'catalog';
@@ -93,31 +80,6 @@ export function buildVerificationUrl(code: string) {
   return `${CERTIFICATE_VERIFICATION_ORIGIN}/sertifika?code=${encodeURIComponent(code)}`;
 }
 
-async function waitForTemplateImages(template: HTMLElement) {
-  const images = Array.from(template.querySelectorAll('img'));
-
-  await Promise.all(images.map((image) => new Promise<void>((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      window.clearTimeout(timeoutId);
-      image.removeEventListener('load', finish);
-      image.removeEventListener('error', finish);
-      resolve();
-    };
-    const timeoutId = window.setTimeout(finish, PDF_IMAGE_WAIT_TIMEOUT_MS);
-
-    if (image.complete) {
-      void image.decode().catch(() => undefined).finally(finish);
-      return;
-    }
-
-    image.addEventListener('load', finish, { once: true });
-    image.addEventListener('error', finish, { once: true });
-  })));
-}
-
 export default function SertifikaPage() {
   const [productCode, setProductCode] = useState('');
   const [record, setRecord] = useState<CertificateRecord | null>(null);
@@ -125,8 +87,7 @@ export default function SertifikaPage() {
   const [error, setError] = useState('');
   const [searchPerformed, setSearchPerformed] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
-  const [qrDataUrl, setQrDataUrl] = useState('');
-  const pdfTemplateRef = useRef<HTMLDivElement>(null);
+  const [pdfError, setPdfError] = useState('');
   const searchRequestIdRef = useRef(0);
 
   const performSearch = useCallback(async (rawCode: string) => {
@@ -140,7 +101,7 @@ export default function SertifikaPage() {
     setLoading(true);
     setError('');
     setRecord(null);
-    setQrDataUrl('');
+    setPdfError('');
     setSearchPerformed(false);
 
     try {
@@ -224,132 +185,43 @@ export default function SertifikaPage() {
   const title = record?.productName || record?.name || record?.productType || 'Sertifikalı Ürün';
   const productionDate = record?.productionDate || inferProductionDate(record?.productCode);
 
-  const downloadCertificatePdf = async () => {
+  const handlePdfDownload = async () => {
     if (!record || !isActive || pdfLoading) return;
     setPdfLoading(true);
+    setPdfError('');
+    const requestId = searchRequestIdRef.current;
 
     try {
       const verificationCode = record.productCode || record.certificateNumber || productCode;
-      const verificationUrl = buildVerificationUrl(verificationCode);
-      const [{ default: html2canvas }, { jsPDF }, { default: QRCode }] = await Promise.all([
-        import('html2canvas'),
-        import('jspdf'),
-        import('qrcode'),
-      ]);
-
-      const generatedQr = await QRCode.toDataURL(verificationUrl, {
-        width: 240,
-        margin: 1,
-        errorCorrectionLevel: 'M',
-        color: { dark: '#12302D', light: '#FFFFFF' },
+      const { downloadCertificatePdf } = await import('@/lib/certificatePdf');
+      await downloadCertificatePdf({
+        title,
+        verificationCode,
+        verificationUrl: buildVerificationUrl(verificationCode),
+        productCode: record.productCode,
+        certificateNumber: record.certificateNumber,
+        productionDate,
+        certificateDate: record.certificateDate,
+        batchNumber: record.batchNumber,
+        productType: record.productType || record.category,
+        gram: record.gram,
+        ayar: record.ayar,
+        goldColor: record.goldColor,
+        stoneType: record.stoneType,
+        sira: record.sira,
+        physicalCount: record.physicalCount || parts.length || 1,
+        warrantyPolicyVersion: record.warrantyPolicyVersion,
+        warrantyInfo: record.warrantyInfo,
+        careInstructions: record.careInstructions,
+        engravingCodes,
+        parts,
+        image: record.image,
       });
-      setQrDataUrl(generatedQr);
-      let template = pdfTemplateRef.current;
-      for (let attempt = 0; !template && attempt < 20; attempt += 1) {
-        await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
-        template = pdfTemplateRef.current;
-      }
-      if (!template) throw new Error('PDF şablonu hazırlanamadı.');
-      await waitForTemplateImages(template);
-
-      const canvas = await html2canvas(template, {
-        scale: 2,
-        backgroundColor: '#ffffff',
-        useCORS: true,
-        logging: false,
-        windowWidth: 794,
-      });
-      const imageData = canvas.toDataURL('image/jpeg', 0.96);
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
-      const margin = 7;
-      const contentWidth = 210 - margin * 2;
-      const printableHeight = 297 - margin * 2;
-      const imageHeight = (canvas.height * contentWidth) / canvas.width;
-      let page = 0;
-
-      // Şablon üst kenardan başlayarak fiziksel A4 yüksekliğine sığıyorsa
-      // ikinci sayfaya bölme. Normal tekli ürün belgesi 5 mm'den fazla alt
-      // boşlukla tek sayfaya sığar; uzun set/toptan içerikleri ise bölünür.
-      const firstPageAvailableHeight = 297 - margin;
-      if (imageHeight <= firstPageAvailableHeight) {
-        pdf.addImage(imageData, 'JPEG', margin, margin, contentWidth, imageHeight, undefined, 'FAST');
-      } else {
-        const templateRect = template.getBoundingClientRect();
-        const canvasScaleY = canvas.height / templateRect.height;
-        const preferredBreaks = Array.from(template.querySelectorAll<HTMLElement>('[data-pdf-break-before]')).map((element) => (
-          (element.getBoundingClientRect().top - templateRect.top) * canvasScaleY
-        ));
-        const fallbackBreaks = Array.from(template.querySelectorAll<HTMLElement>('[data-pdf-break-after]')).map((element) => (
-            (element.getBoundingClientRect().bottom - templateRect.top) * canvasScaleY
-        ));
-        const canvasPixelsPerMillimeter = canvas.width / contentWidth;
-        const maxSegmentHeight = Math.floor(printableHeight * canvasPixelsPerMillimeter);
-        const minimumUsefulSegmentHeight = Math.floor(maxSegmentHeight * 0.55);
-        let startY = 0;
-
-        while (startY < canvas.height) {
-          let endY = Math.min(startY + maxSegmentHeight, canvas.height);
-          if (endY < canvas.height) {
-            const preferredCleanBreaks = preferredBreaks.filter((candidate) => (
-              candidate >= startY + minimumUsefulSegmentHeight && candidate <= endY
-            ));
-            const fallbackCleanBreaks = fallbackBreaks.filter((candidate) => (
-              candidate >= startY + minimumUsefulSegmentHeight && candidate <= endY
-            ));
-            if (preferredCleanBreaks.length > 0) {
-              endY = Math.floor(preferredCleanBreaks[0]);
-            } else if (fallbackCleanBreaks.length > 0) {
-              endY = Math.floor(fallbackCleanBreaks[fallbackCleanBreaks.length - 1]);
-            }
-          }
-
-          const segmentHeightPixels = Math.max(1, endY - startY);
-          const segmentCanvas = document.createElement('canvas');
-          segmentCanvas.width = canvas.width;
-          segmentCanvas.height = segmentHeightPixels;
-          const segmentContext = segmentCanvas.getContext('2d');
-          if (!segmentContext) throw new Error('PDF sayfa bölümü hazırlanamadı.');
-          segmentContext.fillStyle = '#ffffff';
-          segmentContext.fillRect(0, 0, segmentCanvas.width, segmentCanvas.height);
-          segmentContext.drawImage(
-            canvas,
-            0,
-            startY,
-            canvas.width,
-            segmentHeightPixels,
-            0,
-            0,
-            canvas.width,
-            segmentHeightPixels,
-          );
-
-          if (page > 0) pdf.addPage();
-          const segmentHeight = segmentHeightPixels / canvasPixelsPerMillimeter;
-          pdf.addImage(segmentCanvas.toDataURL('image/jpeg', 0.96), 'JPEG', margin, margin, contentWidth, segmentHeight, undefined, 'FAST');
-          pdf.setDrawColor(169, 133, 66);
-          pdf.setLineWidth(0.45);
-          pdf.rect(margin, margin, contentWidth, segmentHeight);
-
-          startY = endY;
-          page += 1;
-        }
-      }
-
-      const safeCode = verificationCode.replace(/[^A-Z0-9_-]/gi, '-');
-      const fileName = `Akturk-Sertifika-${safeCode}.pdf`;
-      const pdfBlob = pdf.output('blob');
-      const downloadUrl = URL.createObjectURL(pdfBlob);
-      const downloadLink = document.createElement('a');
-      downloadLink.href = downloadUrl;
-      downloadLink.download = fileName;
-      downloadLink.style.display = 'none';
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      downloadLink.remove();
-      window.setTimeout(() => URL.revokeObjectURL(downloadUrl), 1_000);
     } catch (pdfError) {
       console.error('PDF oluşturma hatası:', pdfError);
-      setError('PDF belgesi oluşturulamadı. Lütfen tekrar deneyiniz.');
+      if (requestId === searchRequestIdRef.current) {
+        setPdfError('PDF belgesi oluşturulamadı. Lütfen tekrar deneyiniz.');
+      }
     } finally {
       setPdfLoading(false);
     }
@@ -460,7 +332,7 @@ export default function SertifikaPage() {
                 {isActive && (
                   <button
                     type="button"
-                    onClick={() => void downloadCertificatePdf()}
+                    onClick={() => void handlePdfDownload()}
                     disabled={pdfLoading}
                     className="inline-flex min-h-11 items-center justify-center gap-2 border border-[#0a1714] bg-[#0a1714] px-4 py-2 text-xs font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-[#8b6d39] disabled:cursor-wait disabled:opacity-60"
                   >
@@ -472,6 +344,7 @@ export default function SertifikaPage() {
             </div>
 
             <div className="p-4 sm:p-6 lg:p-8">
+              {pdfError && <p role="alert" className="mb-5 border border-red-200 bg-red-50 p-3 text-sm text-red-800">{pdfError}</p>}
               <div className={`grid ${record.image ? 'md:grid-cols-[280px_1fr]' : ''} gap-6`}>
                 {record.image && (
                   <div className="relative h-64 overflow-hidden border border-[#9b8050]/30 bg-[#ded5c8]">
@@ -591,108 +464,6 @@ export default function SertifikaPage() {
           </div>
         )}
 
-        {record && qrDataUrl && (
-          <div
-            ref={pdfTemplateRef}
-            data-testid="certificate-pdf-template"
-            aria-hidden="true"
-            className="fixed left-[-10000px] top-0 w-[794px] bg-white p-7 text-[#152825]"
-          >
-            <div className="border-[3px] border-[#a98542] p-8">
-              <header className="flex items-start justify-between gap-8 border-b border-[#d8c8aa] pb-6">
-                <div>
-                  <p className="font-serif text-[30px] tracking-[0.16em] text-[#9a7434]">AKTÜRK</p>
-                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.3em] text-[#47605c]">Kuyumculuk · Trabzon</p>
-                  <h2 className="mt-6 font-serif text-[25px] leading-tight text-[#12302d]">Ürün Kimlik ve Garanti Belgesi</h2>
-                  <p className="mt-2 text-[11px] leading-[1.55] text-[#47605c]">Bu belge, Aktürk Kuyumculuk kayıt sistemindeki doğrulanmış teknik ürün bilgilerini içerir.</p>
-                </div>
-                <div className="flex flex-col items-center text-center">
-                  {qrDataUrl ? (
-                    <Image src={qrDataUrl} alt="Sertifika doğrulama QR kodu" width={112} height={112} unoptimized />
-                  ) : (
-                    <div className="h-28 w-28 border border-[#e1d4bd] bg-[#f7f3ea]" />
-                  )}
-                  <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#47605c]">Çevrimiçi doğrula</p>
-                </div>
-              </header>
-
-              <section className={`py-6 ${record.image ? 'grid grid-cols-[150px_1fr] items-center gap-7 text-left' : 'text-center'}`}>
-                {record.image && (
-                  <div className="relative h-[150px] overflow-hidden border border-[#e1d4bd] bg-[#f7f3ea]">
-                    <Image src={record.image} alt="Sertifikalı ürün görseli" fill unoptimized className="object-cover" />
-                  </div>
-                )}
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#9a7434]">Sertifikalı ürün</p>
-                  <h3 className="mt-2 max-w-[620px] font-serif text-[23px] leading-tight text-[#12302d]">{title}</h3>
-                  <p className={`mt-3 inline-block border px-4 py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${isActive ? 'border-[#2f7d5a] text-[#2f7d5a]' : 'border-red-700 text-red-700'}`}>
-                    {isActive ? 'Kayıt doğrulandı' : 'Kayıt geçersiz / iptal edilmiş'}
-                  </p>
-                </div>
-              </section>
-
-              <section className="grid grid-cols-2 gap-px border border-[#e1d4bd] bg-[#e1d4bd]">
-                {[
-                  ['Ana Ürün Kodu', record.productCode],
-                  ['Sertifika No', record.certificateNumber],
-                  ['Kazıma Kodu', engravingCodes.join(' · ') || undefined],
-                  ['Ürün / Kategori', record.productType || record.category],
-                  ['Üretim Tarihi', productionDate],
-                  ['Sertifika Tarihi', record.certificateDate],
-                  ['Üretim Parti No', record.batchNumber],
-                  ['Fiziksel Ürün Sayısı', record.physicalCount || (parts.length || 1)],
-                  ['Toplam Net Gram', record.gram ? `${record.gram} gr` : undefined],
-                  ['Ayar', record.ayar],
-                  ['Altın Rengi', record.goldColor],
-                  ['Taş Durumu / Sıra', `${displayValue(record.stoneType)}${record.sira ? ` · Sıra ${record.sira}` : ''}`],
-                ].map(([label, value]) => (
-                  <div key={String(label)} className="bg-white px-4 py-3">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#61716e]">{label}</p>
-                    <p className="mt-1 text-[12px] font-semibold text-[#12302d]">{displayValue(value)}</p>
-                  </div>
-                ))}
-              </section>
-
-              {parts.length > 0 && (
-                <section data-pdf-break-before className="mt-6">
-                  <h4 className="mb-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#9a7434]">Ürün ve Kod Dökümü</h4>
-                  <table className="w-full border-collapse text-left text-[10px]">
-                    <thead><tr className="bg-[#12302d] text-white"><th className="p-2">No</th><th className="p-2">Ürün</th><th className="p-2">Takip / Kazıma</th><th className="p-2">Gram / Ayar</th><th className="p-2">Renk / Taş / Parti</th></tr></thead>
-                    <tbody>
-                      {parts.map((part, index) => (
-                        <tr key={`${part.code || 'pdf-part'}-${index}`} data-pdf-break-after className="border-b border-[#e8decb]">
-                          <td className="p-2">{index + 1}</td>
-                          <td className="p-2">{displayValue(part.type)}{part.sira ? ` · Sıra ${part.sira}` : ''}</td>
-                          <td className="p-2 font-semibold">{displayValue(part.code)}<br />{displayValue(part.markCode)}</td>
-                          <td className="p-2">{displayValue(part.gram)} gr / {displayValue(part.ayar)}</td>
-                          <td className="p-2">{displayValue(part.color)} / {displayValue(part.stone)}<br />{displayValue(part.batchNumber)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </section>
-              )}
-
-              {(record.warrantyInfo || record.careInstructions) && (
-                <section data-pdf-break-before className="mt-6 grid grid-cols-2 gap-5 border-t border-[#e1d4bd] pt-5">
-                  <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#9a7434]">Garanti ve Hizmet</h4>
-                    <p className="mt-2 whitespace-pre-line text-[10px] leading-[1.6] text-[#354b48]">{record.warrantyInfo || '—'}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#9a7434]">Bakım ve Kullanım</h4>
-                    <p className="mt-2 whitespace-pre-line text-[10px] leading-[1.6] text-[#354b48]">{record.careInstructions || '—'}</p>
-                  </div>
-                </section>
-              )}
-
-              <footer className="mt-6 flex items-end justify-between border-t border-[#e1d4bd] pt-4 text-[9px] text-[#61716e]">
-                <p>Belge kodu: <strong className="text-[#12302d]">{displayValue(record.certificateNumber)}</strong></p>
-                <p className="text-right">Müşteri, iletişim, ödeme ve satış tutarı bilgileri bu çevrimiçi kopyada yer almaz.</p>
-              </footer>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
